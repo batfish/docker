@@ -24,7 +24,8 @@ RUN pip3 install pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl \
     matplotlib \
     networkx \
     && rm pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl \
-    && chmod 777 notebooks
+    && find notebooks -type d -exec chmod 777 {} \; \
+    && find notebooks -type f -exec chmod 666 {} \;
 
 # Run both Batfish and Jupyter notebook
 ENTRYPOINT ["./wrapper.sh"]
