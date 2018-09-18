@@ -19,23 +19,22 @@ RUN apt-get update && apt-get install -y \
     openjdk-8-jre-headless \
     wget \
     zip \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* \
-    /var/cache/oracle*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
 
 # Z3
 ADD https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh .
 RUN bash install_z3.sh \
-&& rm -r ~/.batfish_z3_cache/
+    && rm -r ~/.batfish_z3_cache/
 
 # Batfish
 EXPOSE 9996-9997
 CMD ["java", \
-   "-XX:+UnlockExperimentalVMOptions", \
-   "-XX:+UseCGroupMemoryLimitForHeap", \
-   "-XX:MaxRAMFraction=1", \
-   "-cp", "allinone-bundle.jar", \
-   "org.batfish.allinone.Main", \
-   "-runclient", "false", \
-   "-loglevel", "warn", \
-   "-coordinatorargs", "-templatedirs questions -containerslocation /data/containers"]
+    "-XX:+UnlockExperimentalVMOptions", \
+    "-XX:+UseCGroupMemoryLimitForHeap", \
+    "-XX:MaxRAMFraction=1", \
+    "-cp", "allinone-bundle.jar", \
+    "org.batfish.allinone.Main", \
+    "-runclient", "false", \
+    "-loglevel", "warn", \
+    "-coordinatorargs", "-templatedirs questions -containerslocation /data/containers"]
