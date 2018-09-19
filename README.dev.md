@@ -4,7 +4,7 @@ A single `build_images.sh` script is provided that:
 - Builds a Batfish docker image,
 - Tests it with Pybatfish integration tests,
 - Builds an `allinone` docker image (with Jupyter, Pybatfish, and Batfish), 
-- And finally pushes both of these images to the public Batfish organization on docker hub.  
+- And finally pushes both of these images to the public Batfish organization on Docker Hub.  
 
 Specific Batfish and Pybatfish commit hashes can be passed into the script 
 to build from those commits instead of `HEAD` at `master` (the default). For example, the following command will build images from the Batfish commit `3337ec...` and Pybatfish commit `ddcb50...`:
