@@ -3,7 +3,7 @@
 This image contains the [Batfish service][bf], the [Pybatfish client][pybf], and the example
 Jupyter notebooks for convenient introduction to Batfish capabilities.
 
-It requires [Docker](https://www.docker.com/get-started) to be installed and running.
+It requires [Docker][docker] to be installed and running.
 
 ## Available tags
 Currently the `latest` tag is the most preferred way to get a working version.
@@ -49,4 +49,5 @@ To instead run on your own network configurations:
     internal Batfish data remains (and is accessible by the current user on the host machine).
 
 [bf]: https://github.com/batfish/batfish
+[docker]: https://www.docker.com/get-started
 [pybf]: https://github.com/batfish/pybatfish
