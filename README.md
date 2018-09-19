@@ -1,7 +1,7 @@
 # Batfish Docker Images
 
 This repo contains the source files necessary to build [Batfish](https://github.com/batfish/batfish) and
-`allinone` (Batfish plus [Pybatfish](https://github.com/batfish/pybatfish) and Jupyter) docker images.  
+`allinone` (Batfish plus [Pybatfish](https://github.com/batfish/pybatfish) and Jupyter) docker images.
 
 Using one of the pre-built containers from [Docker Hub](https://hub.docker.com/u/batfish/)
 is the quickest and easiest way to get started using Batfish.

@@ -46,7 +46,7 @@ To instead run on your own network configurations:
     ```
 
     This allows Batfish to store data on your disk so that if you stop/delete and restart the container,
-    internal Batfish data remains (and is accessible by the current user).
+    internal Batfish data remains (and is accessible by the current user on the host machine).
 
 [bf]: https://github.com/batfish/batfish
 [pybf]: https://github.com/batfish/pybatfish
