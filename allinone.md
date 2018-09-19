@@ -10,8 +10,8 @@ Currently the `latest` tag is the most preferred way to get a working version.
 
 To run the `allinone` docker image for the first time, run:
 
-1. `docker pull batfish/allinone` This pulls the image
-2. `mkdir -p networks` Sets up a folder for you to put network configurations (can be empty for now)
+1. `docker pull batfish/allinone` -- This pulls the image
+2. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
 3. Run the docker container:
     ```
     docker run \
