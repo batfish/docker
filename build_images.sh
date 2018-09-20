@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script tests and builds Batfish and Batfish+Pybatfish+Jupyter docker images
+# This script tests, builds, and pushes Batfish and Batfish+Pybatfish+Jupyter docker images
 # Optionally pass in Batfish and Pybatfish commit hashes to build from specific commits instead of head, for example:
 # sh build_images.sh 3337ecf49f9f754d502e8aa5443919bea18afdd6 ddcb50bb8c05cbcfa71c261c146bc1360e581961
 
@@ -25,7 +25,7 @@ function cleanup_dirs {
     rm -rf ${PY_ASSETS_FULL_PATH}
 }
 
-# Handle docker container cleanup
+# Handle directory and docker container cleanup
 function finish {
     # Cleanup docker container if it was started and is still running
     if [ -n ${BATFISH_CONTAINER} ]
@@ -91,13 +91,13 @@ fi
 # Create virtual env + dependencies so we can build the wheel
 virtualenv .env
 source .env/bin/activate
-pip install jupyter jupyter_client nbconvert pytest wheel
+pip install pytest wheel
 python setup.py sdist bdist_wheel
 PYBATFISH_TAG=$(git rev-parse --short HEAD)
-PYBATFISH_VERSION=$(python3 setup.py --version)
+PYBATFISH_VERSION=$(python setup.py --version)
 echo PYBATFISH_TAG is $PYBATFISH_TAG
 echo PYBATFISH_VERSION is $PYBATFISH_VERSION
-pip install .
+pip install .[dev]
 ln -s ../batfish/questions
 
 # Start up batfish container
