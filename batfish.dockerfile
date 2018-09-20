@@ -10,6 +10,7 @@ RUN chmod a+rw /data
 COPY ${ASSETS} ./
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV JAVA_LIBRARY_PATH /usr/lib
+ENV HOME /data
 
 # Base package setup
 RUN apt-get update && apt-get install -y \

@@ -1,13 +1,14 @@
 ARG TAG=latest
 FROM batfish/batfish:$TAG
 
-# ASSETS is the directory containing the Pybatfish Python wheel
+# ASSETS is the directory containing the Pybatfish Python wheel, wrapper.sh,
 # and the notebooks/ directory (containing the Jupyter notebooks)
 ARG ASSETS
 # PYBATFISH_VERSION is the version number embedded in the Python wheel in the ASSETS dir
 ARG PYBATFISH_VERSION
 
 COPY ${ASSETS} ./
+RUN chmod a+x wrapper.sh
 
 RUN apt-get update && apt-get install -y \
     python3 \
