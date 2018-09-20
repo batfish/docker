@@ -26,7 +26,7 @@ To instead run on your own network configurations:
     ```
     docker run \
       -v $(pwd)/networks:/notebooks/custom_networks:ro \
-      -p 8888:8888 batfish/allinone:latest
+      -p 8888:8888 batfish/allinone
     ```
 
     This gives the container (specifically Jupyter) read-only access to the networks directory created above.
@@ -42,7 +42,7 @@ To instead run on your own network configurations:
       -v $(pwd)/networks:/notebooks/custom_networks:ro \
       -v $(pwd)/data:/data -v /etc/group:/etc/group:ro \
       -v /etc/passwd:/etc/passwd:ro --user=$(id -u):$(id -g) \
-      --env HOME="/notebooks" -p 8888:8888 batfish/allinone:latest
+      -p 8888:8888 batfish/allinone
     ```
 
     This allows Batfish to store data on your disk so that if you stop/delete and restart the container,
