@@ -97,7 +97,7 @@ if [ "$3" != "" ]; then
 fi
 
 # Create virtual env + dependencies so we can build the wheel
-virtualenv -p python3 .env
+virtualenv .env
 source .env/bin/activate
 pip install pytest wheel
 python setup.py sdist bdist_wheel
