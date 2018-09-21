@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 
-# This script tests, builds, and pushes Batfish and Batfish+Pybatfish+Jupyter docker images
+# This script tests and builds and optionally pushes Batfish and Batfish+Pybatfish+Jupyter docker images
 # Optionally pass in Batfish and Pybatfish commit hashes to build from specific commits instead of head, for example:
-# sh build_images.sh 3337ecf49f9f754d502e8aa5443919bea18afdd6 ddcb50bb8c05cbcfa71c261c146bc1360e581961
+# sh build_images.sh push 3337ecf49f9f754d502e8aa5443919bea18afdd6 ddcb50bb8c05cbcfa71c261c146bc1360e581961
+if [ "$1" == "" -o "$1" == "build" ]; then
+    PUSH=false
+elif [ "$1" == "push" ]; then
+    PUSH=true
+else
+    echo "Unknown action '$1' does not match 'push' or 'build'."
+    exit 1
+fi
 
 # Quick check to see if a particular port is free
 function is_port_free() {
@@ -61,9 +69,9 @@ pushd ${TEMP_DIR}
 git clone https://github.com/batfish/batfish.git
 ## Build and save commit info
 pushd batfish
-if [ "$1" != "" ]; then
-    echo "Using specific Batfish commit $1"
-    git reset --hard $1
+if [ "$2" != "" ]; then
+    echo "Using specific Batfish commit $2"
+    git reset --hard $2
 fi
 mvn clean -f projects/pom.xml package
 BATFISH_TAG=$(git rev-parse --short HEAD)
@@ -83,9 +91,9 @@ pushd ${TEMP_DIR}
 git clone https://github.com/batfish/pybatfish.git
 ## Build and save commit info
 pushd pybatfish
-if [ "$2" != "" ]; then
-    echo "Using specific Pybatfish commit $2"
-    git reset --hard $2
+if [ "$3" != "" ]; then
+    echo "Using specific Pybatfish commit $3"
+    git reset --hard $3
 fi
 
 # Create virtual env + dependencies so we can build the wheel
@@ -133,8 +141,10 @@ docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFIS
 # Cleanup the temp directory if successful
 cleanup_dirs
 
-# Push the docker images after successfully build
-docker push batfish/batfish:sha_${BATFISH_TAG}
-docker push batfish/batfish:latest
-docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
-docker push batfish/allinone:latest
+if [ "$PUSH" == "true" ]; then
+    # Push the docker images after successfully build
+    docker push batfish/batfish:sha_${BATFISH_TAG}
+    docker push batfish/batfish:latest
+    docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
+    docker push batfish/allinone:latest
+fi
