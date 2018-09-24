@@ -1,6 +1,6 @@
 dist: xenial
 
-language: generic
+language: java
 
 addons:
   apt:
