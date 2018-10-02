@@ -5,10 +5,12 @@ Jupyter notebooks for convenient introduction to Batfish capabilities.
 
 It requires [Docker][docker] to be installed and running.
 
-## Available tags
-Currently the `latest` tag is the most preferred way to get a working version.
+There are three main ways to run the Docker image, detailed below:
+* Running the image (stand alone) - simplest, isolated configuration; good for first time users just exploring Batfish
+* Running with custom networks - this mounts a read-only directory from the host machine in the docker container, so custom networks can be passed into the container; good for most users interested in analyzing their networks
+* Running with persistent storage - this builds on the previous invocation and adds a read-write directory for the data produced by Batfish to persist across different instantiations of the docker image
 
-## Running the image
+## Running the image (stand alone)
 
 To run the `allinone` docker image for the first time, using the notebooks and example network bundled with the image:
 
@@ -16,9 +18,9 @@ To run the `allinone` docker image for the first time, using the notebooks and e
 2. Navigate to `http://localhost:8888` in a web browser on the host machine and enter the Jupyter token in the "Password or token:" prompt.
 
 
-### Passing custom networks in
+## Running with custom networks
 
-To instead run on your own network configurations:
+To run on your own network configurations, instead of those bundled in the Docker image:
 
 1. `docker pull batfish/allinone` -- This pulls the latest image from Docker Hub
 2. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
@@ -31,7 +33,9 @@ To instead run on your own network configurations:
 
     This gives the container (specifically Jupyter) read-only access to the networks directory created above.
 
-### Running with persistent storage
+## Running with persistent storage
+
+To allow Batfish to store data on your disk (to make internal Batfish data persist across container instances and make it accessible by the current user on the host machine):
 
 1. `docker pull batfish/allinone` -- This pulls the latest image from Docker Hub
 2. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
@@ -44,9 +48,6 @@ To instead run on your own network configurations:
       -v /etc/passwd:/etc/passwd:ro --user=$(id -u):$(id -g) \
       -p 8888:8888 batfish/allinone
     ```
-
-    This allows Batfish to store data on your disk so that if you stop/delete and restart the container,
-    internal Batfish data remains (and is accessible by the current user on the host machine).
 
 [bf]: https://github.com/batfish/batfish
 [docker]: https://www.docker.com/get-started
