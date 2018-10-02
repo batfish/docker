@@ -5,14 +5,14 @@ Jupyter notebooks for convenient introduction to Batfish capabilities.
 
 It requires [Docker][docker] to be installed and running.
 
-There are three main ways to run the Docker image, detailed below:
-* Running the image (stand alone) - simplest, isolated configuration; good for first time users just exploring Batfish
-* Running with custom networks - this mounts a read-only directory from the host machine in the docker container, so custom networks can be passed into the container; good for most users interested in analyzing their networks
-* Running with persistent storage - this builds on the previous invocation and adds a read-write directory for the data produced by Batfish to persist across different instantiations of the docker image
+There are three main ways options for running the Docker image, detailed below:
+* Running the image (stand alone) - simplest configuration; good for first time users just exploring Batfish
+* Running with custom networks - allows users to pass data into the container; good for most users interested in analyzing their networks with Batfish
+* Running with persistent storage - allows data produced by Batfish to persist across different instantiations of the docker image; good for some advanced users or developers
 
 ## Running the image (stand alone)
 
-To run the `allinone` docker image for the first time, using the notebooks and example network bundled with the image:
+To run the `allinone` docker image for the first time, using only the notebooks and example network bundled with the image:
 
 1. Run `docker run -p 8888:8888 batfish/allinone`.  Note that after the container starts, Jupyter will show a token required to access notebooks (e.g. token=`abcdef123456...`).
 2. Navigate to `http://localhost:8888` in a web browser on the host machine and enter the Jupyter token in the "Password or token:" prompt.
