@@ -5,10 +5,10 @@ Jupyter notebooks for convenient introduction to Batfish capabilities.
 
 It requires [Docker][docker] to be installed and running.
 
-There are three main ways options for running the Docker image, detailed below:
-* Running the image (stand alone) - simplest configuration; good for first time users just exploring Batfish
-* Running with custom networks - allows users to pass data into the container; good for most users interested in analyzing their networks with Batfish
-* Running with persistent storage - allows data produced by Batfish to persist across different instantiations of the docker image; good for some advanced users or developers
+There are three main options for running the Docker image, detailed below:
+* __Running the image (stand alone)__ - simplest configuration; good for first time users just exploring Batfish
+* __Running with custom networks__ - allows users to pass data into the container; good for most users interested in analyzing their networks with Batfish
+* __Running with persistent storage__ - allows data produced by Batfish to persist across different instantiations of the docker image; good for some advanced users or developers
 
 ## Running the image (stand alone)
 
