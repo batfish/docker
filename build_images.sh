@@ -99,9 +99,6 @@ fi
 # Create virtual env + dependencies so we can build the wheel
 virtualenv -p python3 .env
 source .env/bin/activate
-# Install *older* ipython
-# See https://github.com/jupyter/jupyter_console/issues/167
-pip install "ipython<7"
 pip install pytest wheel
 python setup.py sdist bdist_wheel
 PYBATFISH_TAG=$(git rev-parse --short HEAD)
