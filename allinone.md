@@ -8,21 +8,23 @@ It requires [Docker][docker] to be installed and running.
 ## Available tags
 Currently the `latest` tag is the most preferred way to get a working version.
 
+## Getting latest image
+1. `docker pull batfish/allinone` -- This pulls the latest image from Docker Hub
+
 ## Running the image
 
-To run the `allinone` docker image for the first time, using the notebooks and example network bundled with the image:
+To run the `allinone` docker image, and use the notebooks and example network bundled with the image:
 
 1. Run `docker run -p 8888:8888 batfish/allinone`.  Note that after the container starts, Jupyter will show a token required to access notebooks (e.g. token=`abcdef123456...`).
 2. Navigate to `http://localhost:8888` in a web browser on the host machine and enter the Jupyter token in the "Password or token:" prompt.
 
 
-### Passing custom networks in
+### Passing in your own network configurations
 
-To instead run on your own network configurations:
+To use your own network configurations:
 
-1. `docker pull batfish/allinone` -- This pulls the latest image from Docker Hub
-2. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
-3. Run the docker container:
+1. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
+2. Run the docker container:
     ```
     docker run \
       -v $(pwd)/networks:/notebooks/custom_networks:ro \
@@ -31,12 +33,11 @@ To instead run on your own network configurations:
 
     This gives the container (specifically Jupyter) read-only access to the networks directory created above.
 
-### Running with persistent storage
+### Running with persistent storage (along with passing in your own network configurations)
 
-1. `docker pull batfish/allinone` -- This pulls the latest image from Docker Hub
-2. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
-3. `mkdir -p data` -- Sets up a folder for persistent storage
-4. Run the docker container:
+1. `mkdir -p networks` -- Sets up a folder for you to put network configurations (can be empty for now)
+2. `mkdir -p data` -- Sets up a folder for persistent storage
+3. Run the docker container:
     ```
     docker run \
       -v $(pwd)/networks:/notebooks/custom_networks:ro \
