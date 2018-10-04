@@ -30,7 +30,7 @@ To upgrade the docker container, simply run:
 1. `docker stop $(docker ps -f "ancestor=batfish/batfish" -q)` -- Stops the currently running container
 2. `docker pull batfish/batfish` -- Pulls the latest image from Docker Hub
 
-    Then you can use the same docker run command you used to start the container (e.g. `docker run -p 9997:9997 -p 9996:9996 batfish/batfish`).
+    Then you can restart the container with same docker run command you used to start it (e.g. `docker run -p 9997:9997 -p 9996:9996 batfish/batfish`).
 
     Note if running with persistent storage, previously uploaded network snapshots may be incompatible with newer version of Batfish and may need to be re-uploaded.
 

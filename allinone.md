@@ -57,7 +57,7 @@ To upgrade the docker container, simply run:
 1. `docker stop $(docker ps -f "ancestor=batfish/allinone" -q)` -- Stops the currently running allinone container
 2. `docker pull batfish/allinone` -- Pulls the latest image from Docker Hub
 
-    Then you can use the same docker run command you used to start the container (e.g. `docker run -p 8888:8888 batfish/allinone`).
+    Then you can restart the container with the same docker run command you used to start it (e.g. `docker run -p 8888:8888 batfish/allinone`).
 
     Note if running with persistent storage, previously uploaded network snapshots may be incompatible with newer version of Batfish and may need to be re-uploaded.
 
