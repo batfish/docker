@@ -5,8 +5,8 @@ This image contains only the core Batfish service.
 ## Running the image
 
 There are two main options for running the Docker image, detailed below:
-* [Running the image stand-alone](#running-the-image-stand-alone) - simplest configuration; good for most users working with Batfish
-* [Running with persistent storage](#running-with-persistent-storage) - allows data produced by Batfish to persist across different instantiations of the docker image; good for some advanced users or developers
+* [Running the image stand-alone](#running-the-image-stand-alone) - simplest configuration; recommended for most users working with Batfish
+* [Running with persistent storage](#running-with-persistent-storage) - allows data produced by Batfish to persist across different instantiations of the docker image; recommended for advanced users or developers
 
 ### Running the image stand-alone
 

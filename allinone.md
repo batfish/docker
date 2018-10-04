@@ -8,9 +8,9 @@ It requires [Docker][docker] to be installed and running.
 ## Running the image
 
 There are three main options for running the Docker image, detailed below:
-* [Running the image stand-alone](#running-the-image-stand-alone) - simplest configuration; good for first time users just exploring Batfish
-* [Running with custom networks](#running-with-your-own-network-configurations) - allows users to pass data into the container; good for most users interested in analyzing their networks with Batfish
-* [Running with persistent storage](#running-with-persistent-storage-and-your-own-network-configurations) - allows data produced by Batfish to persist across different instantiations of the docker image; good for some advanced users or developers
+* [Running the image stand-alone](#running-the-image-stand-alone) - simplest configuration; recommended for first time users just exploring Batfish
+* [Running with custom networks](#running-with-your-own-network-configurations) - allows users to pass data into the container; recommended for users interested in analyzing their networks with Batfish
+* [Running with persistent storage](#running-with-persistent-storage-and-your-own-network-configurations) - allows data produced by Batfish to persist across different instantiations of the docker image; recommended for advanced users or developers
 
 Note that after the container starts, Jupyter will show a token required to access notebooks (e.g. token=`abcdef123456...`).  Once the container is running, navigate to `http://localhost:8888` in a web browser on the host machine and enter the Jupyter token in the "Password or token:" prompt.
 
