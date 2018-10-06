@@ -1,26 +1,32 @@
-# Batfish service docker image
+# Batfish service docker container
 
-This image contains only the core Batfish service.
+This container contains the core Batfish service.
 
-## Running the image
+## Running the container
 
-To start the Batfish service, run the following commands:
+To start the service, run the following commands:
+```
+mkdir -p data
+docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish
+```
+The first command creates a folder on the host machine where Batfish will persist data across container reboots. The second command starts the service after mapping this folder from within the container and mapping the needed ports. 
+    
+You can now use the [Pybatfish client](pybf) to interact with the service.
 
-1. `mkdir -p data`
-2. `docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish`
+## Upgrading the container
 
-    You can now use the [Pybatfish client](pybf) on the host machine to interact with the service.
+To upgrade the container, simply run:
+```
+docker stop $(docker ps -f "ancestor=batfish/batfish" -q)
+docker pull batfish/batfish
+docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish
+```
 
-## Upgrading
+The first two commands stop the currently running container and pull the latest image from Docker Hub. 
 
-To upgrade the docker container, simply run:
+The third command restarts the container. It assumes that you are running it from the same folder where you originally started the container. If running from other folders, make appropriate modifications to the `$(pwd)/data` part of the command.
 
-1. `docker stop $(docker ps -f "ancestor=batfish/batfish" -q)` -- Stops the currently running container
-2. `docker pull batfish/batfish` -- Pulls the latest image from Docker Hub
-
-    Then you can restart the container with same docker run command you used to start it (e.g. `docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish`).
-
-    Note when running with persistent storage, previously uploaded network snapshots may be incompatible with newer versions of Batfish and may need to be re-uploaded.
+**Note:** After upgrading the container, previously uploaded network snapshots may sometimes become incompatible with newer versions of Batfish and may need to be re-initialized.
 
 
 [pybf]: https://github.com/batfish/pybatfish
