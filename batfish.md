@@ -4,7 +4,7 @@ This container contains the core Batfish service.
 
 ## Running the container
 
-To start the service, run the following commands:
+To start the service, make sure that the Docker daemon is running, and then run the following commands:
 ```
 mkdir -p data
 docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish
