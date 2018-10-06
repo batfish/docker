@@ -2,9 +2,9 @@
 
 # Batfish Docker Containers
 
-This repo has the source files to build `Batfish` and `allinone` docker containers. The former has only the core [Batfish](https://github.com/batfish/batfish) service, and the latter also inlcudes [Pybatfish](https://github.com/batfish/pybatfish) and Jupyter. These containers provide a quick way to start using Batfish.
+This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish. The `Batfish` container has only the core [Batfish](https://github.com/batfish/batfish) service, and the `allinone` container also inlcudes [Pybatfish](https://github.com/batfish/pybatfish). 
 
-We recommend the `Batfish` container if you plan to analyze your own network data. Use the `allinone` container if you want to just play with the data and Jupyter notebooks bundled with Pybatfish. 
+We recommend using the `Batfish` container if you plan to analyze your own network data, and the `allinone` container if you want to just play with the example data and Jupyter notebooks bundled with Pybatfish. 
 
 ## Running the `Batfish` container
 
