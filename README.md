@@ -1,3 +1,5 @@
+Got questions, feedback, or feature requests? Join our community on [Slack!](https://join.slack.com/t/batfish-org/shared_invite/enQtMzA0Nzg2OTAzNzQ1LTUxOTJlY2YyNTVlNGQ3MTJkOTIwZTU2YjY3YzRjZWFiYzE4ODE5ODZiNjA4NGI5NTJhZmU2ZTllOTMwZDhjMzA)
+
 # Batfish Docker Containers
 
 This repo has the source files to build `Batfish` and `allinone` docker containers. The former has only the core [Batfish](https://github.com/batfish/batfish) service, and the latter also inlcudes [Pybatfish](https://github.com/batfish/pybatfish) and Jupyter. These containers provide a quick way to start using Batfish.
