@@ -2,20 +2,25 @@
 
 This image contains only the core Batfish service.
 
-## Available tags
+## Running the image
 
-Currently the `latest` tag is the most preferred way to get a working version.
+To start the Batfish service, run the following commands:
 
-## Running the container
+1. `mkdir -p data`
+2. `docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish`
 
-To run the Batfish service, simply run the following command:
+    You can now use the [Pybatfish client](pybf) on the host machine to interact with the service.
 
-`docker run -p 9997:9997 -p 9996:9996 batfish/batfish`
+## Upgrading
 
-You can now use the Pybatfish client on the host machine to interact with the service.
+To upgrade the docker container, simply run:
 
-### Running with persistent storage
+1. `docker stop $(docker ps -f "ancestor=batfish/batfish" -q)` -- Stops the currently running container
+2. `docker pull batfish/batfish` -- Pulls the latest image from Docker Hub
 
-If you'd like to save Batfish state across different invocations of the container, simply mount a folder (or volume) over `/data`, like so:
+    Then you can restart the container with same docker run command you used to start it (e.g. `docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish`).
 
-`mkdir data && docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish`
+    Note when running with persistent storage, previously uploaded network snapshots may be incompatible with newer versions of Batfish and may need to be re-uploaded.
+
+
+[pybf]: https://github.com/batfish/pybatfish
