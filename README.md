@@ -25,8 +25,11 @@ The docker command above passes current user information into the container (so 
 ## Exploring bundled networks and notebooks
 
 Navigate to the Jupyter notebooks:
+
     * When the Docker container starts, Jupyter will show a token on the console output, required for access (e.g. token=abcdef123456...)
+
     * Navigate to http://localhost:9995 in a web browser on the host machine and enter this token in the "Password or token:" prompt to access the notebooks
+    
     * Select and step through one of the notebooks (`Getting started with Batfish.ipynb` is a good place to start!)
 
 ## Going further (with custom networks)
