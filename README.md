@@ -17,7 +17,7 @@ mkdir -p custom_networks
 docker run \
   -v $(pwd)/custom_networks:/notebooks/custom_networks:ro -v $(pwd)/data:/data \
   -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro --user=$(id -u):$(id -g) \
-  --env HOME="/notebooks" -p 9995:8888 -p 9996:9996 -p 9997:9997 batfish/allinone:latest
+  --env HOME="/notebooks" -p 9995:8888 -p 9996:9996 -p 9997:9997 batfish/allinone
 ```
 
 The docker command above passes current user information into the container (so files created by the container are owned by and visible to the user running docker) and mounts the `data/` and `custom_networks/` directories in order to pass data between the host machine and the container.

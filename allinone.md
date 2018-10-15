@@ -13,7 +13,7 @@ To run the container, make sure that the Docker daemon is running, and then run:
     docker run \
       -v $(pwd)/custom_networks:/notebooks/custom_networks:ro -v $(pwd)/data:/data \
       -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro --user=$(id -u):$(id -g) \
-      --env HOME="/notebooks" -p 9995:8888 -p 9996:9996 -p 9997:9997 batfish/allinone:latest
+      --env HOME="/notebooks" -p 9995:8888 -p 9996:9996 -p 9997:9997 batfish/allinone
     ```
 
     The above command allows Batfish to pass data to and from the host machine, make internal Batfish data persist across container instances, and runs the container as the current user (making any files created by the container owned and accessible by the current user on the host machine).
@@ -31,7 +31,7 @@ docker pull batfish/allinone
 docker run \
   -v $(pwd)/custom_networks:/notebooks/custom_networks:ro -v $(pwd)/data:/data \
   -v /etc/group:/etc/group:ro -v /etc/passwd:/etc/passwd:ro --user=$(id -u):$(id -g) \
-  --env HOME="/notebooks" -p 9995:8888 -p 9996:9996 -p 9997:9997 batfish/allinone:latest
+  --env HOME="/notebooks" -p 9995:8888 -p 9996:9996 -p 9997:9997 batfish/allinone
 ```
 
 These commands stop the currently running container, pull the latest one, and then start it.
