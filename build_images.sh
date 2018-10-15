@@ -66,7 +66,7 @@ echo "Cloning and building batfish"
 echo "Using tmp dir: ${TEMP_DIR}"
 
 pushd ${TEMP_DIR}
-git clone https://github.com/batfish/batfish.git
+git clone --depth 1 https://github.com/batfish/batfish.git
 ## Build and save commit info
 pushd batfish
 if [ "$2" != "" ]; then
@@ -88,7 +88,7 @@ docker build -f ${WORK_DIR}/batfish.dockerfile -t batfish/batfish:sha_${BATFISH_
 echo "Cloning and building pybatfish"
 # Pybatfish
 pushd ${TEMP_DIR}
-git clone https://github.com/batfish/pybatfish.git
+git clone --depth 1 https://github.com/batfish/pybatfish.git
 ## Build and save commit info
 pushd pybatfish
 if [ "$3" != "" ]; then
