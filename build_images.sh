@@ -141,10 +141,16 @@ docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFIS
 # Cleanup the temp directory if successful
 cleanup_dirs
 
+echo "Built batfish/batfish:sha_${BATFISH_TAG}"
+echo "Built batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+
 if [ "$PUSH" == "true" ]; then
     # Push the docker images after successfully build
     docker push batfish/batfish:sha_${BATFISH_TAG}
     docker push batfish/batfish:latest
     docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
     docker push batfish/allinone:latest
+
+    echo "Pushed batfish/batfish:latest and batfish/batfish:sha_${BATFISH_TAG}"
+    echo "Pushed batfish/allinone:latest and batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
 fi
