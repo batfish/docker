@@ -151,6 +151,6 @@ if [ "$PUSH" == "true" ]; then
     docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
     docker push batfish/allinone:latest
 
-    echo "Pushed batfish/batfish:sha_${BATFISH_TAG}"
-    echo "Pushed batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+    echo "Pushed batfish/batfish:latest and batfish/batfish:sha_${BATFISH_TAG}"
+    echo "Pushed batfish/allinone:latest and batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
 fi
