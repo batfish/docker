@@ -11,7 +11,7 @@ docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish
 ```
 The first command creates a folder on the host machine where Batfish will persist data across container reboots. The second command starts the service after mapping this folder from within the container and mapping the needed ports. 
     
-You can now use the [Pybatfish client](pybf) to interact with the service.
+You can now use the [Pybatfish client](https://github.com/batfish/pybatfish) to interact with the service.
 
 ## Upgrading the container
 
@@ -27,6 +27,3 @@ The first two commands stop the currently running container and pull the latest 
 The third command restarts the container. It assumes that you are running it from the same folder where you originally started the container. If running from other folders, make appropriate modifications to the `$(pwd)/data` part of the command.
 
 **Note:** After upgrading the container, previously uploaded network snapshots may sometimes become incompatible with newer versions of Batfish and may need to be re-initialized.
-
-
-[pybf]: https://github.com/batfish/pybatfish
