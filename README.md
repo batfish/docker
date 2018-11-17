@@ -2,26 +2,24 @@
 
 # Batfish Docker Containers
 
-This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish. The `Batfish` container has only the core [Batfish](https://github.com/batfish/batfish) service, and the `allinone` container also inlcudes [Pybatfish](https://github.com/batfish/pybatfish). 
+This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish. 
 
-We recommend using the `Batfish` container if you plan to analyze your own network data, and the `allinone` container if you want to just play with the example data and Jupyter notebooks bundled with Pybatfish. 
+Follow the instructions in the [Batfish README](https://github.com/batfish/batfish/blob/master/README.md) to start using the container.
 
-## Running the `Batfish` container
 
-Detailed instructions are [here](batfish.md), but a short version is:
+## Upgrading the `Batfish` container
+
 ```
-mkdir -p data
-docker run -v $(pwd)/data:/data -p 9997:9997 -p 9996:9996 batfish/batfish
+docker stop $(docker ps -f "ancestor=batfish/batfish" -q)
+docker pull batfish/batfish
 ```
-These commands start the service, and you can then use [Pybatfish](https://github.com/batfish/pybatfish) to interact with it.
 
-## Running the `allinone` container
+## Upgrading the `allinone` container
 
-Detailed instructions are [here](allinone.md), but a short version is:
 ```
-docker run -p 8888:8888 batfish/allinone
+docker stop $(docker ps -f "ancestor=batfish/allinone" -q)
+docker pull batfish/allinone
 ```
-When this container starts, Jupyter will show a token required for access (e.g. token=abcdef123456...). Navigate to http://localhost:8888 in a web browser on the host machine and enter this token in the "Password or token:" prompt to access the notebooks.
 
 ## Building and pushing containers
 
