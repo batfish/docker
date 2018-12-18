@@ -8,10 +8,20 @@ steps:
     plugins:
       - docker#v1.1.1:
           image: "dhalperi/build-base:latest"
+EOF
+### If triggered from another pipeline, we need to download artifacts
+if [ -n "${BUILDKITE_TRIGGERED_FROM_BUILD_ID}" ]; then
+  cat <<EOF
       - artifacts#v1.2.0:
+          build: "\${BUILDKITE_TRIGGERED_FROM_BUILD_ID}"
           download:
+EOF
+  ### If triggered from batfish, download batfish artifacts
+  if [ "${BUILDKITE_TRIGGERED_FROM_BUILD_PIPELINE_SLUG}" = "batfish" ]; then
+    cat <<EOF
             - "workspace/allinone.jar"
             - "workspace/questions.tar"
-          build: "\${BUILDKITE_TRIGGERED_FROM_BUILD_ID}"
 EOF
+  fi
+fi
 

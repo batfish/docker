@@ -55,7 +55,6 @@ is_port_free 9997
 set -e
 set -x
 
-exit
 mkdir -p ${ASSETS_FULL_PATH}
 mkdir -p ${PY_ASSETS_FULL_PATH}
 
@@ -63,13 +62,28 @@ mkdir -p ${PY_ASSETS_FULL_PATH}
 # Batfish
 echo "Cloning and building batfish"
 echo "Using tmp dir: ${TEMP_DIR}"
-
 pushd ${TEMP_DIR}
+
+
+if [ -z "${BATFISH_TAG}" ]; then
+	### If not a triggered build, need to produce artifact and set variables
+	git clone --depth 1 https://github.com/batfish/batfish.git
+	## Build and save commit info
+	pushd batfish
+	mvn clean -f projects/pom.xml package
+	BATFISH_TAG=$(git rev-parse --short HEAD)
+	BATFISH_VERSION=$(grep -1 batfish-parent "projects/pom.xml" | grep version | sed 's/[<>]/|/g' | cut -f3 -d\|)
+	popd
+	cp batfish/projects/allinone/target/allinone-bundle-${BATFISH_VERSION}.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
+	cp -r batfish/questions ${ASSETS_FULL_PATH}
+else
+  ### For triggered build, just prepare using downloaded artifacts
+	cp workspace/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
+	tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f workspace/questions.tar
+fi
+
 echo "BATFISH_TAG is $BATFISH_TAG"
 echo "BATFISH_VERSION is $BATFISH_VERSION"
-popd
-cp workspace/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
-tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f workspace/questions.tar
 popd
 docker build -f ${WORK_DIR}/batfish.dockerfile -t batfish/batfish:sha_${BATFISH_TAG} --build-arg ASSETS=${ASSETS_REL_PATH} .
 
