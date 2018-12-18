@@ -5,6 +5,10 @@
 # sh build_images.sh push 3337ecf49f9f754d502e8aa5443919bea18afdd6 ddcb50bb8c05cbcfa71c261c146bc1360e581961
 
 # Quick check to see if a particular port is free
+
+# docker working directory
+pwd
+
 function is_port_free() {
   netstat -tln | awk '{print $4}' | grep '^127.0.0.1\|^::1' | sed 's/^.*:\([0-9][0-9]*\)$/\1/g' | grep -- "$1" >/dev/null
   local RET=${PIPESTATUS[4]}

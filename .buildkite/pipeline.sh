@@ -3,6 +3,7 @@
 set -e
 cat <<EOF
 steps:
+  - command: "pwd"
   - label: "Build Images"
     command: ".buildkite/build.sh"
     plugins:
