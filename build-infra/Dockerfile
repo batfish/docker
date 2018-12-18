@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     net-tools \
     openjdk-8-jdk \
+    python3-dev \
     software-properties-common \
     unzip \
     wget \
