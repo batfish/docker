@@ -1,0 +1,9 @@
+# Disk caching
+build --disk_cache=/tmp/bazel.cache
+build --experimental_strict_action_env
+build --experimental_guard_against_concurrent_changes
+
+# 
+test --test_keep_going=false
+test --test_output=errors
+

@@ -7,14 +7,7 @@ steps:
     command: "env && .buildkite/build.sh"
     plugins:
       - docker#v2.1.0:
-          debug: true
-          image: "dhalperi/build-base:latest"
-  - label: "Build Images volumes"
-    command: "env && .buildkite/build.sh"
-    plugins:
-      - docker#v2.1.0:
-          debug: true
-          image: "dhalperi/build-base:latest"
+          image: "arifogel/batfish-docker-build-base:latest"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"

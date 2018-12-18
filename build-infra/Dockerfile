@@ -7,17 +7,30 @@ WORKDIR /root/workdir
 
 # Installing Java, python, z3 dependencies
 RUN apt-get update && apt-get install -y \
+    apt-transport-https \
     binutils \
+    ca-certificates \
+    curl \
     gcc \
     git \
     lsb-release \
+    net-tools \
     openjdk-8-jdk \
     python3-pip \
+    software-properties-common \
     unzip \
     wget \
 &&  rm -rf /var/lib/apt/lists/* \
     /var/cache/oracle-jdk8-installer \
 &&  apt-get clean
+
+# Install docker
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+RUN add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+&& apt-get update \
+&& apt-get install -y docker-ce \
+&& rm -rf /var/lib/apt/lists/* \
+&& apt-get clean
 
 # Install Z3
 RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh \
