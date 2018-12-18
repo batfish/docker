@@ -6,12 +6,13 @@
 
 # Quick check to see if a particular port is free
 function is_port_free() {
-  echo -ne "\035" | telnet 127.0.0.1 $1 > /dev/null 2>&1;
-  if [ "${PIPESTATUS[1]}" -ne 0 ]; then
-    return 0
-  else
+  netstat -tln | awk '{print $4}' | grep '^127.0.0.1\|^::1' | sed 's/^.*:\([0-9][0-9]*\)$/\1/g' | grep -- "$1" >/dev/null
+  local RET=${PIPESTATUS[4]}
+  if [ "${RET}" -eq 0 ]; then
     echo "port $1 in use"
-    return 1;
+    return 1
+  else
+    return 0;
   fi
 }
 
@@ -47,12 +48,14 @@ function finish {
 trap finish EXIT
 
 # Make sure the ports Batfish will use are free, we will need that for testing
-is_port_free 9996 || exit $?
-is_port_free 9997 || exit $?
+is_port_free 9996
+is_port_free 9997
 
-# Exit on error after checking ports, since port-check-hack relies on errors
+# Exit on error after checking ports, since port-check succeeds on error
 set -e
+set -x
 
+exit
 mkdir -p ${ASSETS_FULL_PATH}
 mkdir -p ${PY_ASSETS_FULL_PATH}
 
