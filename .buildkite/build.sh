@@ -7,8 +7,12 @@
 # Quick check to see if a particular port is free
 function is_port_free() {
   echo -ne "\035" | telnet 127.0.0.1 $1 > /dev/null 2>&1;
-  [ $? -eq 1 ] && return 0;
-  echo "port $1 in use" && return 1;
+  if [ "${PIPESTATUS[1]}" -ne 0 ]; then
+    return 0
+  else
+    echo "port $1 in use"
+    return 1;
+  fi
 }
 
 # Asset directory setup

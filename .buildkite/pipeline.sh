@@ -3,9 +3,6 @@
 set -e
 cat <<EOF
 steps:
-  - label: "Diagnostics"
-    command: "netstat -tunpl"
-
   - label: "Build Images"
     command: ".buildkite/build.sh"
     plugins:
