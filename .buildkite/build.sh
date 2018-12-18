@@ -6,9 +6,6 @@
 
 # Quick check to see if a particular port is free
 
-# docker working directory
-pwd
-
 function is_port_free() {
   netstat -tln | awk '{print $4}' | grep '^127.0.0.1\|^::1' | sed 's/^.*:\([0-9][0-9]*\)$/\1/g' | grep -- "$1" >/dev/null
   local RET=${PIPESTATUS[4]}

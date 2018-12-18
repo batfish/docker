@@ -3,14 +3,13 @@
 set -e
 cat <<EOF
 steps:
-  - command: "pwd"
   - label: "Build Images"
-    command: "pwd && .buildkite/build.sh"
+    command: ".buildkite/build.sh"
     plugins:
       - docker#v2.1.0:
           image: "dhalperi/build-base:latest"
           volumes:
-            - ".:/workdir"
+            - ".:/root/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
 EOF
 ### If triggered from another pipeline, we need to download artifacts
