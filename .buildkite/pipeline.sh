@@ -5,7 +5,7 @@ cat <<EOF
 steps:
   - command: "pwd"
   - label: "Build Images"
-    command: ".buildkite/build.sh"
+    command: "pwd && .buildkite/build.sh"
     plugins:
       - docker#v2.1.0:
           image: "dhalperi/build-base:latest"
