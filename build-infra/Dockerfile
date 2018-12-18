@@ -16,13 +16,18 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     net-tools \
     openjdk-8-jdk \
-    python3-pip \
     software-properties-common \
     unzip \
     wget \
 &&  rm -rf /var/lib/apt/lists/* \
     /var/cache/oracle-jdk8-installer \
 &&  apt-get clean
+
+# Install pip
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3
+
+# Install virtualenv
+RUN python3 -m pip install virtualenv
 
 # Install docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
