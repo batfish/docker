@@ -8,6 +8,7 @@ steps:
     plugins:
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
+          always-pull: true
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
