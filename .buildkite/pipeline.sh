@@ -6,7 +6,7 @@ steps:
   - label: "Build Images"
     command: ".buildkite/build.sh"
     plugins:
-      - docker#v1.1.1:
+      - docker#v2.1.0:
           image: "dhalperi/build-base:latest"
           volumes:
             - ".:/workdir"
