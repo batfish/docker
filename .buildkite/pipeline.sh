@@ -11,6 +11,7 @@ steps:
       - artifacts#v1.2.0:
           download:
             - "workspace/allinone.jar"
+            - "workspace/questions.tar"
           build: "\${BUILDKITE_TRIGGERED_FROM_BUILD_ID}"
 EOF
 
