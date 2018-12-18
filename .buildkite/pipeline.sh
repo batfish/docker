@@ -4,7 +4,7 @@ set -e
 cat <<EOF
 steps:
   - label: "Build Images"
-    command: "ls -l workspace/allinone.jar"
+    command: ".buildkite/build.sh"
     plugins:
       - docker#v1.1.1:
           image: "dhalperi/build-base:latest"
