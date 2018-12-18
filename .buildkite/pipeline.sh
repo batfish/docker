@@ -4,20 +4,21 @@ set -e
 cat <<EOF
 steps:
   - label: "Build Images"
-    command: ".buildkite/build.sh"
+    command: "env && .buildkite/build.sh"
     plugins:
       - docker#v2.1.0:
           debug: true
           image: "dhalperi/build-base:latest"
   - label: "Build Images volumes"
-    command: ".buildkite/build.sh"
+    command: "env && .buildkite/build.sh"
     plugins:
       - docker#v2.1.0:
           debug: true
           image: "dhalperi/build-base:latest"
           volumes:
-            - ".:/root/workdir"
+            - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
+          workdir: "/workdir"
 EOF
 ### If triggered from another pipeline, we need to download artifacts
 if [ -n "${BUILDKITE_TRIGGERED_FROM_BUILD_ID}" ]; then
