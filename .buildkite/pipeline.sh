@@ -11,5 +11,6 @@ steps:
       - artifacts#v1.2.0:
           download:
             - "workspace/allinone.jar"
+          build: "\${BUILDKITE_TRIGGERED_FROM_BUILD_ID}"
 EOF
 
