@@ -8,6 +8,9 @@ steps:
     plugins:
       - docker#v1.1.1:
           image: "dhalperi/build-base:latest"
+          volumes:
+            - ".:/workdir"
+            - "/var/run/docker.sock:/var/run/docker.sock"
 EOF
 ### If triggered from another pipeline, we need to download artifacts
 if [ -n "${BUILDKITE_TRIGGERED_FROM_BUILD_ID}" ]; then
