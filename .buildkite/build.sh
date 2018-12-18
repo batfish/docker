@@ -55,6 +55,9 @@ is_port_free 9997
 set -e
 set -x
 
+### Ensure docker socket is available
+ls -l /var/run/docker.sock
+
 mkdir -p ${ASSETS_FULL_PATH}
 mkdir -p ${PY_ASSETS_FULL_PATH}
 
