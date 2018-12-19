@@ -112,8 +112,8 @@ echo PYBATFISH_VERSION is $PYBATFISH_VERSION
 pip install .[dev]
 ln -s ../batfish/questions
 
-# Start up batfish container
-BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 --network=container:"$(docker ps | grep arifogel/batfish-docker-build-base | awk '{print $1}')" arifogel/batfish:sha_${BATFISH_TAG})
+# Start up batfish container using build-base network stack
+BATFISH_CONTAINER=$(docker run -d --network=container:"$(docker ps | grep arifogel/batfish-docker-build-base | awk '{print $1}')" arifogel/batfish:sha_${BATFISH_TAG})
 # Poll until we can connect to the container
 while ! curl http://localhost:9996/
 do
