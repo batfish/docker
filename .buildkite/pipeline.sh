@@ -4,7 +4,7 @@ set -e
 cat <<EOF
 steps:
   - label: "Build Images"
-    command: ".buildkite/write_password.py && unset DOCKER_BOT_PASSWORD && docker login --username=batfishbuildkitebot --password-stdin < docker_bot_password"
+    command: "python3 .buildkite/write_password.py && unset DOCKER_BOT_PASSWORD && docker login --username=batfishbuildkitebot --password-stdin < docker_bot_password"
     plugins:
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
