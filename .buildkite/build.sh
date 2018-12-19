@@ -147,3 +147,11 @@ cleanup_dirs
 
 echo "Built batfish/batfish:sha_${BATFISH_TAG}"
 echo "Built batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+
+# Push the docker images after successfully build
+docker push arifogel/batfish:sha_${BATFISH_TAG}
+docker push arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
+
+echo "Pushed arifogel/batfish:sha_${BATFISH_TAG}"
+echo "Pushed arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+
