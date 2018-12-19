@@ -15,6 +15,7 @@ steps:
           always-pull: true
           environment:
             - "DOCKER_BOT_PASSWORD"
+          network: "host"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
