@@ -73,8 +73,4 @@ RUN git clone --depth=1 --branch=circle-ci https://github.com/dhalperi/batfish \
 && cd .. \
 && rm -rf batfish
 
-# Python deps to build
-RUN pip3 install pytest
-
-
 ENV _JAVA_OPTIONS -Xmx2g
