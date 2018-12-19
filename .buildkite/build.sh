@@ -72,7 +72,7 @@ pushd ${TEMP_DIR}
 
 if [ -z "${BATFISH_TAG}" ]; then
 	### If not a triggered build, need to produce artifact and set variables
-	git clone --depth 1 https://github.com/batfish/batfish.git
+	git clone --depth 1 https://github.com/arifogel/batfish.git
 	## Build and save commit info
 	pushd batfish
 	mvn clean -f projects/pom.xml package
@@ -90,13 +90,13 @@ fi
 echo "BATFISH_TAG is $BATFISH_TAG"
 echo "BATFISH_VERSION is $BATFISH_VERSION"
 popd
-docker build -f ${WORK_DIR}/batfish.dockerfile -t batfish/batfish:sha_${BATFISH_TAG} --build-arg ASSETS=${ASSETS_REL_PATH} .
+docker build -f ${WORK_DIR}/batfish.dockerfile -t arifogel/batfish:sha_${BATFISH_TAG} --build-arg ASSETS=${ASSETS_REL_PATH} .
 
 
 echo "Cloning and building pybatfish"
 # Pybatfish
 pushd ${TEMP_DIR}
-git clone --depth 1 https://github.com/batfish/pybatfish.git
+git clone --depth 1 https://github.com/arifogel/pybatfish.git
 ## Build and save commit info
 pushd pybatfish
 
@@ -113,7 +113,7 @@ pip install .[dev]
 ln -s ../batfish/questions
 
 # Start up batfish container
-BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 --network=batfish-docker batfish/batfish:sha_${BATFISH_TAG})
+BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 --network=container:"$(docker ps | grep arifogel/batfish-docker-build-base | awk '{print $1}')" arifogel/batfish:sha_${BATFISH_TAG})
 # Poll until we can connect to the container
 while ! curl http://localhost:9996/
 do
@@ -131,12 +131,9 @@ cp pybatfish/dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl ${PY_ASSET
 cp -r pybatfish/jupyter_notebooks/ ${PY_ASSETS_FULL_PATH}/notebooks
 popd
 
-# Add latest tag to the batfish image since we know it works with pybatfish
-docker tag batfish/batfish:sha_${BATFISH_TAG} batfish/batfish:latest
-
 # Combined container stuff
 cp wrapper.sh ${PY_ASSETS_FULL_PATH}
-docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} -t batfish/allinone:latest \
+docker build -f ${WORK_DIR}/allinone.dockerfile -t arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} \
   --build-arg PYBATFISH_VERSION=${PYBATFISH_VERSION} \
   --build-arg ASSETS=${PY_ASSETS_REL_PATH} \
   --build-arg TAG=sha_${BATFISH_TAG} .
@@ -145,8 +142,8 @@ docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFIS
 # Cleanup the temp directory if successful
 cleanup_dirs
 
-echo "Built batfish/batfish:sha_${BATFISH_TAG}"
-echo "Built batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+echo "Built arifogel/batfish:sha_${BATFISH_TAG}"
+echo "Built arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
 
 # Push the docker images after successfully build
 docker push arifogel/batfish:sha_${BATFISH_TAG}
