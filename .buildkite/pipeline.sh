@@ -4,11 +4,13 @@ set -e
 cat <<EOF
 steps:
   - label: "Build Images"
-    command: "env && .buildkite/build.sh"
+    command: ".buildkite/write_password.py && unset DOCKER_BOT_PASSWORD && docker login --username=batfishbuildkitebot --password-stdin < docker_bot_password"
     plugins:
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
           always-pull: true
+          environment:
+            - "DOCKER_BOT_PASSWORD"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
