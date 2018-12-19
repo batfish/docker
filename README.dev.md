@@ -6,8 +6,8 @@
     
    ```
    ...
-   Built batfish/batfish:sha_ABCDEF
-   Built batfish/allinone:sha_ABCDEF_123456
+   Built arifogel/batfish:sha_ABCDEF
+   Built arifogel/allinone:sha_ABCDEF_123456
    ```
    
 2. Set env vars based on the SHA values (make sure to replace the SHA values with those from the output of the previous step):
@@ -21,7 +21,7 @@
     
    ```
    mkdir -p data
-   docker run -v $(pwd)/data:/data -p 8888:8888 batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
+   docker run -v $(pwd)/data:/data -p 8888:8888 arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
    ```
    
 4. Open browser to https://localhost:8888
@@ -31,10 +31,10 @@
 6. If all goes well, push the containers
 
    ```
-   docker push batfish/batfish:sha_${BATFISH_TAG}
-   docker push batfish/batfish:latest
-   docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
-   docker push batfish/allinone:latest
+   docker push arifogel/batfish:sha_${BATFISH_TAG}
+   docker push arifogel/batfish:latest
+   docker push arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
+   docker push arifogel/allinone:latest
    ```
 
 ## build_images.sh Usage

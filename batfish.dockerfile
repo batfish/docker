@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
 
 # Z3
-ADD https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh .
+ADD https://raw.githubusercontent.com/arifogel/batfish/master/tools/install_z3.sh .
 RUN bash install_z3.sh \
     && rm -r ~/.batfish_z3_cache/
 

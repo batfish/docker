@@ -4,21 +4,21 @@
 
 This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish. 
 
-Follow the instructions in the [Batfish README](https://github.com/batfish/batfish/blob/master/README.md) to start using the container.
+Follow the instructions in the [Batfish README](https://github.com/arifogel/batfish/blob/master/README.md) to start using the container.
 
 
 ## Upgrading the `Batfish` container
 
 ```
-docker stop $(docker ps -f "ancestor=batfish/batfish" -q)
-docker pull batfish/batfish
+docker stop $(docker ps -f "ancestor=arifogel/batfish" -q)
+docker pull arifogel/batfish
 ```
 
 ## Upgrading the `allinone` container
 
 ```
-docker stop $(docker ps -f "ancestor=batfish/allinone" -q)
-docker pull batfish/allinone
+docker stop $(docker ps -f "ancestor=arifogel/allinone" -q)
+docker pull arifogel/allinone
 ```
 
 ## Building and pushing containers
