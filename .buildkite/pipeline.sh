@@ -13,7 +13,6 @@ steps:
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
           always-pull: true
-          debug: true
           environment:
             - "DOCKER_BOT_PASSWORD"
           volumes:
