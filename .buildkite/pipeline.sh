@@ -16,7 +16,7 @@ steps:
           debug: true
           environment:
             - "DOCKER_BOT_PASSWORD"
-          network: "host"
+          network: "batfish-docker"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"

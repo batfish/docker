@@ -113,7 +113,7 @@ pip install .[dev]
 ln -s ../batfish/questions
 
 # Start up batfish container
-BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 batfish/batfish:sha_${BATFISH_TAG})
+BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 --network=batfish-docker batfish/batfish:sha_${BATFISH_TAG})
 # Poll until we can connect to the container
 while ! curl http://localhost:9996/
 do
