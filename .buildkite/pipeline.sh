@@ -13,6 +13,7 @@ steps:
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
+            - "/root/.docker:/root/.docker"
           workdir: "/workdir"
 EOF
 ### If triggered from another pipeline, we need to download artifacts
