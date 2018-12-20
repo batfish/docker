@@ -1,6 +1,4 @@
 #/usr/bin/env bash
-export DOCKER_BOT_PASSWORD
-export DOCKER_BOT_USER
 ( python3 <<EOF
 import os
 print(os.environ['DOCKER_BOT_PASSWORD'])

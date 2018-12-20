@@ -3,9 +3,10 @@
 set -e
 cat <<EOF
 steps:
-  - command: "bash -c \"echo \$SOMETHING\""
   - label: "Build Images"
     command: 
+      - "export DOCKER_BOT_PASSWORD"
+      - "export DOCKER_BOT_USER"
       - ". .buildkite/docker_login.sh"
       - ".buildkite/build.sh"
     plugins:
