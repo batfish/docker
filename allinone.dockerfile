@@ -11,7 +11,7 @@ COPY ${ASSETS} ./
 RUN chmod a+x wrapper.sh
 
 # Use us-west-1 sources
-sed -ri -e "s|archive.ubuntu.com|us-west-1.ec2.archive.ubuntu.com|g" -e "s|security.ubuntu.com|us-west-1.ec2.archive.ubuntu.com|g" /etc/apt/sources.list
+RUN sed -ri -e "s|archive.ubuntu.com|us-west-1.ec2.archive.ubuntu.com|g" -e "s|security.ubuntu.com|us-west-1.ec2.archive.ubuntu.com|g" /etc/apt/sources.list
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
