@@ -113,7 +113,7 @@ pip install .[dev]
 ln -s "../batfish/questions"
 
 # Start up batfish container using build-base network stack
-BATFISH_CONTAINER="$(docker run -d --network=container:"$(docker ps | grep arifogel/batfish-docker-build-base | awk '{print $1}')" arifogel/batfish:sha_"${BATFISH_TAG}")"
+BATFISH_CONTAINER="$(docker run -d --network=container:"$(grep '/docker/' /proc/self/cgroup | sed 's|.*docker/\(.*\)|\1|g' | head -n1)" "arifogel/batfish:sha_${BATFISH_TAG}")"
 # Poll until we can connect to the container
 while ! curl http://localhost:9996/
 do
