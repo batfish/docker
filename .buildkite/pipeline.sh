@@ -11,6 +11,9 @@ steps:
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
           always-pull: true
+          envronment:
+            - DOCKER_BOT_PASSWORD
+            - DOCKER_BOT_USER
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
