@@ -5,18 +5,15 @@ cat <<EOF
 steps:
   - label: "Build Images"
     command: 
-      - "export DOCKER_BOT_PASSWORD"
-      - "export DOCKER_BOT_USER"
       - ". .buildkite/docker_login.sh"
       - ".buildkite/build.sh"
     plugins:
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
           always-pull: true
-          envronment:
+          environment:
             - "DOCKER_BOT_PASSWORD"
             - "DOCKER_BOT_USER"
-            - "SOMETHING"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
