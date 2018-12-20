@@ -115,13 +115,13 @@ ln -s "../batfish/questions"
 # Start up batfish container using build-base network stack
 BATFISH_CONTAINER="$(docker run -d --network=container:"$(grep '/docker/' /proc/self/cgroup | sed 's|.*docker/\(.*\)|\1|g' | head -n1)" "arifogel/batfish:sha_${BATFISH_TAG}")"
 # Poll until we can connect to the container
-NUM_RETRIES=30
+MAX_RETRIES=30
 CURL_ATTEMPT=0
-while ! curl http://localhost:9996/ >&/dev/null && [ "${CURL_ATTEMPT}" -lt "${NUM_RETRIES}" ]
+while ! curl http://localhost:9996/ >&/dev/null && [ "${CURL_ATTEMPT}" -lt "${MAX_RETRIES}" ]
 do
   echo "$(date) - waiting for Batfish to start"
   sleep 1
-  NUM_RETRIES=$((NUM_RETRIES + 1))
+  CURL_ATTEMPT=$((CURL_ATTEMPT + 1))
 done
 echo "$(date) - connected to Batfish"
 
