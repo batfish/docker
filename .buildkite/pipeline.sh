@@ -10,13 +10,6 @@ steps:
       - docker-login#v2.0.1:
           username: batfishbuildkitebot
           password-env: DOCKER_LOGIN_PASSWORD
-      - docker#v2.1.0:
-          image: "arifogel/batfish-docker-build-base:latest"
-          always-pull: true
-          volumes:
-            - ".:/workdir"
-            - "/var/run/docker.sock:/var/run/docker.sock"
-          workdir: "/workdir"
   - label: "Build Images"
     command: 
       - ".buildkite/build.sh"
