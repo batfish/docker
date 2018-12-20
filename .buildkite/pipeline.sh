@@ -8,7 +8,7 @@ steps:
       - ".buildkite/build.sh"
     plugins:
       - docker-login#v2.0.1:
-        - username: "batfishbuildkitebot"
+          username: "batfishbuildkitebot"
       - docker#v2.1.0:
           image: "arifogel/batfish-docker-build-base:latest"
           always-pull: true
