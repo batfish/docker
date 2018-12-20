@@ -6,6 +6,7 @@ steps:
   - command: "bash -c \"echo \$SOMETHING\""
   - label: "Build Images"
     command: 
+      - "bash -c \"echo \$SOMETHING\""
       - ". .buildkite/docker_login.sh"
       - ".buildkite/build.sh"
     plugins:
@@ -13,9 +14,9 @@ steps:
           image: "arifogel/batfish-docker-build-base:latest"
           always-pull: true
           envronment:
-            - DOCKER_BOT_PASSWORD
-            - DOCKER_BOT_USER
-            - SOMETHING
+            - "DOCKER_BOT_PASSWORD"
+            - "DOCKER_BOT_USER"
+            - "SOMETHING"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
