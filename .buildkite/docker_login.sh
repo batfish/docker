@@ -1,4 +1,5 @@
 #/usr/bin/env bash
+echo $SOMETHING
 { python3 <<EOF
 import os
 print(os.environ['DOCKER_BOT_PASSWORD'])

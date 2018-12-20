@@ -3,6 +3,7 @@
 set -e
 cat <<EOF
 steps:
+  - command: "bash -c \"echo \$SOMETHING\""
   - label: "Build Images"
     command: 
       - ". .buildkite/docker_login.sh"
@@ -14,6 +15,7 @@ steps:
           envronment:
             - DOCKER_BOT_PASSWORD
             - DOCKER_BOT_USER
+            - SOMETHING
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
