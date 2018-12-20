@@ -6,7 +6,6 @@ steps:
   - command: "bash -c \"echo \$SOMETHING\""
   - label: "Build Images"
     command: 
-      - "bash -c \"echo \$SOMETHING\""
       - ". .buildkite/docker_login.sh"
       - ".buildkite/build.sh"
     plugins:

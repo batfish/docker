@@ -1,10 +1,11 @@
 #/usr/bin/env bash
-echo $SOMETHING
-{ python3 <<EOF
+export DOCKER_BOT_PASSWORD
+export DOCKER_BOT_USER
+( python3 <<EOF
 import os
 print(os.environ['DOCKER_BOT_PASSWORD'])
 EOF
-} | docker login --username="${DOCKER_BOT_USER}" --password-stdin
+) | docker login --username="${DOCKER_BOT_USER}" --password-stdin
 unset DOCKER_BOT_PASSWORD
 unset DOCKER_BOT_USER
 
