@@ -13,13 +13,17 @@ ENV JAVA_LIBRARY_PATH /usr/lib
 ENV HOME /data
 
 # Base package setup
-RUN apt-get update && apt-get install -y \
-    binutils \
-    libgomp1 \
-    lsb-release \
-    openjdk-8-jre-headless \
-    wget \
-    zip \
+RUN sed -i.bak -e 's/\(archive\|security\).ubuntu.com/us-west-1.ec2.archive.ubuntu.com.s3.amazonaws.com/g' \
+      /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y \
+      binutils \
+      libgomp1 \
+      lsb-release \
+      openjdk-8-jre-headless \
+      wget \
+      zip \
+    && mv /etc/apt/sources.list.bak /etc/apt/sources.list \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
 
