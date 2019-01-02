@@ -78,27 +78,29 @@ echo "BATFISH_VERSION is $BATFISH_VERSION"
 docker build -f "${WORK_DIR}/batfish.dockerfile" -t "arifogel/batfish:sha_${BATFISH_TAG}" --build-arg ASSETS="${ASSETS_REL_PATH}" .
 
 
-echo "Cloning and building pybatfish"
 # Pybatfish
+echo "Install pybatfish and run integration tests"
+PYBATFISH_ARTIFACTS_DIR="${WORK_DIR}/artifacts/pybatfish"
+# Prepare tests
 pushd "${TEMP_DIR}"
-
-# Clone
 mkdir -p pybatfish
 pushd pybatfish
+tar -x --no-same-owner -f "${PYBATFISH_ARTIFACTS_DIR}/integration_tests.tgz"
+tar -x --no-same-owner -f "${PYBATFISH_ARTIFACTS_DIR}/jupyter_notebooks.tgz"
+ln -s "${ASSETS_FULL_PATH}/questions"
 git init
 git remote add origin https://github.com/arifogel/pybatfish
 git fetch -v --depth 1 origin "${PYBATFISH_TAG}"
 git checkout -f "${PYBATFISH_TAG}"
 
-# Create virtual env + dependencies so we can build the wheel
+# Create virtual env + dependencies
 virtualenv -p python3 .env
-source ".env/bin/activate"
+. ".env/bin/activate"
 pip install pytest wheel
-python setup.py sdist bdist_wheel
+pip install "${PYBATFISH_ARTIFACTS_DIR}/pybatfish.whl"
+
 echo "PYBATFISH_TAG is $PYBATFISH_TAG"
 echo "PYBATFISH_VERSION is $PYBATFISH_VERSION"
-pip install .[dev]
-ln -s "${ASSETS_FULL_PATH}/questions"
 
 # Start up batfish container using build-base network stack
 BATFISH_CONTAINER="$(docker run -d --network=container:"$(grep '/docker/' /proc/self/cgroup | sed 's|.*docker/\(.*\)|\1|g' | head -n1)" "arifogel/batfish:sha_${BATFISH_TAG}")"
@@ -118,9 +120,9 @@ py.test "tests/integration"
 deactivate
 docker stop "${BATFISH_CONTAINER}"
 popd
-cp "pybatfish/dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl" "${PY_ASSETS_FULL_PATH}"
 cp -r "pybatfish/jupyter_notebooks/" "${PY_ASSETS_FULL_PATH}/notebooks"
 popd
+cp "${PYBATFISH_ARTIFACTS_DIR}/pybatfish.whl" "${PY_ASSETS_FULL_PATH}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl"
 
 # Combined container stuff
 cp "wrapper.sh" "${PY_ASSETS_FULL_PATH}"
