@@ -93,7 +93,7 @@ ln -s "${ASSETS_FULL_PATH}/questions"
 virtualenv -p python3 .env
 . ".env/bin/activate"
 pip install pytest wheel
-pip install "${PYBATFISH_ARTIFACTS_DIR}/pybatfish.whl"
+pip install "${PYBATFISH_ARTIFACTS_DIR}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl"
 
 echo "PYBATFISH_TAG is $PYBATFISH_TAG"
 echo "PYBATFISH_VERSION is $PYBATFISH_VERSION"
@@ -118,7 +118,7 @@ docker stop "${BATFISH_CONTAINER}"
 popd
 cp -r "pybatfish/jupyter_notebooks/" "${PY_ASSETS_FULL_PATH}/notebooks"
 popd
-cp "${PYBATFISH_ARTIFACTS_DIR}/pybatfish.whl" "${PY_ASSETS_FULL_PATH}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl"
+cp "${PYBATFISH_ARTIFACTS_DIR}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl" "${PY_ASSETS_FULL_PATH}/"
 
 # Combined container stuff
 cp "wrapper.sh" "${PY_ASSETS_FULL_PATH}"
