@@ -15,6 +15,7 @@ steps:
           environment:
             - "DOCKER_BOT_PASSWORD"
             - "DOCKER_BOT_USER"
+            - "BUILDKITE_PULL_REQUEST"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"
