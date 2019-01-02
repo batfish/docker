@@ -31,6 +31,9 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | python3
 # Install virtualenv
 RUN python3 -m pip install virtualenv
 
+# Create AWS-CLI virtualenv
+RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && pip install awscli && deactivate
+
 # Install docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 RUN add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
