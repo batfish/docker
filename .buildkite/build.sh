@@ -93,7 +93,7 @@ ln -s "${ASSETS_FULL_PATH}/questions"
 virtualenv -p python3 .env
 . ".env/bin/activate"
 pip install pytest wheel
-pip install "${PYBATFISH_ARTIFACTS_DIR}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl"[test]
+pip install "${PYBATFISH_ARTIFACTS_DIR}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl"[dev,test]
 
 echo "PYBATFISH_TAG is $PYBATFISH_TAG"
 echo "PYBATFISH_VERSION is $PYBATFISH_VERSION"
