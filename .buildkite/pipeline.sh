@@ -5,9 +5,7 @@ cat <<EOF
 steps:
   - label: "Build Images"
     command: 
-      - "python3 .buildkite/write_password.py"
-      - "unset DOCKER_BOT_PASSWORD"
-      - "docker login --username=batfishbuildkitebot --password-stdin < docker_bot_password"
+      - ". .buildkite/docker_login.sh"
       - ".buildkite/download_artifacts.sh"
       - ".buildkite/build.sh"
     plugins:
@@ -16,6 +14,7 @@ steps:
           always-pull: true
           environment:
             - "DOCKER_BOT_PASSWORD"
+            - "DOCKER_BOT_USER"
           volumes:
             - ".:/workdir"
             - "/var/run/docker.sock:/var/run/docker.sock"

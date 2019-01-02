@@ -20,26 +20,26 @@ function is_port_free() {
 
 # Asset directory setup
 WORK_DIR="$PWD"
-TEMP_DIR=$(mktemp -d)
-ASSETS_REL_PATH=./assets
-ASSETS_FULL_PATH=${WORK_DIR}/${ASSETS_REL_PATH}
-PY_ASSETS_REL_PATH=./py_assets
-PY_ASSETS_FULL_PATH=${WORK_DIR}/${PY_ASSETS_REL_PATH}
+TEMP_DIR="$(mktemp -d)"
+ASSETS_REL_PATH="assets"
+ASSETS_FULL_PATH="${WORK_DIR}/${ASSETS_REL_PATH}"
+PY_ASSETS_REL_PATH="py_assets"
+PY_ASSETS_FULL_PATH="${WORK_DIR}/${PY_ASSETS_REL_PATH}"
 
 function cleanup_dirs {
-    rm -rf ${TEMP_DIR}
-    rm -rf ${ASSETS_FULL_PATH}
-    rm -rf ${PY_ASSETS_FULL_PATH}
+    rm -rf "${TEMP_DIR}"
+    rm -rf "${ASSETS_FULL_PATH}"
+    rm -rf "${PY_ASSETS_FULL_PATH}"
 }
 
 # Handle directory and docker container cleanup
 function finish {
     # Cleanup docker container if it was started and is still running
-    if [ -n ${BATFISH_CONTAINER} ]
+    if [ -n "${BATFISH_CONTAINER}" ]
     then
-      if docker top ${BATFISH_CONTAINER} &>/dev/null
+      if docker top "${BATFISH_CONTAINER}" &>/dev/null
         then
-          docker stop ${BATFISH_CONTAINER}
+          docker stop "${BATFISH_CONTAINER}"
           echo stopped Batfish container
         fi
     fi
@@ -58,10 +58,10 @@ set -e
 set -x
 
 ### Ensure docker socket is available
-ls -l /var/run/docker.sock
+ls -l "/var/run/docker.sock"
 
-mkdir -p ${ASSETS_FULL_PATH}
-mkdir -p ${PY_ASSETS_FULL_PATH}
+mkdir -p "${ASSETS_FULL_PATH}"
+mkdir -p "${PY_ASSETS_FULL_PATH}"
 
 ### get versions
 BATFISH_TAG="$(cat artifacts/batfish/tag)"
@@ -75,51 +75,54 @@ cp artifacts/batfish/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
 tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f artifacts/batfish/questions.tar
 echo "BATFISH_TAG is $BATFISH_TAG"
 echo "BATFISH_VERSION is $BATFISH_VERSION"
-docker build -f ${WORK_DIR}/batfish.dockerfile -t arifogel/batfish:sha_${BATFISH_TAG} --build-arg ASSETS=${ASSETS_REL_PATH} .
+docker build -f "${WORK_DIR}/batfish.dockerfile" -t "arifogel/batfish:sha_${BATFISH_TAG}" --build-arg ASSETS="${ASSETS_REL_PATH}" .
 
 
 echo "Cloning and building pybatfish"
 # Pybatfish
-pushd ${TEMP_DIR}
-git clone --depth 1 --branch="${PYBATFISH_TAG}" https://github.com/arifogel/pybatfish.git
+pushd "${TEMP_DIR}"
+git clone --depth 1 --branch="${PYBATFISH_TAG}" "https://github.com/arifogel/pybatfish.git"
 ## Build and save commit info
 pushd pybatfish
 
 # Create virtual env + dependencies so we can build the wheel
 virtualenv -p python3 .env
-source .env/bin/activate
+source ".env/bin/activate"
 pip install pytest wheel
 python setup.py sdist bdist_wheel
-echo PYBATFISH_TAG is $PYBATFISH_TAG
-echo PYBATFISH_VERSION is $PYBATFISH_VERSION
+echo "PYBATFISH_TAG is $PYBATFISH_TAG"
+echo "PYBATFISH_VERSION is $PYBATFISH_VERSION"
 pip install .[dev]
 ln -s "${ASSETS_FULL_PATH}/questions"
 
 # Start up batfish container using build-base network stack
-BATFISH_CONTAINER=$(docker run -d --network=container:"$(docker ps | grep arifogel/batfish-docker-build-base | awk '{print $1}')" arifogel/batfish:sha_${BATFISH_TAG})
+BATFISH_CONTAINER="$(docker run -d --network=container:"$(grep '/docker/' /proc/self/cgroup | sed 's|.*docker/\(.*\)|\1|g' | head -n1)" "arifogel/batfish:sha_${BATFISH_TAG}")"
 # Poll until we can connect to the container
-while ! curl http://localhost:9996/
+MAX_RETRIES=30
+CURL_ATTEMPT=0
+while ! curl http://localhost:9996/ >&/dev/null && [ "${CURL_ATTEMPT}" -lt "${MAX_RETRIES}" ]
 do
   echo "$(date) - waiting for Batfish to start"
   sleep 1
+  CURL_ATTEMPT=$((CURL_ATTEMPT + 1))
 done
 echo "$(date) - connected to Batfish"
 
 # Run pybatfish integration tests on batfish container
-py.test tests/integration
+py.test "tests/integration"
 deactivate
-docker stop ${BATFISH_CONTAINER}
+docker stop "${BATFISH_CONTAINER}"
 popd
-cp pybatfish/dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl ${PY_ASSETS_FULL_PATH}
-cp -r pybatfish/jupyter_notebooks/ ${PY_ASSETS_FULL_PATH}/notebooks
+cp "pybatfish/dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl" "${PY_ASSETS_FULL_PATH}"
+cp -r "pybatfish/jupyter_notebooks/" "${PY_ASSETS_FULL_PATH}/notebooks"
 popd
 
 # Combined container stuff
-cp wrapper.sh ${PY_ASSETS_FULL_PATH}
-docker build -f ${WORK_DIR}/allinone.dockerfile -t arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} \
-  --build-arg PYBATFISH_VERSION=${PYBATFISH_VERSION} \
-  --build-arg ASSETS=${PY_ASSETS_REL_PATH} \
-  --build-arg TAG=sha_${BATFISH_TAG} .
+cp "wrapper.sh" "${PY_ASSETS_FULL_PATH}"
+docker build -f "${WORK_DIR}/allinone.dockerfile" -t "arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}" \
+  --build-arg PYBATFISH_VERSION="${PYBATFISH_VERSION}" \
+  --build-arg ASSETS="${PY_ASSETS_REL_PATH}" \
+  --build-arg TAG="sha_${BATFISH_TAG}" .
 
 
 # Cleanup the temp directory if successful

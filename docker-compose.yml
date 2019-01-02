@@ -1,0 +1,7 @@
+version: '2'
+services:
+  app:
+    build: ./batfish.dockerfile
+    working_dir: /workdir
+    volumes: .:/workdir
+

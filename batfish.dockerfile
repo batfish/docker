@@ -12,6 +12,9 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV JAVA_LIBRARY_PATH /usr/lib
 ENV HOME /data
 
+# Use us-west-1 sources
+RUN sed -ri -e "s|archive.ubuntu.com|us-west-1.ec2.archive.ubuntu.com|g" -e "s|security.ubuntu.com|us-west-1.ec2.archive.ubuntu.com|g" /etc/apt/sources.list
+
 # Base package setup
 RUN apt-get update && apt-get install -y \
     binutils \
