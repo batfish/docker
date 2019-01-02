@@ -72,7 +72,7 @@ PYBATFISH_VERSION="$(cat artifacts/pybatfish/version)"
 # Batfish
 # Prepare using downloaded artifacts
 cp artifacts/batfish/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
-tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f artifacts/batfish/questions.tar
+tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f artifacts/batfish/questions.tgz
 echo "BATFISH_TAG is $BATFISH_TAG"
 echo "BATFISH_VERSION is $BATFISH_VERSION"
 docker build -f "${WORK_DIR}/batfish.dockerfile" -t "arifogel/batfish:sha_${BATFISH_TAG}" --build-arg ASSETS="${ASSETS_REL_PATH}" .
