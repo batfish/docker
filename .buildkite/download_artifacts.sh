@@ -11,11 +11,11 @@ mkdir -p "${PYBATFISH_DIR}"
 buildkite-agent artifact download "${S3_BUCKET}/${BATFISH_TAR}" "${BATFISH_DIR}/"
 buildkite-agent artifact download "${S3_BUCKET}/${PYBATFISH_TAR}" "${PYBATFISH_DIR}/"
 pushd "${BATFISH_DIR}"
-tar -xf dev.tar
+tar -x --no-same-owner -f dev.tar
 [ -n "$(cat tag)" ]
 popd
 pushd "${PYBATFISH_DIR}"
-tar -xf dev.tar
+tar -x --no-same-owner -f dev.tar
 [ -n "$(cat tag)" ]
 popd
 
