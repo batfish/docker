@@ -88,10 +88,6 @@ pushd pybatfish
 tar -x --no-same-owner -f "${PYBATFISH_ARTIFACTS_DIR}/integration_tests.tgz"
 tar -x --no-same-owner -f "${PYBATFISH_ARTIFACTS_DIR}/jupyter_notebooks.tgz"
 ln -s "${ASSETS_FULL_PATH}/questions"
-git init
-git remote add origin https://github.com/arifogel/pybatfish
-git fetch -v --depth 1 origin "${PYBATFISH_TAG}"
-git checkout -f "${PYBATFISH_TAG}"
 
 # Create virtual env + dependencies
 virtualenv -p python3 .env
