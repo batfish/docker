@@ -81,9 +81,14 @@ docker build -f "${WORK_DIR}/batfish.dockerfile" -t "arifogel/batfish:sha_${BATF
 echo "Cloning and building pybatfish"
 # Pybatfish
 pushd "${TEMP_DIR}"
-git clone --depth 1 --branch="${PYBATFISH_TAG}" "https://github.com/arifogel/pybatfish.git"
-## Build and save commit info
+
+# Clone
+mkdir -p pybatfish
 pushd pybatfish
+git init
+git remote set-url origin https://github.com/arifogel/pybatfish
+git fetch -v origin "${PYBATFISH_TAG}"
+git checkout -f "${PYBATFISH_TAG}"
 
 # Create virtual env + dependencies so we can build the wheel
 virtualenv -p python3 .env
