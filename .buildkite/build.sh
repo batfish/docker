@@ -87,7 +87,7 @@ mkdir -p pybatfish
 pushd pybatfish
 git init
 git remote add origin https://github.com/arifogel/pybatfish
-git fetch -v origin "${PYBATFISH_TAG}"
+git fetch -v --depth 1 origin "${PYBATFISH_TAG}"
 git checkout -f "${PYBATFISH_TAG}"
 
 # Create virtual env + dependencies so we can build the wheel
