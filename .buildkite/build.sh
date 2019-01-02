@@ -63,40 +63,25 @@ ls -l /var/run/docker.sock
 mkdir -p ${ASSETS_FULL_PATH}
 mkdir -p ${PY_ASSETS_FULL_PATH}
 
+### get versions
+BATFISH_TAG="$(cat artifacts/batfish/tag)"
+BATFISH_VERSION="$(cat artifacts/batfish/version)"
+PYBATFISH_TAG="$(cat artifacts/pybatfish/tag)"
+PYBATFISH_VERSION="$(cat artifacts/pybatfish/version)"
 
 # Batfish
-echo "Cloning and building batfish"
-echo "Using tmp dir: ${TEMP_DIR}"
-pushd ${TEMP_DIR}
-
-
-if [ -z "${BATFISH_TAG}" ]; then
-	### If not a triggered build, need to produce artifact and set variables
-	git clone --depth 1 https://github.com/arifogel/batfish.git
-	## Build and save commit info
-	pushd batfish
-	mvn clean -f projects/pom.xml package
-	BATFISH_TAG=$(git rev-parse --short HEAD)
-	BATFISH_VERSION=$(grep -1 batfish-parent "projects/pom.xml" | grep version | sed 's/[<>]/|/g' | cut -f3 -d\|)
-	popd
-	cp batfish/projects/allinone/target/allinone-bundle-${BATFISH_VERSION}.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
-	cp -r batfish/questions ${ASSETS_FULL_PATH}
-else
-  ### For triggered build, just prepare using downloaded artifacts
-	cp workspace/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
-	tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f workspace/questions.tar
-fi
-
+# Prepare using downloaded artifacts
+cp artifacts/batfish/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
+tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f artifacts/batfish/questions.tar
 echo "BATFISH_TAG is $BATFISH_TAG"
 echo "BATFISH_VERSION is $BATFISH_VERSION"
-popd
 docker build -f ${WORK_DIR}/batfish.dockerfile -t arifogel/batfish:sha_${BATFISH_TAG} --build-arg ASSETS=${ASSETS_REL_PATH} .
 
 
 echo "Cloning and building pybatfish"
 # Pybatfish
 pushd ${TEMP_DIR}
-git clone --depth 1 https://github.com/arifogel/pybatfish.git
+git clone --depth 1 --branch="${PYBATFISH_TAG}" https://github.com/arifogel/pybatfish.git
 ## Build and save commit info
 pushd pybatfish
 
@@ -105,12 +90,10 @@ virtualenv -p python3 .env
 source .env/bin/activate
 pip install pytest wheel
 python setup.py sdist bdist_wheel
-PYBATFISH_TAG=$(git rev-parse --short HEAD)
-PYBATFISH_VERSION=$(python setup.py --version)
 echo PYBATFISH_TAG is $PYBATFISH_TAG
 echo PYBATFISH_VERSION is $PYBATFISH_VERSION
 pip install .[dev]
-ln -s ../batfish/questions
+ln -s "${ASSETS_FULL_PATH}/questions"
 
 # Start up batfish container using build-base network stack
 BATFISH_CONTAINER=$(docker run -d --network=container:"$(docker ps | grep arifogel/batfish-docker-build-base | awk '{print $1}')" arifogel/batfish:sha_${BATFISH_TAG})
@@ -145,10 +128,20 @@ cleanup_dirs
 echo "Built arifogel/batfish:sha_${BATFISH_TAG}"
 echo "Built arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
 
-# Push the docker images after successfully build
-docker push arifogel/batfish:sha_${BATFISH_TAG}
-docker push arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
+if [ "${BUILDKITE_PULL_REQUEST}" = "false" ]; then 
+  # Push the docker images after successfully build
+  docker push arifogel/batfish:sha_${BATFISH_TAG}
+  docker push arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
 
-echo "Pushed arifogel/batfish:sha_${BATFISH_TAG}"
-echo "Pushed arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+  echo "Pushed arifogel/batfish:sha_${BATFISH_TAG}"
+  echo "Pushed arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+
+  docker tag "arifogel/batfish:sha_${BATFISH_TAG}" "arifogel/batfish:dev"
+  docker tag "arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}" "arifogel/allinone:dev"
+  docker push "arifogel/batfish:dev"
+  docker push "arifogel/allinone:dev"
+
+  echo "Pushed arifogel/batfish:dev"
+  echo "Pushed arifogel/allinone:dev"
+fi
 
