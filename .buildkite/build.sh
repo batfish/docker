@@ -86,7 +86,7 @@ pushd "${TEMP_DIR}"
 mkdir -p pybatfish
 pushd pybatfish
 git init
-git remote set-url origin https://github.com/arifogel/pybatfish
+git remote add origin https://github.com/arifogel/pybatfish
 git fetch -v origin "${PYBATFISH_TAG}"
 git checkout -f "${PYBATFISH_TAG}"
 
