@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gcc \
     git \
+    jq \
     lsb-release \
     net-tools \
     openjdk-8-jdk \
