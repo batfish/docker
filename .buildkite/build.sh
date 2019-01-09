@@ -142,7 +142,6 @@ cleanup_dirs
 echo "Built ${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}"
 echo "Built ${ALLINONE_DOCKER_REPO}:${ALLINONE_DOCKER_TAG}"
 
-DOCKER_TAG
 if [ "${BUILDKITE_PULL_REQUEST}" = "false" ]; then 
   if curl --silent -f -lSL "https://index.docker.io/v1/repositories/${BATFISH_DOCKER_REPO}/tags/${BATFISH_DOCKER_TAG}" > /dev/null; then
     echo "Skipping batfish docker push since tag already exists"
