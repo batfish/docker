@@ -6,6 +6,9 @@
 
 # Quick check to see if a particular port is free
 
+BATFISH_DOCKER_REPO="arifogel/batfish"
+ALLINONE_DOCKER_REPO="arifogel/allinone"
+
 function is_port_free() {
   which netstat | return 1
   netstat -tln | awk '{print $4}' | grep '^127.0.0.1\|^::1' | sed 's/^.*:\([0-9][0-9]*\)$/\1/g' | grep -- "$1" >/dev/null
@@ -57,6 +60,9 @@ is_port_free 9997
 set -e
 set -x
 
+REPO_TAG="$(git rev-parse HEAD)"
+[ -n "${REPO_TAG}" ]
+
 ### Ensure docker socket is available
 ls -l "/var/run/docker.sock"
 
@@ -66,8 +72,10 @@ mkdir -p "${PY_ASSETS_FULL_PATH}"
 ### get versions
 BATFISH_TAG="$(cat artifacts/batfish/tag)"
 BATFISH_VERSION="$(cat artifacts/batfish/version)"
+BATFISH_DOCKER_TAG="sha_${BATFISH_TAG}_${REPO_TAG}"
 PYBATFISH_TAG="$(cat artifacts/pybatfish/tag)"
 PYBATFISH_VERSION="$(cat artifacts/pybatfish/version)"
+ALLINONE_DOCKER_TAG="sha_${BATFISH_TAG}_${PYBATFISH_TAG}_${REPO_TAG}"
 
 # Batfish
 # Prepare using downloaded artifacts
@@ -75,7 +83,7 @@ cp artifacts/batfish/allinone.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
 tar -x --no-same-owner -C ${ASSETS_FULL_PATH} -f artifacts/batfish/questions.tgz
 echo "BATFISH_TAG is $BATFISH_TAG"
 echo "BATFISH_VERSION is $BATFISH_VERSION"
-docker build -f "${WORK_DIR}/batfish.dockerfile" -t "arifogel/batfish:sha_${BATFISH_TAG}" --build-arg ASSETS="${ASSETS_REL_PATH}" .
+docker build -f "${WORK_DIR}/batfish.dockerfile" -t "${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}" --build-arg ASSETS="${ASSETS_REL_PATH}" .
 
 
 # Pybatfish
@@ -99,7 +107,7 @@ echo "PYBATFISH_TAG is $PYBATFISH_TAG"
 echo "PYBATFISH_VERSION is $PYBATFISH_VERSION"
 
 # Start up batfish container using build-base network stack
-BATFISH_CONTAINER="$(docker run -d --network=container:"$(grep '/docker/' /proc/self/cgroup | sed 's|.*docker/\(.*\)|\1|g' | head -n1)" "arifogel/batfish:sha_${BATFISH_TAG}")"
+BATFISH_CONTAINER="$(docker run -d --network=container:"$(grep '/docker/' /proc/self/cgroup | sed 's|.*docker/\(.*\)|\1|g' | head -n1)" "${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}")"
 # Poll until we can connect to the container
 MAX_RETRIES=30
 CURL_ATTEMPT=0
@@ -122,32 +130,38 @@ cp "${PYBATFISH_ARTIFACTS_DIR}/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.w
 
 # Combined container stuff
 cp "wrapper.sh" "${PY_ASSETS_FULL_PATH}"
-docker build -f "${WORK_DIR}/allinone.dockerfile" -t "arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}" \
+docker build -f "${WORK_DIR}/allinone.dockerfile" -t "${ALLINONE_DOCKER_REPO}:${ALLINONE_DOCKER_TAG}" \
   --build-arg PYBATFISH_VERSION="${PYBATFISH_VERSION}" \
   --build-arg ASSETS="${PY_ASSETS_REL_PATH}" \
-  --build-arg TAG="sha_${BATFISH_TAG}" .
+  --build-arg TAG="${BATFISH_DOCKER_TAG}" .
 
 
 # Cleanup the temp directory if successful
 cleanup_dirs
 
-echo "Built arifogel/batfish:sha_${BATFISH_TAG}"
-echo "Built arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
+echo "Built ${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}"
+echo "Built ${ALLINONE_DOCKER_REPO}:${ALLINONE_DOCKER_TAG}"
 
+DOCKER_TAG
 if [ "${BUILDKITE_PULL_REQUEST}" = "false" ]; then 
-  # Push the docker images after successfully build
-  docker push arifogel/batfish:sha_${BATFISH_TAG}
-  docker push arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
-
-  echo "Pushed arifogel/batfish:sha_${BATFISH_TAG}"
-  echo "Pushed arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
-
-  docker tag "arifogel/batfish:sha_${BATFISH_TAG}" "arifogel/batfish:dev"
-  docker tag "arifogel/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}" "arifogel/allinone:dev"
-  docker push "arifogel/batfish:dev"
-  docker push "arifogel/allinone:dev"
-
-  echo "Pushed arifogel/batfish:dev"
-  echo "Pushed arifogel/allinone:dev"
+  if curl --silent -f -lSL "https://index.docker.io/v1/repositories/${BATFISH_DOCKER_REPO}/tags/${BATFISH_DOCKER_TAG}" > /dev/null; then
+    echo "Skipping batfish docker push since tag already exists"
+  else
+    # Push the docker images after successfully build
+    docker push "${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}"
+    echo "Pushed ${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}"
+    docker tag "${BATFISH_DOCKER_REPO}:${BATFISH_DOCKER_TAG}" "${BATFISH_DOCKER_REPO}:dev"
+    docker push "${BATFISH_DOCKER_REPO}:dev"
+    echo "Pushed ${BATFISH_DOCKER_REPO}:dev"
+  fi
+  if curl --silent -f -lSL "https://index.docker.io/v1/repositories/${ALLINONE_DOCKER_REPO}/tags/${ALLINONE_DOCKER_TAG}" >& /dev/null; then
+    echo "Skipping allinone docker push since tag already exists"
+  else
+    docker push "${ALLINONE_DOCKER_REPO}:${ALLINONE_DOCKER_TAG}"
+    echo "Pushed ${ALLINONE_DOCKER_REPO}:${ALLINONE_DOCKER_TAG}"
+    docker tag "${ALLINONE_DOCKER_REPO}:${ALLINONE_DOCKER_TAG}" "${ALLINONE_DOCKER_REPO}:dev"
+    docker push "${ALLINONE_DOCKER_REPO}:dev"
+    echo "Pushed ${ALLINONE_DOCKER_REPO}:dev"
+  fi
 fi
 
