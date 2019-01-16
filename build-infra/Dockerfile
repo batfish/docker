@@ -5,6 +5,7 @@ LABEL vendor="The Batfish Open Source Project"
 ARG MAVEN_VERSION=3.6.0
 ARG BAZEL_VERSION=0.21.0
 ARG USERNAME=batfish
+ARG UID=2000
 
 # Set a Working Dir
 WORKDIR /root/workdir
@@ -43,8 +44,8 @@ RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/t
 
 ##### Switch to non-root-user
 
-RUN groupadd -g 999 ${USERNAME} \
-&& useradd -m -r -u 999 -g ${USERNAME} ${USERNAME} \
+RUN groupadd -g ${UID} ${USERNAME} \
+&& useradd -m -r -u ${UID} -g ${USERNAME} ${USERNAME} \
 && mkdir -p /home/${USERNAME}/workdir \
 && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
 USER ${USERNAME}
