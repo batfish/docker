@@ -2,6 +2,9 @@
 FROM ubuntu:16.04
 LABEL vendor="The Batfish Open Source Project"
 
+ARG MAVEN_VERSION=3.6.0
+ARG BAZEL_VERSION=0.21.0
+
 # Set a Working Dir
 WORKDIR /root/workdir
 
@@ -33,7 +36,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | python3
 RUN python3 -m pip install virtualenv
 
 # Create AWS-CLI virtualenv
-RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && pip install awscli && deactivate
+RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install awscli && deactivate
 
 # Install docker
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
@@ -56,9 +59,9 @@ RUN wget --no-verbose https://github.com/bazelbuild/bazel/releases/download/0.19
 && rm -f install_bazel.sh
 
 # Install maven
-RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip \
-&& unzip apache-maven-3.6.0-bin.zip \
-&& rm -f apache-maven-3.6.0-bin.zip
+RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip \
+&& unzip apache-maven-${MAVEN_VERSION}-bin.zip \
+&& rm -f apache-maven-${MAVEN_VERSION}-bin.zip
 
 # Setup JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
@@ -66,15 +69,13 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1
 
 # Add Bazel and Maven to PATH
-ENV PATH $PATH:/root/workdir/apache-maven-3.6.0/bin:/root/bin
+ENV PATH $PATH:/root/workdir/apache-maven-${MAVEN_VERSION}/bin:/root/bin
 
 # Fetch all the current Maven and bazel dependencies
 ADD .bazelrc /root
-RUN git clone --depth=1 --branch=circle-ci https://github.com/dhalperi/batfish \
+RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
 && mvn -f projects verify -DskipTests=false \
 && mvn dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:1.6:jar:all-deps \
 && cd .. \
 && rm -rf batfish
-
-ENV _JAVA_OPTIONS -Xmx2g
