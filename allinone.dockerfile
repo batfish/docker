@@ -1,5 +1,5 @@
 ARG TAG=latest
-FROM arifogel/batfish:$TAG
+FROM batfish/batfish:$TAG
 
 # ASSETS is the directory containing the Pybatfish Python wheel, wrapper.sh,
 # and the notebooks/ directory (containing the Jupyter notebooks)
