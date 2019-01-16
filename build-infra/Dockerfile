@@ -4,6 +4,7 @@ LABEL vendor="The Batfish Open Source Project"
 
 ARG MAVEN_VERSION=3.6.0
 ARG BAZEL_VERSION=0.21.0
+ARG USERNAME=batfish
 
 # Set a Working Dir
 WORKDIR /root/workdir
@@ -25,26 +26,14 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     unzip \
     wget \
+    zip \
 &&  rm -rf /var/lib/apt/lists/* \
     /var/cache/oracle-jdk8-installer \
 &&  apt-get clean
 
-# Install pip
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3
-
-# Install virtualenv
-RUN python3 -m pip install virtualenv
-
-# Create AWS-CLI virtualenv
-RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install awscli && deactivate
-
-# Install docker
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-RUN add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
-&& apt-get update \
-&& apt-get install -y docker-ce \
-&& rm -rf /var/lib/apt/lists/* \
-&& apt-get clean
+# Install pip and virtualenv
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3 \
+&& python3 -m pip install virtualenv
 
 # Install Z3
 RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh \
@@ -52,8 +41,20 @@ RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/t
 && rm -r ~/.batfish_z3_cache \
 && rm install_z3.sh
 
+##### Switch to non-root-user
+
+RUN groupadd -g 999 ${USERNAME} \
+&& useradd -m -r -u 999 -g ${USERNAME} ${USERNAME} \
+&& mkdir -p /home/${USERNAME}/workdir \
+&& chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}/workdir
+
+# Create AWS-CLI virtualenv
+RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install awscli && deactivate
+
 # Install bazel
-RUN wget --no-verbose https://github.com/bazelbuild/bazel/releases/download/0.19.2/bazel-0.19.2-installer-linux-x86_64.sh -O install_bazel.sh \
+RUN wget --no-verbose https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh -O install_bazel.sh \
 && chmod +x install_bazel.sh \
 && ./install_bazel.sh --user \
 && rm -f install_bazel.sh
@@ -69,10 +70,9 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1
 
 # Add Bazel and Maven to PATH
-ENV PATH $PATH:/root/workdir/apache-maven-${MAVEN_VERSION}/bin:/root/bin
+ENV PATH $PATH:/home/${USERNAME}/workdir/apache-maven-${MAVEN_VERSION}/bin:/home/${USERNAME}/bin
 
 # Fetch all the current Maven and bazel dependencies
-ADD .bazelrc /root
 RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
 && mvn -f projects verify -DskipTests=false \
