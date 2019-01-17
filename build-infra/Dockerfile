@@ -2,6 +2,8 @@
 FROM ubuntu:16.04
 LABEL vendor="The Batfish Open Source Project"
 
+ARG GOOGLE_JAVA_FORMAT_VERSION=1.7
+ARG JACOCO_VERSION=0.8.2
 ARG MAVEN_VERSION=3.6.0
 ARG BAZEL_VERSION=0.21.0
 ARG USERNAME=batfish
@@ -77,6 +79,7 @@ ENV PATH $PATH:/home/${USERNAME}/workdir/apache-maven-${MAVEN_VERSION}/bin:/home
 RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
 && mvn -f projects verify -DskipTests=false \
-&& mvn dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:1.6:jar:all-deps \
+&& mvn dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:${GOOGLE_JAVA_FORMAT_VERSION}:jar:all-deps \
+&& mvn dependency:get -Dartifact=org.jacoco:org.jacoco.agent:${JACOCO_VERSION}:jar:runtime \
 && cd .. \
 && rm -rf batfish
