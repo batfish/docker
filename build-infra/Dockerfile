@@ -80,6 +80,6 @@ RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
 && mvn -f projects verify -DskipTests=false \
 && mvn dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:${GOOGLE_JAVA_FORMAT_VERSION}:jar:all-deps \
-&& mvn dependency:get -Dartifact=org.jacoco:org.jacoco.agent:${JACOCO_VERSION}:jar:runtime \
+&& mvn dependency:get -Dartifact=org.jacoco:org.jacoco.cli:${JACOCO_VERSION}:jar:nodeps \
 && cd .. \
 && rm -rf batfish
