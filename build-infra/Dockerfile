@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     jq \
     lsb-release \
     net-tools \
-    openjdk-11-jdk \
+    openjdk-8-jdk \
     python-minimal \
     python3-dev \
     rsync \
@@ -68,7 +68,7 @@ RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSI
 && rm -f apache-maven-${MAVEN_VERSION}-bin.zip
 
 # Setup JAVA_HOME
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 # Set Java to obey cgroup limits
 ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1
 
