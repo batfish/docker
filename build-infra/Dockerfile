@@ -1,11 +1,11 @@
 # Setting the parent image to ubuntu
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 LABEL vendor="The Batfish Open Source Project"
 
 ARG GOOGLE_JAVA_FORMAT_VERSION=1.7
 ARG JACOCO_VERSION=0.8.2
 ARG MAVEN_VERSION=3.6.0
-ARG BAZEL_VERSION=0.22.0
+ARG BAZEL_VERSION=0.23.0
 ARG USERNAME=batfish
 ARG UID=2000
 
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     jq \
     lsb-release \
     net-tools \
-    openjdk-8-jdk \
+    openjdk-11-jdk \
     python-minimal \
     python3-dev \
     software-properties-common \
@@ -31,7 +31,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     zip \
 &&  rm -rf /var/lib/apt/lists/* \
-    /var/cache/oracle-jdk8-installer \
 &&  apt-get clean
 
 # Install pip and virtualenv
@@ -68,7 +67,7 @@ RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSI
 && rm -f apache-maven-${MAVEN_VERSION}-bin.zip
 
 # Setup JAVA_HOME
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 # Set Java to obey cgroup limits
 ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1
 
