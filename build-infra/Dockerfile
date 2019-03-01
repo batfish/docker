@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install -y \
     openjdk-11-jdk \
     python-minimal \
     python3-dev \
+    rsync \
     software-properties-common \
     unzip \
     wget \
@@ -77,7 +78,7 @@ ENV PATH $PATH:/home/${USERNAME}/workdir/apache-maven-${MAVEN_VERSION}/bin:/home
 # Fetch all the current Maven and bazel dependencies
 RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
-&& mvn -f projects verify -DskipTests=false \
+&& mvn -f projects verify -DskipTests=false -Dmaven.javadoc.skip=false \
 && mvn -f projects dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:${GOOGLE_JAVA_FORMAT_VERSION}:jar:all-deps \
 && mvn -f projects dependency:get -Dartifact=org.jacoco:org.jacoco.cli:${JACOCO_VERSION}:jar:nodeps \
 && cd .. \
