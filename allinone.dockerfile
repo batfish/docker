@@ -21,7 +21,6 @@ RUN apt-get update && apt-get install -y \
 EXPOSE 8888
 RUN pip3 install pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl \
     attrdict \
-    tornado \
     jupyter \
     matplotlib \
     networkx \
