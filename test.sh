@@ -11,11 +11,10 @@ apt-get install -y git curl
 
 pushd pybatfish
 # Install test dependencies
-pip3 install -e .[dev]
-pip3 uninstall .
+pip3 install .[dev]
 
 echo waiting for batfish to start
-# Poll until we can connect to the container
+# Poll until we can connect to the coordinator
 while ! curl http://localhost:9996/
 do
   echo "$(date) - waiting for Batfish to start"
@@ -23,7 +22,10 @@ do
 done
 echo "$(date) - connected to Batfish"
 
-echo starting tests
+echo starting unit tests
+# Integration tests are skipped by setup.cfg
+pytest tests
+echo starting integration tests
 pytest tests/integration
 echo done with tests
 popd

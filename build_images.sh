@@ -78,7 +78,6 @@ PYBATFISH_TAG=$(git rev-parse --short HEAD)
 PYBATFISH_VERSION=$(python setup.py --version)
 echo PYBATFISH_TAG is $PYBATFISH_TAG
 echo PYBATFISH_VERSION is $PYBATFISH_VERSION
-# pip install .[dev]
 cp -r ../batfish/questions questions
 deactivate
 popd
@@ -95,7 +94,7 @@ docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFIS
   --build-arg ASSETS=${PY_ASSETS_REL_PATH} \
   --build-arg TAG=sha_${BATFISH_TAG} .
 
-# Hack to get tmp dir mounting to work for mac without updating Docker
+# Get tmp dir mounting to work for mac without updating Docker
 # See https://github.com/docker/for-mac/issues/1532
 PYBATFISH_DIR=$TEMP_DIR/pybatfish
 MAC_PYBATFISH_DIR=/private/$TEMP_DIR/pybatfish
@@ -108,10 +107,8 @@ docker run -v $(pwd)/test.sh:/test.sh:ro \
   --entrypoint /bin/bash \
   batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} test.sh
 
-
 docker tag batfish/batfish:sha_${BATFISH_TAG} batfish/batfish:latest
 docker tag batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} batfish/allinone:latest
-
 
 # Cleanup the temp directory if successful
 cleanup_dirs
@@ -121,10 +118,10 @@ echo "Built batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
 
 if [ "$PUSH" == "true" ]; then
     # Push the docker images after successfully build
-    # docker push batfish/batfish:sha_${BATFISH_TAG}
-    # docker push batfish/batfish:latest
-    # docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
-    # docker push batfish/allinone:latest
+    docker push batfish/batfish:sha_${BATFISH_TAG}
+    docker push batfish/batfish:latest
+    docker push batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}
+    docker push batfish/allinone:latest
 
     echo "Pushed batfish/batfish:latest and batfish/batfish:sha_${BATFISH_TAG}"
     echo "Pushed batfish/allinone:latest and batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG}"
