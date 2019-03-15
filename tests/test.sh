@@ -23,7 +23,7 @@ done
 echo "$(date) - connected to Batfish"
 
 echo starting unit tests
-# Integration tests are skipped by setup.cfg
+# Integration tests are skipped by --ignore setting in setup.cfg
 pytest tests
 echo starting integration tests
 pytest tests/integration
