@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # This script tests and builds and optionally pushes Batfish and Batfish+Pybatfish+Jupyter docker images
 # Optionally pass in Batfish and Pybatfish commit hashes to build from specific commits instead of head, for example:
@@ -12,6 +11,13 @@ else
     echo "Unknown action '$1' does not match 'push' or 'build'."
     exit 1
 fi
+
+# Quick check to see if a particular port is free
+function is_port_free() {
+  echo -ne "\035" | telnet 127.0.0.1 $1 > /dev/null 2>&1;
+  [ $? -eq 1 ] && return 0;
+  echo "port $1 in use" && return 1;
+}
 
 # Asset directory setup
 WORK_DIR="$PWD"
@@ -28,8 +34,29 @@ function cleanup_dirs {
     rm -rf ${PY_ASSETS_FULL_PATH}
 }
 
+# Handle directory and docker container cleanup
+function finish {
+    # Cleanup docker container if it was started and is still running
+    if [ -n ${BATFISH_CONTAINER} ]
+    then
+      if docker top ${BATFISH_CONTAINER} &>/dev/null
+        then
+          docker stop ${BATFISH_CONTAINER}
+          echo stopped Batfish container
+        fi
+    fi
+    cleanup_dirs
+}
+
 # Cleanup on exit
-trap cleanup_dirs EXIT
+trap finish EXIT
+
+# Make sure the ports Batfish will use are free, we will need that for testing
+is_port_free 9996 || exit $?
+is_port_free 9997 || exit $?
+
+# Exit on error after checking ports, since port-check-hack relies on errors
+set -e
 
 mkdir -p ${ASSETS_FULL_PATH}
 mkdir -p ${PY_ASSETS_FULL_PATH}
@@ -79,14 +106,30 @@ PYBATFISH_TAG=$(git rev-parse --short HEAD)
 PYBATFISH_VERSION=$(python setup.py --version)
 echo PYBATFISH_TAG is $PYBATFISH_TAG
 echo PYBATFISH_VERSION is $PYBATFISH_VERSION
+pip install .[dev]
 cp -r ../batfish/questions questions
-deactivate
-popd
 
+# Start up batfish container
+BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 batfish/batfish:sha_${BATFISH_TAG})
+# Poll until we can connect to the container
+while ! curl http://localhost:9996/
+do
+  echo "$(date) - waiting for Batfish to start"
+  sleep 1
+done
+echo "$(date) - connected to Batfish"
+
+# Run pybatfish integration tests on batfish container
+py.test tests/integration
+deactivate
+docker stop ${BATFISH_CONTAINER}
+popd
 cp pybatfish/dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl ${PY_ASSETS_FULL_PATH}
 cp -r pybatfish/jupyter_notebooks/ ${PY_ASSETS_FULL_PATH}/notebooks
 popd
 
+# Add latest tag to the batfish image since we know it works with pybatfish
+docker tag batfish/batfish:sha_${BATFISH_TAG} batfish/batfish:latest
 
 # Combined container stuff
 cp wrapper.sh ${PY_ASSETS_FULL_PATH}
@@ -108,7 +151,6 @@ docker run -v $(pwd)/tests/test.sh:/test.sh:ro \
   --entrypoint /bin/bash \
   batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} test.sh
 
-docker tag batfish/batfish:sha_${BATFISH_TAG} batfish/batfish:latest
 docker tag batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} batfish/allinone:latest
 
 # Cleanup the temp directory if successful
