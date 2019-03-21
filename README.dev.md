@@ -41,6 +41,7 @@
 A `build_images.sh` script is provided that:
 - Builds a Batfish jar
 - Builds a Batfish docker image
+- Tests it with Pybatfish integration tests
 - Builds a Pybatfish wheel
 - Builds an `allinone` docker image (with Jupyter, Pybatfish, and Batfish)
 - Runs Pybatfish integration tests inside the `allinone` container
