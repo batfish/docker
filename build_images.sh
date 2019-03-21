@@ -19,6 +19,7 @@ function is_port_free() {
   echo "port $1 in use" && return 1;
 }
 
+MAX_BATFISH_STARTUP_WAIT=20
 # Asset directory setup
 WORK_DIR="$PWD"
 TEMP_DIR=$(mktemp -d)
@@ -29,7 +30,7 @@ PY_ASSETS_FULL_PATH=${WORK_DIR}/${PY_ASSETS_REL_PATH}
 
 function cleanup_dirs {
     # Testing writes pycache files as root
-    sudo rm -rf ${TEMP_DIR}
+    rm -rf ${TEMP_DIR}
     rm -rf ${ASSETS_FULL_PATH}
     rm -rf ${PY_ASSETS_FULL_PATH}
 }
@@ -112,10 +113,16 @@ cp -r ../batfish/questions questions
 # Start up batfish container
 BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 batfish/batfish:sha_${BATFISH_TAG})
 # Poll until we can connect to the container
+COUNTER=0
 while ! curl http://localhost:9996/
 do
+  if [ $COUNTER -gt $MAX_BATFISH_STARTUP_WAIT ]; then
+    echo "Batfish took too long to start, aborting"
+    exit 1
+  fi
   echo "$(date) - waiting for Batfish to start"
   sleep 1
+  ((COUNTER+=1))
 done
 echo "$(date) - connected to Batfish"
 
