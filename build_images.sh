@@ -126,7 +126,8 @@ done
 echo "$(date) - connected to Batfish"
 
 # Run pybatfish integration tests on batfish container
-py.test tests/integration
+py.test -p no:cacheprovider tests/integration
+py3clean .
 deactivate
 docker stop ${BATFISH_CONTAINER}
 popd
