@@ -40,7 +40,3 @@ echo Done with tests
 # Remove pycache
 py3clean .
 popd
-while true
-do
-  sleep 1
-done
