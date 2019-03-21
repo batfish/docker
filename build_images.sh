@@ -29,7 +29,6 @@ PY_ASSETS_REL_PATH=./py_assets
 PY_ASSETS_FULL_PATH=${WORK_DIR}/${PY_ASSETS_REL_PATH}
 
 function cleanup_dirs {
-    # Testing writes pycache files as root
     rm -rf ${TEMP_DIR}
     rm -rf ${ASSETS_FULL_PATH}
     rm -rf ${PY_ASSETS_FULL_PATH}
