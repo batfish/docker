@@ -1,19 +1,19 @@
 #!/bin/bash
 set -e
 
-# Start both jupyter and batfish
-echo starting wrapper
+# Start both Jupyter and Batfish
+echo Starting wrapper
 sh wrapper.sh&
 
-echo performing setup
+echo Performing setup
 apt-get update
-apt-get install -y git curl
+apt-get install -y curl
 
 pushd pybatfish
 # Install test dependencies
 pip3 install .[dev]
 
-echo waiting for batfish to start
+echo Waiting for batfish to start
 # Poll until we can connect to the coordinator
 COUNTER=0
 while ! curl http://localhost:9996/
@@ -28,13 +28,13 @@ do
 done
 echo "$(date) - connected to Batfish"
 
-echo starting unit tests
+echo Starting unit tests
 # Integration tests are skipped by --ignore setting in setup.cfg
 # Skip generating .pytest_cache
 pytest -p no:cacheprovider tests
-echo starting integration tests
+echo Starting integration tests
 pytest -p no:cacheprovider tests/integration
-echo done with tests
+echo Done with tests
 # Remove pycache
 py3clean .
 popd
