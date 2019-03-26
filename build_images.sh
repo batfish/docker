@@ -19,6 +19,7 @@ function is_port_free() {
   echo "port $1 in use" && return 1;
 }
 
+MAX_BATFISH_STARTUP_WAIT=20
 # Asset directory setup
 WORK_DIR="$PWD"
 TEMP_DIR=$(mktemp -d)
@@ -106,20 +107,28 @@ PYBATFISH_VERSION=$(python setup.py --version)
 echo PYBATFISH_TAG is $PYBATFISH_TAG
 echo PYBATFISH_VERSION is $PYBATFISH_VERSION
 pip install .[dev]
-ln -s ../batfish/questions
+cp -r ../batfish/questions questions
 
 # Start up batfish container
 BATFISH_CONTAINER=$(docker run -d -p 9996:9996 -p 9997:9997 batfish/batfish:sha_${BATFISH_TAG})
 # Poll until we can connect to the container
+COUNTER=0
 while ! curl http://localhost:9996/
 do
+  if [ $COUNTER -gt $MAX_BATFISH_STARTUP_WAIT ]; then
+    echo "Batfish took too long to start, aborting"
+    exit 1
+  fi
   echo "$(date) - waiting for Batfish to start"
   sleep 1
+  ((COUNTER+=1))
 done
 echo "$(date) - connected to Batfish"
 
 # Run pybatfish integration tests on batfish container
-py.test tests/integration
+# Cache doesn't work when folder is mounted in container, so wipe it
+py.test -p no:cacheprovider tests/integration
+py3clean .
 deactivate
 docker stop ${BATFISH_CONTAINER}
 popd
@@ -132,11 +141,25 @@ docker tag batfish/batfish:sha_${BATFISH_TAG} batfish/batfish:latest
 
 # Combined container stuff
 cp wrapper.sh ${PY_ASSETS_FULL_PATH}
-docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} -t batfish/allinone:latest \
+docker build -f ${WORK_DIR}/allinone.dockerfile -t batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} \
   --build-arg PYBATFISH_VERSION=${PYBATFISH_VERSION} \
   --build-arg ASSETS=${PY_ASSETS_REL_PATH} \
   --build-arg TAG=sha_${BATFISH_TAG} .
 
+# Get tmp dir mounting to work for mac without updating Docker
+# See https://github.com/docker/for-mac/issues/1532
+PYBATFISH_DIR=$TEMP_DIR/pybatfish
+MAC_PYBATFISH_DIR=/private/$TEMP_DIR/pybatfish
+if [ -d "$MAC_PYBATFISH_DIR" ]; then
+    PYBATFISH_DIR=$MAC_PYBATFISH_DIR
+fi
+# Run tests inside Docker container
+docker run -v $(pwd)/tests/test.sh:/test.sh:ro \
+  -v $PYBATFISH_DIR:/pybatfish \
+  --entrypoint /bin/bash \
+  batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} test.sh
+
+docker tag batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} batfish/allinone:latest
 
 # Cleanup the temp directory if successful
 cleanup_dirs
