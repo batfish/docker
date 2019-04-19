@@ -128,7 +128,8 @@ echo "$(date) - connected to Batfish"
 # Run pybatfish integration tests on batfish container
 # Cache doesn't work when folder is mounted in container, so wipe it
 py.test -p no:cacheprovider tests/integration
-py3clean .
+# Remove Python cache files, which interfere with running tests inside the container
+find . -name \*.pyc -delete
 deactivate
 docker stop ${BATFISH_CONTAINER}
 popd
