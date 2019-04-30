@@ -15,6 +15,9 @@ pushd pybatfish
 # Install test dependencies
 pip3 install dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl[dev]
 
+# Tests expect notebooks to be a specific place
+# ln -s /notebooks jupyter-notebooks
+
 echo Waiting for batfish to start
 # Poll until we can connect to the coordinator
 COUNTER=0
@@ -31,9 +34,8 @@ done
 echo "$(date) - connected to Batfish"
 
 echo Starting unit tests
-# Integration tests are skipped by --ignore setting in setup.cfg
 # Skip generating .pytest_cache
-pytest -p no:cacheprovider tests
+pytest -p no:cacheprovider --ignore tests/integration tests
 echo Starting integration tests
 pytest -p no:cacheprovider tests/integration
 echo Done with tests
