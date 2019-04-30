@@ -15,9 +15,6 @@ pushd pybatfish
 # Install test dependencies
 pip3 install dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl[dev]
 
-# Tests expect notebooks to be a specific place
-# ln -s /notebooks jupyter-notebooks
-
 echo Waiting for batfish to start
 # Poll until we can connect to the coordinator
 COUNTER=0
