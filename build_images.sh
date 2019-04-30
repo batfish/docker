@@ -157,6 +157,7 @@ fi
 # Run tests inside Docker container
 docker run -v $(pwd)/tests/test.sh:/test.sh:ro \
   -v $PYBATFISH_DIR:/pybatfish \
+  -e PYBATFISH_VERSION="${PYBATFISH_VERSION}" \
   --entrypoint /bin/bash \
   batfish/allinone:sha_${BATFISH_TAG}_${PYBATFISH_TAG} test.sh
 
