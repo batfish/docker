@@ -31,9 +31,8 @@ done
 echo "$(date) - connected to Batfish"
 
 echo Starting unit tests
-# Integration tests are skipped by --ignore setting in setup.cfg
 # Skip generating .pytest_cache
-pytest -p no:cacheprovider tests
+pytest -p no:cacheprovider --ignore tests/integration tests
 echo Starting integration tests
 pytest -p no:cacheprovider tests/integration
 echo Done with tests
