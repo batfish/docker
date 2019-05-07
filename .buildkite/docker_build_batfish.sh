@@ -25,12 +25,11 @@ tar xzf ${ARTIFACT_DIR}/questions.tgz -C ${ASSET_DIR}
 cp ${ARTIFACT_DIR}/allinone-bundle.jar ${ASSET_DIR}
 
 docker build -f ${ABS_SOURCE_DIR}/batfish.dockerfile \
-  -t batfish/batfish:${BF_TAG} --build-arg ASSETS=${ASSET_DIR} .
-docker tag batfish/batfish:${BF_TAG} batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}
+  -t batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} \
+  --build-arg ASSETS=${ASSET_DIR} .
 
 if [ "${1-}" == "" ]; then
   # Upload the image to Docker Hub if no image file path is specified
-  docker push batfish/batfish:${BF_TAG}
   docker push batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}
 else
   # Upload the image as an artifact tar if an image file path is specified
