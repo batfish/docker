@@ -30,9 +30,3 @@ for image in "batfish" "allinone"; do
               "batfish/${image}:${UPDATE_TO_TAG}"
   docker push "batfish/${image}:${UPDATE_TO_TAG}"
 done
-
-
-
-# docker push batfish/batfish:${BF_TAG}
-# docker push batfish/allinone:${BF_TAG}_${PYBF_TAG}
-
