@@ -1,4 +1,4 @@
-#!/use/bin.env bash
+#!/usr/bin/env bash
 set -euox pipefail
 
 PYBF_VERSION=$(cat /assets/pybatfish-version.txt)
