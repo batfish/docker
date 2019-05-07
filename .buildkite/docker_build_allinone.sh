@@ -24,7 +24,7 @@ PYBF_VERSION=$(cat ${ARTIFACT_DIR}/pybatfish-version.txt)
 PYBF_TAG=$(cat ${ARTIFACT_DIR}/pybatfish-tag.txt)
 BF_TAG=$(cat ${ARTIFACT_DIR}/batfish-tag.txt)
 
-# Setup assets for the batfish image
+# Setup assets for the Batfish image
 cp ${ARTIFACT_DIR}/pybatfish*.whl ${ASSET_DIR}
 TEMP_DIR=$(mktemp -d)
 tar xzf ${ARTIFACT_DIR}/pybatfish-notebooks.tgz -C ${TEMP_DIR}

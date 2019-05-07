@@ -23,5 +23,5 @@ mkdir -p ${QUESTION_DIR}
 cp -r ${BF_DIR}/questions/{stable,experimental} ${QUESTION_DIR}
 tar -czf ${ARTIFACT_DIR}/questions.tgz -C ${TMP_DIR} questions
 
-# 3. The tag for the batfish container
+# 3. The tag for the Batfish image
 echo ${BATFISH_TAG} > ${ARTIFACT_DIR}/batfish-tag.txt

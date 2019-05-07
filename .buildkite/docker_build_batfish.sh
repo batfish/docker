@@ -15,7 +15,7 @@ buildkite-agent artifact download ${ARTIFACT_DIR}/questions.tgz ${ARTIFACT_DIR}
 
 BF_TAG=$(cat ${ARTIFACT_DIR}/batfish-tag.txt)
 
-# Setup assets for the batfish image
+# Setup assets for the Batfish image
 tar xzf ${ARTIFACT_DIR}/questions.tgz -C ${ASSET_DIR}
 cp ${ARTIFACT_DIR}/allinone-bundle.jar ${ASSET_DIR}
 
