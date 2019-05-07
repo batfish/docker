@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Test the Allinone Docker image with Pybatfish integration tests
+# Accepts optional argument:
+#  1. Allinone docker artifact filename: if specified, Allinone image is loaded
+#     from this artifact instead of pulling from Docker Hub
+
 set -euxo pipefail
 
 BUILDKITE_DIR="$(dirname "${BASH_SOURCE[0]}")"

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Test the Batfish Docker image with Pybatfish integration tests
+# Accepts optional argument:
+#  1. Batfish docker artifact filename: if specified, Batfish image is loaded
+#     from this artifact instead of pulling from Docker Hub
+
 set -euxo pipefail
 
 # Handle docker container cleanup

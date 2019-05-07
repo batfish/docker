@@ -10,7 +10,7 @@ git clone --depth=1 --branch=${BATFISH_GITHUB_BATFISH_REF} ${BATFISH_GITHUB_BATF
 pushd ${BF_DIR}
   BATFISH_TAG=$(git rev-parse --short HEAD)
 popd
-mvn -f ${BF_DIR}/projects install
+mvn -f ${BF_DIR}/projects package
 
 # Copy artifacts
 # 1. The jar

@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# Build Allinone Docker image and either push to Docker Hub or save an artifact
+# Accepts optional arguments:
+#  1. Batfish docker artifact filename: if specified, Batfish image is loaded
+#     from this artifact instead of pulling from Docker Hub
+#  2. Allinone docker artifact filename: if specified, Allinone image is saved
+#     to this artifact instead of pushing to Docker Hub
+
 set -euxo pipefail
 
 BUILDKITE_DIR="$(dirname "${BASH_SOURCE[0]}")"
