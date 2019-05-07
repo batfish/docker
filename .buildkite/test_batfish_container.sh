@@ -28,7 +28,7 @@ buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-tag.txt ${ARTIFACT_D
 buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-tests.tgz ${ARTIFACT_DIR}
 buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-version.txt ${ARTIFACT_DIR}
 buildkite-agent artifact download ${ARTIFACT_DIR}/questions.tgz ${ARTIFACT_DIR}
-if [ "$1" != "" ]; then
+if [ "${1-}" != "" ]; then
   # Download and load the image artifact if an image file path is specified
   buildkite-agent artifact download ${ARTIFACT_DIR}/$1 ${ARTIFACT_DIR}
   docker load -i ${ARTIFACT_DIR}/$1

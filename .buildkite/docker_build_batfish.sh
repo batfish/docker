@@ -23,7 +23,7 @@ docker build -f ${ABS_SOURCE_DIR}/batfish.dockerfile \
   -t batfish/batfish:${BF_TAG} --build-arg ASSETS=${ASSET_DIR} .
 docker tag batfish/batfish:${BF_TAG} batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}
 
-if [ "$1" == "" ]; then
+if [ "${1-}" == "" ]; then
   # Upload the image to Docker Hub if no image file path is specified
   docker push batfish/batfish:${BF_TAG}
   docker push batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}

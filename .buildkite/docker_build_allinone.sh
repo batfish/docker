@@ -14,7 +14,7 @@ buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish*.whl ${ARTIFACT_DIR}
 buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-notebooks.tgz ${ARTIFACT_DIR}
 buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-tag.txt ${ARTIFACT_DIR}
 buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-version.txt ${ARTIFACT_DIR}
-if [ "$1" != "" ]; then
+if [ "${1-}" != "" ]; then
   # Download and load the image artifact if an image file path is specified
   buildkite-agent artifact download ${ARTIFACT_DIR}/$1 ${ARTIFACT_DIR}
   docker load -i ${ARTIFACT_DIR}/$1
@@ -39,7 +39,7 @@ docker build -f ${ABS_SOURCE_DIR}/allinone.dockerfile \
   --build-arg TAG=${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} .
 docker tag batfish/allinone:${BF_TAG}_${PYBF_TAG} batfish/allinone:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}
 
-if [ "$2" == "" ]; then
+if [ "${2-}" == "" ]; then
   # Upload the image to Docker Hub if no image file path is specified
   docker push batfish/allinone:${BF_TAG}_${PYBF_TAG}
   docker push batfish/allinone:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}
