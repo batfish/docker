@@ -2,7 +2,7 @@
 
 # Batfish Docker Containers
 
-This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish. 
+This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish.
 
 Follow the instructions in the [Batfish README](https://github.com/batfish/batfish/blob/master/README.md) to start using the container.
 
@@ -23,4 +23,4 @@ docker pull batfish/allinone
 
 ## Building and pushing containers
 
-If you are a developer of Batfish, see [dev instructions](README.dev.md) on how to build images and push them to Docker Hub.
+If you are a developer of Batfish, see [dev instructions](https://docs.google.com/document/d/15XWSdyHApnVbmZCg3FKpu6ree2HGDysmgYNFhbqTj1Q) on how to build images and push them to Docker Hub.
