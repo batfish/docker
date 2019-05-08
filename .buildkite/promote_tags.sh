@@ -4,6 +4,8 @@ set -euxo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")"/common_vars.sh
 UPDATE_TO_TAG=$(buildkite-agent meta-data get release-docker-tag)
 
+mkdir ${ARTIFACT_DIR}
+
 buildkite-agent artifact download ${ARTIFACT_DIR}/batfish-tag.txt ${ARTIFACT_DIR}
 buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-tag.txt ${ARTIFACT_DIR}
 
