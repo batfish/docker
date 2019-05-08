@@ -14,12 +14,14 @@ docker stop $(docker ps -f "ancestor=batfish/batfish" -q)
 docker pull batfish/batfish
 ```
 
+
 ## Upgrading the `allinone` container
 
 ```
 docker stop $(docker ps -f "ancestor=batfish/allinone" -q)
 docker pull batfish/allinone
 ```
+
 
 ## Building and pushing containers
 
