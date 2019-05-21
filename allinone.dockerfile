@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN python3 -m pip install --upgrade pip
 
 # Pybatfish + Jupyter
 EXPOSE 8888
