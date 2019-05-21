@@ -16,7 +16,10 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --upgrade pip
+RUN pip3 install --upgrade pip
+# Fix system-pip3 clash after update
+# See https://github.com/pypa/pip/issues/5221
+RUN hash -d pip3
 
 # Pybatfish + Jupyter
 EXPOSE 8888
