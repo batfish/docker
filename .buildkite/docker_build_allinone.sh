@@ -30,6 +30,7 @@ fi
 PYBF_VERSION=$(cat ${ARTIFACT_DIR}/pybatfish-version.txt)
 PYBF_TAG=$(cat ${ARTIFACT_DIR}/pybatfish-tag.txt)
 BF_TAG=$(cat ${ARTIFACT_DIR}/batfish-tag.txt)
+SHA_TAG="${BF_TAG}_${PYBF_TAG}"
 
 # Setup assets for the Batfish image
 cp ${ARTIFACT_DIR}/pybatfish*.whl ${ASSET_DIR}
@@ -41,6 +42,7 @@ cp ${ABS_SOURCE_DIR}/wrapper.sh ${ASSET_DIR}
 
 docker build -f ${ABS_SOURCE_DIR}/allinone.dockerfile \
   -t batfish/allinone:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} \
+  --label "org.batfish.allinone-tag=${SHA_TAG}" \
   --build-arg PYBATFISH_VERSION=${PYBF_VERSION} \
   --build-arg ASSETS=${ASSET_DIR} \
   --build-arg TAG=${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} .

@@ -26,6 +26,7 @@ cp ${ARTIFACT_DIR}/allinone-bundle.jar ${ASSET_DIR}
 
 docker build -f ${ABS_SOURCE_DIR}/batfish.dockerfile \
   -t batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} \
+  --label "org.batfish.batfish-tag=${BF_TAG}" \
   --build-arg ASSETS=${ASSET_DIR} .
 
 if [ "${1-}" == "" ]; then
