@@ -8,7 +8,7 @@ MAX_BATFISH_STARTUP_WAIT=20
 curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash conda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
-conda create -y -n conda_env python=3.7.3
+conda create -y -n conda_env python=3.7
 source activate conda_env
 
 pip install /assets/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl[dev]
