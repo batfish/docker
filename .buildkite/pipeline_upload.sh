@@ -100,7 +100,7 @@ cat <<EOF
       queue: 'open-source-default'
   - label: ":python: Test PyPI release"
     command:
-      - "sage/.buildkite/publish_pybf.sh test"
+      - "sage/.buildkite/publish_pybf_test.sh"
     agents:
       queue: 'open-source-default'
     plugins:
@@ -112,12 +112,7 @@ cat <<EOF
           volumes:
             - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
           environment:
-            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
             - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN}"
-            # Project and therefore token won't exist until after initial PyPI push
-            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
-            - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
-            - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
       - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
           download:
             - artifacts/pybatfish-tag.txt
@@ -152,7 +147,7 @@ cat <<EOF
 EOF
 
 cat <<EOF
-  - label: ":rocket: Release!"
+  - label: ":rocket: Container release"
     command:
       - ".buildkite/promote_tags.sh"
     plugins:
@@ -163,5 +158,29 @@ cat <<EOF
       queue: 'open-source-default'
     env:
       BATFISH_VERSION_STRING: ${BATFISH_VERSION_STRING}
+  - label: ":python: PyPI release"
+    command:
+      - "sage/.buildkite/publish_pybf.sh"
+    agents:
+      queue: 'open-source-default'
+    plugins:
+      - docker#${DOCKER_PLUGIN_VERSION}:
+          image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
+          always-pull: true
+          mount-buildkite-agent: true
+          mount-ssh-agent: true
+          volumes:
+            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
+          environment:
+            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
+            # Project and therefore token won't exist until after initial PyPI push
+            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
+            - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
+            - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
+      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
+          download:
+            - artifacts/pybatfish-tag.txt
+            - artifacts/pybatfish-version.txt
+            - artifacts/pybatfish-*.whl
 
 EOF
