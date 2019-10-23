@@ -72,9 +72,14 @@ cat <<EOF
 EOF
 
 cat <<EOF
-  - label: ":pytest: Test Batfish container w/ Pybatfish"
+  - label: ":snake: dev <-> :batfish: dev"
     command:
       - ".buildkite/test_batfish_container.sh"
+  - label: ":snake: dev <-> :batfish: prod"
+    command:
+      - ".buildkite/test_batfish_container.sh"
+    env:
+      BATFISH_CONTAINER_TAG: latest
   - label: ":docker: Build Allinone container"
     command:
       - ".buildkite/docker_build_allinone.sh"
@@ -97,6 +102,8 @@ EOF
 
 cat <<EOF
   - block: ":chrome::firefox::ie::safari::edge: Manual testing"
+    # Only run on release pipeline
+    if: pipeline.id == "f283deec-7e26-4f46-b8c6-b95b0cc1d974"
     prompt: >-
       Perform manual testing. Instructions at
       https://docs.google.com/document/d/15XWSdyHApnVbmZCg3FKpu6ree2HGDysmgYNFhbqTj1Q/
@@ -114,6 +121,8 @@ EOF
 
 cat <<EOF
   - label: ":rocket: Release!"
+    # Only run on release pipeline
+    if: pipeline.id == "f283deec-7e26-4f46-b8c6-b95b0cc1d974"
     command:
       - ".buildkite/promote_tags.sh"
     plugins:

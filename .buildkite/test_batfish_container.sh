@@ -3,6 +3,9 @@
 # Accepts optional argument:
 #  1. Batfish docker artifact filename: if specified, Batfish image is loaded
 #     from this artifact instead of pulling from Docker Hub
+#
+# If env var BATFISH_CONTAINER_TAG is set, that is used as the container tag
+# instead of the default testing tag. (e.g. test-1234)
 
 set -euxo pipefail
 
@@ -39,8 +42,11 @@ if [ "${1-}" != "" ]; then
   docker load -i ${ARTIFACT_DIR}/$1
 fi
 
+# Use provided container tag, if applicable
+BATFISH_CONTAINER_TAG="${BATFISH_CONTAINER_TAG:-${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}}"
+
 # Use host network so Batfish is accessible at localhost from inside test container
-BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER})
+BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${BATFISH_CONTAINER_TAG})
 
 # Run Pybatfish integration tests against Batfish container
 docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
