@@ -57,6 +57,7 @@ cat <<EOF
           environment:
             - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
+            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
     agents:
       queue: 'open-source-default'
   - wait
