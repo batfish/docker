@@ -12,6 +12,8 @@ buildkite-agent artifact download ${ARTIFACT_DIR}/pybatfish-tag.txt ${ARTIFACT_D
 BF_TAG=$(cat ${ARTIFACT_DIR}/batfish-tag.txt)
 PYBF_TAG=$(cat ${ARTIFACT_DIR}/pybatfish-tag.txt)
 
+# TODO only run if bf is one of the artifacts to release
+
 for image in "batfish" "allinone"; do
   SHA_TAG=${BF_TAG}
   if [ "$image" == "allinone" ]; then

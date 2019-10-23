@@ -60,7 +60,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         # twine upload artifacts/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl
         deactivate
 
-        # re-install from test PyPi and re-test, in a new venv
+        # Install from PyPI
         python3 -m virtualenv testpypi
         . testpypi/bin/activate
         pip install pybatfish

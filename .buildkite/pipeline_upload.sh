@@ -113,6 +113,7 @@ cat <<EOF
           environment:
             - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
             - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN}"
+            # Project and therefore token won't exist until after initial PyPI push
             - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
             - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
@@ -145,7 +146,7 @@ cat <<EOF
         options:
           - label: "Pybf"
             value: "pybf"
-          - label: "Bf container"
+          - label: "Bf containers"
             value: "bf"
 EOF
 
