@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")"/common_vars.sh
-UPDATE_TO_TAG=$(buildkite-agent meta-data get release-docker-tag)
+UPDATE_TO_TAG=$(buildkite-agent meta-data get release-tag)
 
 mkdir ${ARTIFACT_DIR}
 

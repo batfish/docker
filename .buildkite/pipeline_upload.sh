@@ -9,7 +9,11 @@ BATFISH_GITHUB_PYBATFISH_REF="${BATFISH_GITHUB_PYBATFISH_REF:-master}"
 BATFISH_GITHUB_PYBATFISH_REPO="${BATFISH_GITHUB_PYBATFISH_REPO:-https://github.com/batfish/pybatfish}"
 DOCKER_LOGIN_PLUGIN_VERSION="${DOCKER_LOGIN_PLUGIN_VERSION:-v2.0.1}"
 DOCKER_LOGIN_PLUGIN_USERNAME="${DOCKER_LOGIN_PLUGIN_USERNAME:-batfishbuildkitebot}"
+
+ARTIFACTS_PLUGIN_VERSION="${ARTIFACTS_PLUGIN_VERSION:-v1.2.0}"
 DOCKER_PLUGIN_VERSION="${DOCKER_PLUGIN_VERSION:-v3.3.0}"
+
+BATFISH_VERSION_STRING="${BATFISH_VERSION_STRING:-$(date +'%Y.%m.%d').${BUILDKITE_BUILD_NUMBER}}"
 
 cat <<EOF
 steps:
@@ -93,7 +97,32 @@ cat <<EOF
       - ".buildkite/test_allinone_container.sh"
     agents:
       queue: 'open-source-default'
+  - label: ":python: Test PyPI release"
+    command:
+      - "sage/.buildkite/publish_pybf.sh test"
+    agents:
+      queue: 'open-source-default'
+    plugins:
+      - docker#${DOCKER_PLUGIN_VERSION}:
+          image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
+          always-pull: true
+          mount-buildkite-agent: true
+          mount-ssh-agent: true
+          volumes:
+            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
+          environment:
+            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
+            - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN}"
+            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
+            - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
+            - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
+      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
+          download:
+            - artifacts/pybatfish-tag.txt
+            - artifacts/pybatfish-version.txt
+            - artifacts/pybatfish-*.whl
 EOF
+
 
 cat <<EOF
   - block: ":chrome::firefox::ie::safari::edge: Manual testing"
@@ -102,14 +131,22 @@ cat <<EOF
       https://docs.google.com/document/d/15XWSdyHApnVbmZCg3FKpu6ree2HGDysmgYNFhbqTj1Q/
       Your build number is: ${BUILDKITE_BUILD_NUMBER}
     fields:
-      - select: "Docker image tag"
-        key: "release-docker-tag"
+      - select: "Artifact tag"
+        key: "release-tag"
         default: "test"
         options:
           - label: "Public release"
             value: "latest"
           - label: "Test use only"
             value: "test"
+      - select: "Artifact(s) to release"
+        key: "artifacts-to-release"
+        multiple: true
+        options:
+          - label: "Pybf"
+            value: "pybf"
+          - label: "Bf container"
+            value: "bf"
 EOF
 
 cat <<EOF
