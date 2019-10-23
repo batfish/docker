@@ -5,7 +5,8 @@ PYBF_VERSION=$(cat /assets/pybatfish-version.txt)
 MAX_BATFISH_STARTUP_WAIT=20
 
 # Setup conda so we can avoid permission issues setting up Python as non-root user
-curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+# Use version 4.7.10 for now to get around intermittent unpack issue https://github.com/conda/conda/issues/9345
+curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-4.7.10-Linux-x86_64.sh
 bash conda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 conda create -y -n conda_env python=3.7
