@@ -160,4 +160,7 @@ cat <<EOF
             password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
     agents:
       queue: 'open-source-default'
+    env:
+      BATFISH_VERSION_STRING: ${BATFISH_VERSION_STRING}
+
 EOF
