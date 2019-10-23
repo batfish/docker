@@ -49,13 +49,15 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         git config user.email "buildkitebot@intentionet.com"
         git commit -am "Prepare for release ${BATFISH_VERSION_STRING}: Updating version number"
         echo "PUSH PLACEHOLDER"
-        git push --set-upstream origin $BRANCH_NAME
+        # SKIP push for now
+        # git push --set-upstream origin $BRANCH_NAME
         popd
 
         echo "Uploading Pybf to PyPI"
         echo "UPLOAD PLACEHOLDER"
-        export TWINE_PASSWORD=${PYBF_PYPI_TOKEN}
-        twine upload artifacts/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl
+        # SKIP upload for now
+        # export TWINE_PASSWORD=${PYBF_PYPI_TOKEN}
+        # twine upload artifacts/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl
         deactivate
 
         # re-install from test PyPi and re-test, in a new venv

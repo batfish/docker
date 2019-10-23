@@ -19,16 +19,19 @@ for image in "batfish" "allinone"; do
   fi
   # Ensure we have the latest container
   docker pull "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}"
+
+  echo "RETAG AND PUSH PLACEHOLDER"
+  # SKIP tag and push for now
   # Re-tag & push with sha tag
-  docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
-              "batfish/${image}:${SHA_TAG}"
-  docker push "batfish/${image}:${SHA_TAG}"
+  #docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+  #            "batfish/${image}:${SHA_TAG}"
+  #docker push "batfish/${image}:${SHA_TAG}"
   # Re-tag & push with updated tag + build number
-  docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
-              "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
-  docker push "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
+  #docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+  #            "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
+  #docker push "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
   # Re-tag & push with just updated tag
-  docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
-              "batfish/${image}:${UPDATE_TO_TAG}"
-  docker push "batfish/${image}:${UPDATE_TO_TAG}"
+  #docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+  #            "batfish/${image}:${UPDATE_TO_TAG}"
+  #docker push "batfish/${image}:${UPDATE_TO_TAG}"
 done
