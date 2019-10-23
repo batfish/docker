@@ -75,6 +75,8 @@ cat <<EOF
   - label: ":pytest: Test Batfish container w/ Pybatfish"
     command:
       - ".buildkite/test_batfish_container.sh"
+    agents:
+      queue: 'open-source-default'
   - label: ":docker: Build Allinone container"
     command:
       - ".buildkite/docker_build_allinone.sh"
