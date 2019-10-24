@@ -36,7 +36,6 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^bf$; then
                     "batfish/${image}:${UPDATE_TO_TAG}"
         docker push "batfish/${image}:${UPDATE_TO_TAG}"
 
-        # TODO tag with BATFISH_VERSION_STRING
         if [ "${UPDATE_TO_TAG}" == "latest" ]; then
             echo "Publishing VERSION tag for ${image}"
             # For latest containers, re-tag & push with version tag (build number is already in the version number)
