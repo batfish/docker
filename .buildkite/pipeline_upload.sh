@@ -76,27 +76,6 @@ cat <<EOF
             password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
     agents:
       queue: 'open-source-default'
-  # TODO move later in pipeline
-  - label: ":python: Test PyPI release"
-    command:
-      - ".buildkite/publish_pybf_test.sh"
-    agents:
-      queue: 'open-source-default'
-    plugins:
-      - docker#${DOCKER_PLUGIN_VERSION}:
-          image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
-          always-pull: true
-          mount-buildkite-agent: true
-          mount-ssh-agent: true
-          volumes:
-            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
-          environment:
-            - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN}"
-      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
-          download:
-            - artifacts/pybatfish-tag.txt
-            - artifacts/pybatfish-version.txt
-            - artifacts/pybatfish-*.whl
   - wait
 EOF
 
@@ -122,6 +101,26 @@ cat <<EOF
       - ".buildkite/test_allinone_container.sh"
     agents:
       queue: 'open-source-default'
+  - label: ":python: Test PyPI release"
+    command:
+      - ".buildkite/publish_pybf_test.sh"
+    agents:
+      queue: 'open-source-default'
+    plugins:
+      - docker#${DOCKER_PLUGIN_VERSION}:
+          image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
+          always-pull: true
+          mount-buildkite-agent: true
+          mount-ssh-agent: true
+          volumes:
+            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
+          environment:
+            - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN}"
+      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
+          download:
+            - artifacts/pybatfish-tag.txt
+            - artifacts/pybatfish-version.txt
+            - artifacts/pybatfish-*.whl
 EOF
 
 
