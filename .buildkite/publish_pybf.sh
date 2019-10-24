@@ -31,6 +31,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         git checkout ${PYBF_COMMIT}
 
         BRANCH_NAME="release-${BATFISH_VERSION_STRING}"
+        BRANCH_NAME="test-bot-branch"
         git checkout origin/master -b $BRANCH_NAME
         # Sane in-place version replace: https://stackoverflow.com/a/22084103
         sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${BATFISH_VERSION_STRING}\"/" pybatfish/__init__.py
@@ -40,7 +41,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         git commit -am "Prepare for release ${BATFISH_VERSION_STRING}: Updating version number"
         echo "PUSH PLACEHOLDER"
         # SKIP push for now
-        # git push --set-upstream origin $BRANCH_NAME
+        git push --set-upstream origin $BRANCH_NAME
         popd
 
         echo "Uploading Pybf to PyPI"
