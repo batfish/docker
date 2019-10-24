@@ -100,7 +100,7 @@ cat <<EOF
       queue: 'open-source-default'
   - label: ":python: Test PyPI release"
     command:
-      - "sage/.buildkite/publish_pybf_test.sh"
+      - ".buildkite/publish_pybf_test.sh"
     agents:
       queue: 'open-source-default'
     plugins:
@@ -160,7 +160,7 @@ cat <<EOF
       BATFISH_VERSION_STRING: ${BATFISH_VERSION_STRING}
   - label: ":python: PyPI release"
     command:
-      - "sage/.buildkite/publish_pybf.sh"
+      - ".buildkite/publish_pybf.sh"
     agents:
       queue: 'open-source-default'
     plugins:
