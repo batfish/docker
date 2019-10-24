@@ -31,7 +31,6 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         git checkout ${PYBF_COMMIT}
 
         BRANCH_NAME="release-${BATFISH_VERSION_STRING}"
-        BRANCH_NAME="test-bot-branch"
         git checkout origin/master -b $BRANCH_NAME
         # Sane in-place version replace: https://stackoverflow.com/a/22084103
         sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${BATFISH_VERSION_STRING}\"/" pybatfish/__init__.py
@@ -39,16 +38,12 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         git config user.name "open-source-buildkitebot"
         git config user.email "open-source-buildkitebot@intentionet.com"
         git commit -am "Prepare for release ${BATFISH_VERSION_STRING}: Updating version number"
-        echo "PUSH PLACEHOLDER"
-        # SKIP push for now
         git push --set-upstream origin $BRANCH_NAME
         popd
 
         echo "Uploading Pybf to PyPI"
-        echo "UPLOAD PLACEHOLDER"
-        # SKIP upload for now
-        # export TWINE_PASSWORD=${PYBF_PYPI_TOKEN}
-        # twine upload artifacts/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl
+        export TWINE_PASSWORD=${PYBF_PYPI_TOKEN}
+        twine upload artifacts/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl
         deactivate
 
         # Install from PyPI
@@ -62,7 +57,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         echo "Pybf import was successful!"
         deactivate
     else
-        echo "Unrecognized release tag (test|latest)"
+        echo "Unrecognized release tag (expected test|latest)"
         exit 1
     fi
 else

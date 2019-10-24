@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish Pybf wheel to test PyPI
+# Test that built wheel can be published and installed from test PyPI
 
 set -euo pipefail
 
