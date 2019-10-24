@@ -55,6 +55,8 @@ cat <<EOF
           image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
           always-pull: true
           mount-ssh-agent: true
+          volumes:
+            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
           environment:
             - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
