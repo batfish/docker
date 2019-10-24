@@ -36,8 +36,8 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         # Sane in-place version replace: https://stackoverflow.com/a/22084103
         sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${BATFISH_VERSION_STRING}\"/" pybatfish/__init__.py
         rm -f pybatfish/__init__.py.bak
-        git config user.name "buildkitebot"
-        git config user.email "buildkitebot@intentionet.com"
+        git config user.name "open-source-buildkitebot"
+        git config user.email "open-source-buildkitebot@intentionet.com"
         git commit -am "Prepare for release ${BATFISH_VERSION_STRING}: Updating version number"
         echo "PUSH PLACEHOLDER"
         # SKIP push for now

@@ -3,6 +3,7 @@ set -euxo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")"/common_vars.sh
 UPDATE_TO_TAG=$(buildkite-agent meta-data get release-tag)
+ARTIFACTS_TO_RELEASE=$(buildkite-agent meta-data get artifacts-to-release)
 
 if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^bf$; then
     echo "Publishing Bf"
