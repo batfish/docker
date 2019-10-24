@@ -16,30 +16,35 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^bf$; then
     PYBF_TAG=$(cat ${ARTIFACT_DIR}/pybatfish-tag.txt)
 
     for image in "batfish" "allinone"; do
-      SHA_TAG=${BF_TAG}
-      if [ "$image" == "allinone" ]; then
-        SHA_TAG=${BF_TAG}_${PYBF_TAG}
-      fi
-      # Ensure we have the latest container
-      docker pull "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}"
+        SHA_TAG=${BF_TAG}
+        if [ "$image" == "allinone" ]; then
+          SHA_TAG=${BF_TAG}_${PYBF_TAG}
+        fi
+        # Ensure we have the latest container
+        docker pull "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}"
 
-      echo "RETAG AND PUSH PLACEHOLDER"
-      # SKIP tag and push for now
-      # Re-tag & push with sha tag
-      #docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
-      #            "batfish/${image}:${SHA_TAG}"
-      #docker push "batfish/${image}:${SHA_TAG}"
-      # Re-tag & push with updated tag + build number
-      #docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
-      #            "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
-      #docker push "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
-      # Re-tag & push with just updated tag
-      #docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
-      #            "batfish/${image}:${UPDATE_TO_TAG}"
-      #docker push "batfish/${image}:${UPDATE_TO_TAG}"
+        # Re-tag & push with sha tag
+        docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+                    "batfish/${image}:${SHA_TAG}"
+        docker push "batfish/${image}:${SHA_TAG}"
+        # Re-tag & push with updated tag + build number
+        docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+                    "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
+        docker push "batfish/${image}:${UPDATE_TO_TAG}-${BUILDKITE_BUILD_NUMBER}"
+        # Re-tag & push with just updated tag
+        docker tag  "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+                    "batfish/${image}:${UPDATE_TO_TAG}"
+        docker push "batfish/${image}:${UPDATE_TO_TAG}"
 
-      # TODO tag with BATFISH_VERSION_STRING
+        # TODO tag with BATFISH_VERSION_STRING
+        if [ "${UPDATE_TO_TAG}" == "latest" ]; then
+            echo "Publishing VERSION tag for ${image}"
+            # For latest containers, re-tag & push with version tag (build number is already in the version number)
+            docker tag "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
+                       "batfish/${image}:${BATFISH_VERSION_STRING}"
+            docker push "batfish/${image}:${BATFISH_VERSION_STRING}"
+        fi
     done
-  else
+else
     echo "Skipping publishing Bf"
 fi
