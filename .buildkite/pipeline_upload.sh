@@ -54,6 +54,7 @@ cat <<EOF
       - docker#${DOCKER_PLUGIN_VERSION}:
           image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
           always-pull: true
+          mount-ssh-agent: true
           environment:
             - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
