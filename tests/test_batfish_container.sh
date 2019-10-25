@@ -32,4 +32,4 @@ TEMP_DIR=$(mktemp -d)
 tar xzf /assets/questions.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-tests.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-notebooks.tgz -C ${TEMP_DIR}
-pytest ${TEMP_DIR}/tests/integration
+pytest ${PYBATFISH_PYTEST_ARGS:-} ${TEMP_DIR}/tests/integration

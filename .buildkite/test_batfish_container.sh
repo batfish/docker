@@ -5,7 +5,9 @@
 #     from this artifact instead of pulling from Docker Hub
 #
 # If env var BATFISH_CONTAINER_TAG is set, that is used as the container tag
-# instead of the default testing tag. (e.g. test-1234)
+# instead of the default testing tag. (e.g. test-1234).
+# If env var PYBATFISH_PYTEST_ARGS is set, that is added as extra args
+# passed into pytest when running Pybatfish integration tests.
 
 set -euxo pipefail
 
@@ -51,6 +53,7 @@ BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${BATFISH_CONTAINER
 # Run Pybatfish integration tests against Batfish container
 docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
   -v $ABS_SOURCE_DIR/tests/test_batfish_container.sh:/test.sh \
+  --env PYBATFISH_PYTEST_ARGS=${PYBATFISH_PYTEST_ARGS:-} \
   --entrypoint /bin/bash batfish/ci-base:latest /test.sh
 
 docker stop ${BATFISH_CONTAINER}

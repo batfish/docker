@@ -75,11 +75,16 @@ cat <<EOF
   - label: ":snake: dev <-> :batfish: dev"
     command:
       - ".buildkite/test_batfish_container.sh"
+    agents:
+      queue: 'open-source-default'
   - label: ":snake: dev <-> :batfish: prod"
     command:
       - ".buildkite/test_batfish_container.sh"
     env:
       BATFISH_CONTAINER_TAG: latest
+      PYBATFISH_PYTEST_ARGS="-k 'not test_notebook_output'"
+    agents:
+      queue: 'open-source-default'
   - label: ":docker: Build Allinone container"
     command:
       - ".buildkite/docker_build_allinone.sh"
