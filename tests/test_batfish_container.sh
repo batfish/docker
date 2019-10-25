@@ -33,7 +33,7 @@ tar xzf /assets/questions.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-tests.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-notebooks.tgz -C ${TEMP_DIR}
 
-echo Got pybsatfish pytest args:
-echo ${PYBATFISH_PYTEST_ARGS:-}
+echo Got internal pybatfish pytest args:
+echo "${PYBATFISH_PYTEST_ARGS:-}"
 
 pytest ${PYBATFISH_PYTEST_ARGS:-} ${TEMP_DIR}/tests/integration
