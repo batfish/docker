@@ -10,7 +10,7 @@ git clone --depth=1 --branch=${BATFISH_GITHUB_PYBATFISH_REF} ${BATFISH_GITHUB_PY
 pushd ${PYBF_DIR}
   PYBF_TAG=$(git rev-parse --short HEAD)
   # Update version if specified
-  if [ "${BATFISH_VERSION_STRING:-}" == "" ]; then
+  if [ "${BATFISH_VERSION_STRING:-}" != "" ]; then
     # Sane in-place version replace: https://stackoverflow.com/a/22084103
     sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${BATFISH_VERSION_STRING}\"/" pybatfish/__init__.py
     rm -f pybatfish/__init__.py.bak
