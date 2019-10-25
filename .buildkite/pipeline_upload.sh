@@ -82,7 +82,7 @@ cat <<EOF
       - ".buildkite/test_batfish_container.sh"
     env:
       BATFISH_CONTAINER_TAG: latest
-      PYBATFISH_PYTEST_ARGS="-k 'not test_notebook_output'"
+      PYBATFISH_PYTEST_ARGS: "-k 'not test_notebook_output'"
     agents:
       queue: 'open-source-default'
   - label: ":docker: Build Allinone container"
