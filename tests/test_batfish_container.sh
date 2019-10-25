@@ -39,5 +39,5 @@ echo "${PYBATFISH_PYTEST_ARGS:-}"
 # Use eval here to evaluate quotes in pytest args before spaces
 # e.g. permit the following as two items:
 #   -k "not test_name"
-# instead of treating it like three items (`-k`, `"not`, and `test_name`)
+# instead of treating it like three items (`-k`, `"not`, and `test_name"`)
 eval pytest ${PYBATFISH_PYTEST_ARGS:-} ${TEMP_DIR}/tests/integration
