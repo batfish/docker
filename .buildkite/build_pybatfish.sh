@@ -9,9 +9,12 @@ PYBF_DIR=$(mktemp -d)
 git clone --depth=1 --branch=${BATFISH_GITHUB_PYBATFISH_REF} ${BATFISH_GITHUB_PYBATFISH_REPO} ${PYBF_DIR}
 pushd ${PYBF_DIR}
   PYBF_TAG=$(git rev-parse --short HEAD)
-  # Sane in-place version replace: https://stackoverflow.com/a/22084103
-  sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${BATFISH_VERSION_STRING}\"/" pybatfish/__init__.py
-  rm -f pybatfish/__init__.py.bak
+  # Update version if specified
+  if [ "${BATFISH_VERSION_STRING:-}" == "" ]; then
+    # Sane in-place version replace: https://stackoverflow.com/a/22084103
+    sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${BATFISH_VERSION_STRING}\"/" pybatfish/__init__.py
+    rm -f pybatfish/__init__.py.bak
+  fi
   python3 -m virtualenv .venv
   source .venv/bin/activate
   pip install setuptools
