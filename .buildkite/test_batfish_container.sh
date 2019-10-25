@@ -50,8 +50,6 @@ BATFISH_CONTAINER_TAG="${BATFISH_CONTAINER_TAG:-${TESTING_TAG}-${BUILDKITE_BUILD
 # Use host network so Batfish is accessible at localhost from inside test container
 BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${BATFISH_CONTAINER_TAG})
 
-echo Got pybatfish pytest args:
-echo "${PYBATFISH_PYTEST_ARGS:-}"
 # Run Pybatfish integration tests against Batfish container
 docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
   -v $ABS_SOURCE_DIR/tests/test_batfish_container.sh:/test.sh \

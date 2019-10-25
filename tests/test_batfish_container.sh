@@ -33,9 +33,6 @@ tar xzf /assets/questions.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-tests.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-notebooks.tgz -C ${TEMP_DIR}
 
-echo Got internal pybatfish pytest args:
-echo "${PYBATFISH_PYTEST_ARGS:-}"
-
 # Use eval here to evaluate quotes in pytest args before spaces
 # e.g. permit the following as two items:
 #   -k "not test_name"
