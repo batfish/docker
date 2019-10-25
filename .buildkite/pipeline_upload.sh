@@ -177,7 +177,7 @@ cat <<EOF
 #            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
 #          environment:
 #            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
-#            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN}"
+#            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
 #            - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
 #            - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
 #      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
