@@ -5,6 +5,8 @@ source "$(dirname "${BASH_SOURCE[0]}")"/common_vars.sh
 UPDATE_TO_TAG=$(buildkite-agent meta-data get release-tag)
 ARTIFACTS_TO_RELEASE=$(buildkite-agent meta-data get artifacts-to-release)
 
+# Check if bf is one of the artifacts we want to release
+# Note: artifact names are newline delimited
 if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^bf$; then
     echo "Publishing Bf"
     mkdir ${ARTIFACT_DIR}
@@ -38,7 +40,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^bf$; then
 
         if [ "${UPDATE_TO_TAG}" == "latest" ]; then
             echo "Publishing VERSION tag for ${image}"
-            # For latest containers, re-tag & push with version tag (build number is already in the version number)
+            # For latest containers, re-tag & push with version tag
             docker tag "batfish/${image}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}" \
                        "batfish/${image}:${BATFISH_VERSION_STRING}"
             docker push "batfish/${image}:${BATFISH_VERSION_STRING}"
