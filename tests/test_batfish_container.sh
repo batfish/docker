@@ -36,4 +36,8 @@ tar xzf /assets/pybatfish-notebooks.tgz -C ${TEMP_DIR}
 echo Got internal pybatfish pytest args:
 echo "${PYBATFISH_PYTEST_ARGS:-}"
 
-pytest ${PYBATFISH_PYTEST_ARGS:-} ${TEMP_DIR}/tests/integration
+# Use eval here to evaluate quotes in pytest args before spaces
+# e.g. permit the following as two items:
+#   -k "not test_name"
+# instead of treating it like three items (`-k`, `"not`, and `test_name`)
+eval pytest ${PYBATFISH_PYTEST_ARGS:-} ${TEMP_DIR}/tests/integration
