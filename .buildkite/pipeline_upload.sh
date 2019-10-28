@@ -85,7 +85,7 @@ EOF
 # Get (Unix time) timestamp for the oldest container we would test
 MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} day" +%s)
 
-CONTAINER_TAGS=$(wget -O - https://registry.hub.docker.com/v1/repositories/batfish/batfish/tags)
+CONTAINER_TAGS=$(wget -q -O - https://registry.hub.docker.com/v1/repositories/batfish/batfish/tags)
 # Get tags that start with dates (YYYY.M.D.#)
 DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?"')
 
