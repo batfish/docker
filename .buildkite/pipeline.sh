@@ -74,15 +74,20 @@ cat <<EOF
       - docker#${DOCKER_PLUGIN_VERSION}:
           image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
           always-pull: true
-          mount-ssh-agent: true
-          volumes:
-            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
           environment:
             - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
             - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
 ${COMMON_STEP_ATTRIBUTES}
 EOF
+# Use SSH for upload pipeline
+if [ "${BUILDKITE_PIPELINE_ID}" == "${BATFISH_UPLOAD_PIPELINE}" ]; then
+cat <<EOF
+          mount-ssh-agent: true
+          volumes:
+            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
+EOF
+fi
 
 ###### WAIT between initial build and docker container build
 cat <<EOF
