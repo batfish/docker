@@ -139,8 +139,8 @@ cat <<EOF
   - label: ":arrow_up::docker: Upload test containers"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
-      - ".buildkite/push_test_image.sh batfish.jar batfish"
-      - ".buildkite/push_test_image.sh allinone.jar allinone"
+      - ".buildkite/push_test_image.sh batfish.tar batfish"
+      - ".buildkite/push_test_image.sh allinone.tar allinone"
     plugins:
       - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
           username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
