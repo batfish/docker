@@ -93,8 +93,8 @@ cat <<EOF
   - label: ":docker: Build Batfish container"
     command:
       - ".buildkite/docker_build_batfish.sh batfish.tar"
-      artifact_paths:
-        - artifacts/batfish.tar
+    artifact_paths:
+      - artifacts/batfish.tar
 ${COMMON_STEP_ATTRIBUTES}
 EOF
 
