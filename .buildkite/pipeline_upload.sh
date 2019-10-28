@@ -100,6 +100,7 @@ cat <<EOF
       - ".buildkite/test_batfish_container.sh"
     env:
       BATFISH_CONTAINER_TAG: ${bf_tag}
+      # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
     agents:
       queue: 'open-source-default'
@@ -108,17 +109,18 @@ fi
 done <<< "${DATE_TAGS}"
 
 cat <<EOF
-  - label: ":snake: dev <-> :batfish: dev"
-    command:
-      - ".buildkite/test_batfish_container.sh"
-    agents:
-      queue: 'open-source-default'
   - label: ":snake: dev <-> :batfish: prod"
     command:
       - ".buildkite/test_batfish_container.sh"
     env:
       BATFISH_CONTAINER_TAG: latest
+      # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
+    agents:
+      queue: 'open-source-default'
+  - label: ":snake: dev <-> :batfish: dev"
+    command:
+      - ".buildkite/test_batfish_container.sh"
     agents:
       queue: 'open-source-default'
   - label: ":docker: Build Allinone container"
