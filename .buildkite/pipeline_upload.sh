@@ -15,6 +15,9 @@ DOCKER_PLUGIN_VERSION="${DOCKER_PLUGIN_VERSION:-v3.3.0}"
 
 BATFISH_VERSION_STRING="${BATFISH_VERSION_STRING:-$(date +'%Y.%m.%d').${BUILDKITE_BUILD_NUMBER}}"
 
+# Only test Bf containers less than this many days old
+BATFISH_MAX_TEST_CONTAINER_AGE="${BATFISH_MAX_TEST_CONTAINER_AGE:-31}"
+
 cat <<EOF
 steps:
 EOF
@@ -79,12 +82,30 @@ cat <<EOF
   - wait
 EOF
 
-CONTAINER_TAGS=$(wget -O - https://registry.hub.docker.com/v1/repositories/batfish/allinone/tags)
+# Get (Unix time) timestamp for the oldest container we would test
+MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} day" +%s)
 
-DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?')
+CONTAINER_TAGS=$(wget -O - https://registry.hub.docker.com/v1/repositories/batfish/batfish/tags)
+# Get tags that start with dates (YYYY.M.D.#)
+DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}(\.[0-9]\+\)\?"')
 
-echo "$DATE_TAGS"
-exit 1
+# Run integration tests on recent Batfish containers
+while read bf_tag; do
+# Convert YYYY.M.D format into (Unix time) timestamp that we can compare
+TAG_TIMESTAMP=$(date -d $(echo ${pybfe_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' | sed 's/\./-/g') +"%s")
+if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
+cat <<EOF
+- label: ":snake: dev <-> :batfish: ${bf_tag}"
+  command:
+    - ".buildkite/test_batfish_container.sh"
+  env:
+    BATFISH_CONTAINER_TAG: ${bf_tag}
+    PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
+  agents:
+    queue: 'open-source-default'
+EOF
+fi
+done <<< "${DATE_TAGS}"
 
 cat <<EOF
   - label: ":snake: dev <-> :batfish: dev"
