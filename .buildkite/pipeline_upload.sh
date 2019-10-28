@@ -95,14 +95,14 @@ while read bf_tag; do
 TAG_TIMESTAMP=$(date -d $(echo ${bf_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' | sed 's/\./-/g') +"%s")
 if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
 cat <<EOF
-- label: ":snake: dev <-> :batfish: ${bf_tag}"
-  command:
-    - ".buildkite/test_batfish_container.sh"
-  env:
-    BATFISH_CONTAINER_TAG: ${bf_tag}
-    PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
-  agents:
-    queue: 'open-source-default'
+  - label: ":snake: dev <-> :batfish: ${bf_tag}"
+    command:
+      - ".buildkite/test_batfish_container.sh"
+    env:
+      BATFISH_CONTAINER_TAG: ${bf_tag}
+      PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
+    agents:
+      queue: 'open-source-default'
 EOF
 fi
 done <<< "${DATE_TAGS}"
