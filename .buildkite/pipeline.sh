@@ -80,7 +80,7 @@ ${COMMON_STEP_ATTRIBUTES}
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
             - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
 EOF
-# Use SSH for upload pipeline
+# Use SSH for upload pipeline, this needs to come RIGHT after the `plugins` section in the preceeding step
 if [ "${BUILDKITE_PIPELINE_ID}" == "${BATFISH_UPLOAD_PIPELINE}" ]; then
 cat <<EOF
           mount-ssh-agent: true

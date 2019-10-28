@@ -13,7 +13,7 @@ fi
 
 BUILDKITE_DIR="$(dirname "${BASH_SOURCE[0]}")"
 source $BUILDKITE_DIR/common_vars.sh
-mkdir $ARTIFACT_DIR
+mkdir -p $ARTIFACT_DIR
 
 # Download, load into local Docker, and push the specified image to Docker Hub
 buildkite-agent artifact download ${ARTIFACT_DIR}/$1 ${ARTIFACT_DIR}
