@@ -79,6 +79,11 @@ cat <<EOF
   - wait
 EOF
 
+CONTAINER_TAGS=$(wget -O - https://registry.hub.docker.com/v1/repositories/batfish/allinone/tags)
+
+echo "$CONTAINER_TAGS"
+exit 1
+
 cat <<EOF
   - label: ":snake: dev <-> :batfish: dev"
     command:
