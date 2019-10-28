@@ -155,7 +155,7 @@ cat <<EOF
           volumes:
             - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
           environment:
-            - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN}"
+            - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN-}"
       - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
           download:
             - artifacts/pybatfish-tag.txt
