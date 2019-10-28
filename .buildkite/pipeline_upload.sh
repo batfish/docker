@@ -81,7 +81,9 @@ EOF
 
 CONTAINER_TAGS=$(wget -O - https://registry.hub.docker.com/v1/repositories/batfish/allinone/tags)
 
-echo "$CONTAINER_TAGS"
+DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?')
+
+echo "$DATE_TAGS"
 exit 1
 
 cat <<EOF
