@@ -87,12 +87,12 @@ MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} d
 
 CONTAINER_TAGS=$(wget -O - https://registry.hub.docker.com/v1/repositories/batfish/batfish/tags)
 # Get tags that start with dates (YYYY.M.D.#)
-DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}(\.[0-9]\+\)\?"')
+DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?"')
 
 # Run integration tests on recent Batfish containers
 while read bf_tag; do
 # Convert YYYY.M.D format into (Unix time) timestamp that we can compare
-TAG_TIMESTAMP=$(date -d $(echo ${pybfe_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' | sed 's/\./-/g') +"%s")
+TAG_TIMESTAMP=$(date -d $(echo ${bf_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' | sed 's/\./-/g') +"%s")
 if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
 cat <<EOF
 - label: ":snake: dev <-> :batfish: ${bf_tag}"
