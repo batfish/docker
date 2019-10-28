@@ -145,7 +145,9 @@ cat <<EOF
       - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
           username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
           password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
+${COMMON_STEP_ATTRIBUTES}
 EOF
+
 cat <<EOF
   - label: ":python: Test PyPI release"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
