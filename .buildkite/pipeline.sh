@@ -62,6 +62,7 @@ EOF
 
 cat <<EOF
   - label: ":python: Build pybatfish"
+${COMMON_STEP_ATTRIBUTES}
     command:
       - ".buildkite/build_pybatfish.sh"
     artifact_paths:
@@ -78,7 +79,6 @@ cat <<EOF
             - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
             - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
-${COMMON_STEP_ATTRIBUTES}
 EOF
 # Use SSH for upload pipeline
 if [ "${BUILDKITE_PIPELINE_ID}" == "${BATFISH_UPLOAD_PIPELINE}" ]; then
