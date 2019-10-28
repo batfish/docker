@@ -58,6 +58,9 @@ cat <<EOF
             - "BATFISH_GITHUB_BATFISH_REF=${BATFISH_GITHUB_BATFISH_REF}"
             - "BATFISH_GITHUB_BATFISH_REPO=${BATFISH_GITHUB_BATFISH_REPO}"
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+cat <<EOF
   - label: ":python: Build pybatfish"
     command:
       - ".buildkite/build_pybatfish.sh"
@@ -79,42 +82,66 @@ ${COMMON_STEP_ATTRIBUTES}
             - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
             - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+###### WAIT between initial build and docker container build
+cat <<EOF
   - wait
 EOF
 
 cat <<EOF
   - label: ":docker: Build Batfish container"
     command:
-      - ".buildkite/docker_build_batfish.sh"
-    plugins:
-      - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
-            username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
-            password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
+      - ".buildkite/docker_build_batfish.sh batfish.tar"
+      artifact_paths:
+        - artifacts/batfish.tar
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+###### WAIT between initial docker build and initial tests
+cat <<EOF
   - wait
 EOF
 
 cat <<EOF
   - label: ":pytest: Test Batfish container w/ Pybatfish"
     command:
-      - ".buildkite/test_batfish_container.sh"
+      - ".buildkite/test_batfish_container.sh batfish.tar"
 ${COMMON_STEP_ATTRIBUTES}
   - label: ":docker: Build Allinone container"
     command:
-      - ".buildkite/docker_build_allinone.sh"
-    plugins:
-      - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
-            username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
-            password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
+      - ".buildkite/docker_build_allinone.sh batfish.tar allinone.tar"
+    artifact_paths:
+      - artifacts/allinone.tar
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+###### WAIT between allinone docker build and allinone tests
+cat <<EOF
   - wait
 EOF
 
 cat <<EOF
   - label: ":docker::pytest: Test Allinone container"
     command:
-      - ".buildkite/test_allinone_container.sh"
+      - ".buildkite/test_allinone_container.sh allinone.tar"
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+
+###### End pre-commit-only steps and begin upload steps here
+cat <<EOF
+  - label: ":arrow_up::docker: Upload test containers"
+    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    command:
+      - ".buildkite/push_test_image.sh batfish.jar batfish"
+      - ".buildkite/push_test_image.sh allinone.jar allinone"
+    plugins:
+      - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
+          username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
+          password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
+EOF
+cat <<EOF
   - label: ":python: Test PyPI release"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
@@ -176,6 +203,9 @@ cat <<EOF
     env:
       BATFISH_VERSION_STRING: ${BATFISH_VERSION_STRING}
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+cat <<EOF
 ### Pybatfish PyPI project does not exist yet, so can cannot automatically push yet
 #  - label: ":python: PyPI release"
 #    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
@@ -201,5 +231,4 @@ ${COMMON_STEP_ATTRIBUTES}
 #            - artifacts/pybatfish-tag.txt
 #            - artifacts/pybatfish-version.txt
 #            - artifacts/pybatfish-*.whl
-
 EOF
