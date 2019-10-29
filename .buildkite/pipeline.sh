@@ -63,7 +63,7 @@ ${COMMON_STEP_ATTRIBUTES}
 EOF
 
 cat <<EOF
-  - label: ":python: Build pybatfish"
+  - label: ":ferris_wheel: Build pybatfish"
 ${COMMON_STEP_ATTRIBUTES}
     command:
       - ".buildkite/build_pybatfish.sh"
@@ -131,7 +131,7 @@ cat <<EOF
 EOF
 
 cat <<EOF
-  - label: ":docker::pytest: Test Allinone container"
+  - label: ":pytest: Test Allinone container"
     command:
       - ".buildkite/test_allinone_container.sh allinone.tar"
 ${COMMON_STEP_ATTRIBUTES}
@@ -253,7 +253,7 @@ cat <<EOF
 EOF
 
 cat <<EOF
-  - label: ":rocket: Container release"
+  - label: ":docker::rocket: Container release"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/promote_tags.sh"
@@ -268,7 +268,7 @@ EOF
 
 cat <<EOF
 ### Pybatfish PyPI project does not exist yet, so can cannot automatically push yet
-#  - label: ":python: PyPI release"
+#  - label: ":python::rocket: PyPI release"
 #    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
 #    command:
 #      - ".buildkite/publish_pybf.sh"
