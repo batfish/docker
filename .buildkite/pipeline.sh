@@ -101,6 +101,8 @@ cat <<EOF
   - label: ":docker: Build Batfish container"
     command:
       - ".buildkite/docker_build_batfish.sh batfish.tar"
+    env:
+      BATFISH_VERSION_STRING: ${BATFISH_VERSION_STRING}
     artifact_paths:
       - artifacts/batfish.tar
 ${COMMON_STEP_ATTRIBUTES}
