@@ -79,12 +79,3 @@ cat <<EOF
     command:
       - ".buildkite/test_allinone_container.sh allinone.tar"
 EOF
-
-
-cat <<EOF
-  - label: "Dummy step"
-    # Only run on release pipeline
-    if: pipeline.id == "f283deec-7e26-4f46-b8c6-b95b0cc1d974"
-    command:
-      - "echo hello"
-EOF
