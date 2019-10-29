@@ -160,7 +160,7 @@ EOF
 MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} day" +%s)
 
 CONTAINER_TAGS=$(wget -q -O - https://registry.hub.docker.com/v1/repositories/batfish/batfish/tags)
-# Get tags that start with dates (YYYY.M.D.#)
+# Get tags that start with dates (e.g. YYYY.M.D.# or YYYY.MM.DD)
 DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?"' | sed 's/"//g')
 
 # Run integration tests on recent Batfish containers
@@ -175,6 +175,8 @@ cat <<EOF
       - ".buildkite/test_batfish_container.sh"
     env:
       BATFISH_CONTAINER_TAG: ${bf_tag}
+      # Determines which Pybatfish integration tests are run
+      bf_version: ${bf_tag}
       # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
 ${COMMON_STEP_ATTRIBUTES}
