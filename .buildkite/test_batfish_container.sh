@@ -50,11 +50,18 @@ BATFISH_CONTAINER_TAG="${BATFISH_CONTAINER_TAG:-${TESTING_TAG}-${BUILDKITE_BUILD
 # Use host network so Batfish is accessible at localhost from inside test container
 BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${BATFISH_CONTAINER_TAG})
 
+if [ "${bf_version-}" == "" ] then;
+  # Pull batfish version from container label if none is supplied via env var
+  BATFISH_VERSION=$(docker inspect -f '{{ index .Config.Labels "org.batfish.batfish-version" }}' ${BATFISH_CONTAINER})
+else
+  BATFISH_VERSION=${bf_version}
+fi
+echo "Using Batfish version: ${BATFISH_VERSION}"
 # Run Pybatfish integration tests against Batfish container
 docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
   -v $ABS_SOURCE_DIR/tests/test_batfish_container.sh:/test.sh \
   --env PYBATFISH_PYTEST_ARGS="${PYBATFISH_PYTEST_ARGS:-}" \
-  --env bf_version="${bf_version-}" \
+  --env bf_version="${BATFISH_VERSION}" \
   --entrypoint /bin/bash batfish/ci-base:latest /test.sh
 
 docker stop ${BATFISH_CONTAINER}
