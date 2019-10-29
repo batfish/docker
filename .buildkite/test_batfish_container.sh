@@ -50,7 +50,7 @@ BATFISH_CONTAINER_TAG="${BATFISH_CONTAINER_TAG:-${TESTING_TAG}-${BUILDKITE_BUILD
 # Use host network so Batfish is accessible at localhost from inside test container
 BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${BATFISH_CONTAINER_TAG})
 
-if [ "${bf_version-}" == "" ] then;
+if [ "${bf_version-}" == "" ]; then
   # Pull batfish version from container label if none is supplied via env var
   BATFISH_VERSION=$(docker inspect -f '{{ index .Config.Labels "org.batfish.batfish-version" }}' ${BATFISH_CONTAINER})
 else
