@@ -31,4 +31,9 @@ TEMP_DIR=$(mktemp -d)
 tar xzf /assets/questions.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-tests.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-notebooks.tgz -C ${TEMP_DIR}
-pytest ${TEMP_DIR}/tests/integration
+
+# Use eval here to evaluate quotes in pytest args before spaces
+# e.g. permit the following as two items:
+#   -k "not test_name"
+# instead of treating it like three items (`-k`, `"not`, and `test_name"`)
+eval pytest ${PYBATFISH_PYTEST_ARGS:-} ${TEMP_DIR}/tests/integration
