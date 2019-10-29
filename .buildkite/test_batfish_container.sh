@@ -54,6 +54,7 @@ BATFISH_CONTAINER=$(docker run -d --net=host batfish/batfish:${BATFISH_CONTAINER
 docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
   -v $ABS_SOURCE_DIR/tests/test_batfish_container.sh:/test.sh \
   --env PYBATFISH_PYTEST_ARGS="${PYBATFISH_PYTEST_ARGS:-}" \
+  --env bf_version="${bf_version}" \
   --entrypoint /bin/bash batfish/ci-base:latest /test.sh
 
 docker stop ${BATFISH_CONTAINER}
