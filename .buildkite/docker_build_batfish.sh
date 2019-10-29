@@ -29,8 +29,7 @@ docker build -f ${ABS_SOURCE_DIR}/batfish.dockerfile \
   --label "org.batfish.batfish-tag=${BF_TAG}" \
   --label "org.batfish.batfish-version=${BATFISH_VERSION_STRING-}" \
   --build-arg ASSETS=${ASSET_DIR} .
-echo BATFISH/BATFISH DOCKER IMAGE LABEL
-echo $(docker image inspect -f '{{ range $k, $v := .Config.Labels -}}{{ $k }}={{ $v }} {{ end -}}' batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER})
+
 if [ "${1-}" == "" ]; then
   # Upload the image to Docker Hub if no image file path is specified
   docker push batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}
