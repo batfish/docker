@@ -18,7 +18,7 @@ deactivate
 # Install from test PyPI
 python3 -m virtualenv testpypi
 . testpypi/bin/activate
-pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple pybatfish
+pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple pybatfish==${BATFISH_VERSION_STRING}
 
 # If we can successfully import something after installing from PyPI,
 # then assume the upload was successful

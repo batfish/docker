@@ -49,7 +49,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
         # Install from PyPI
         python3 -m virtualenv testpypi
         . testpypi/bin/activate
-        pip install pybatfish
+        pip install pybatfish==${BATFISH_VERSION_STRING}
 
         # If we can successfully import something after installing from PyPI,
         # then assume the upload was successful
