@@ -216,6 +216,7 @@ cat <<EOF
           volumes:
             - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
           environment:
+            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
             - "PYBF_TEST_PYPI_TOKEN=${PYBF_TEST_PYPI_TOKEN-}"
       - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
           download:
