@@ -4,8 +4,8 @@ LABEL vendor="The Batfish Open Source Project"
 
 ARG GOOGLE_JAVA_FORMAT_VERSION=1.7
 ARG JACOCO_VERSION=0.8.2
-ARG MAVEN_VERSION=3.6.0
-ARG BAZEL_VERSION=0.23.0
+ARG MAVEN_VERSION=3.6.2
+ARG BAZEL_VERSION=1.1.0
 ARG USERNAME=batfish
 ARG UID=2000
 
@@ -24,7 +24,6 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     net-tools \
     openjdk-8-jdk \
-    python-minimal \
     python3-dev \
     rsync \
     software-properties-common \
@@ -78,7 +77,7 @@ ENV PATH $PATH:/home/${USERNAME}/workdir/apache-maven-${MAVEN_VERSION}/bin:/home
 # Fetch all the current Maven and bazel dependencies
 RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
-&& mvn -f projects verify -DskipTests=false -Dmaven.javadoc.skip=false \
+&& mvn -f projects verify -DskipTests=false \
 && mvn -f projects dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:${GOOGLE_JAVA_FORMAT_VERSION}:jar:all-deps \
 && mvn -f projects dependency:get -Dartifact=org.jacoco:org.jacoco.cli:${JACOCO_VERSION}:jar:nodeps \
 && cd .. \
