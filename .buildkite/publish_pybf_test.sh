@@ -18,7 +18,21 @@ deactivate
 # Install from test PyPI
 python3 -m virtualenv testpypi
 . testpypi/bin/activate
-pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple pybatfish==${BATFISH_VERSION_STRING}
+
+# Max retries before giving up on installing from PyPI
+# Need retries because sometimes it takes a little while for newly uploaded package to propagate
+MAX_RETRIES=2
+COUNTER=0
+while ! pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple pybatfish==${BATFISH_VERSION_STRING}
+do
+  if [ $COUNTER -gt $MAX_RETRIES ]; then
+    echo "Could not install Pybf"
+    exit 1
+  fi
+  sleep 5
+  ((COUNTER+=1))
+done
+echo "Pybf installed"
 
 # If we can successfully import something after installing from PyPI,
 # then assume the upload was successful
