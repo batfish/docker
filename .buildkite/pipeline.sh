@@ -234,6 +234,7 @@ cat <<EOF
       Perform manual testing. Instructions at
       https://docs.google.com/document/d/15XWSdyHApnVbmZCg3FKpu6ree2HGDysmgYNFhbqTj1Q/
       Your build number is: ${BUILDKITE_BUILD_NUMBER}
+      Version string is: ${BATFISH_VERSION_STRING}
     fields:
       - select: "Artifact tag"
         key: "release-tag"
