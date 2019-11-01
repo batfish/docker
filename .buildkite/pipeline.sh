@@ -208,15 +208,12 @@ PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://te
 # PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
 
 while read pybf_tag; do
-echo "# processing ${pybf_tag}"
 # Convert tag from YYYY.M.D to YYYY-M-D and just drop tags that do not start with four digits (need || true; to avoid erroring when regex doesn't match)
 PARSED_TAG=$(echo ${pybf_tag} | { grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' || true; } | sed 's/\./-/g')
-echo "# parsed ${PARSED_TAG}"
 # Only consider tags that look like dates
 if [[ "${PARSED_TAG}" != "" ]]; then
 # Convert YYYY-M-D format into (comparable Unix time) timestamp
 TAG_TIMESTAMP=$(date -d "${PARSED_TAG}" +"%s")
-echo "# timestamp ${TAG_TIMESTAMP}"
 if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
 cat <<EOF
   - label: ":snake: ${pybf_tag} <-> :batfish: dev"
@@ -233,8 +230,6 @@ EOF
 fi
 fi
 done <<< "${PYBF_TAGS}"
-
-echo "# done w/ pybf"
 
 cat <<EOF
   - label: ":snake: prod <-> :batfish: dev"
