@@ -232,6 +232,19 @@ fi
 done <<< "${PYBF_TAGS}"
 
 cat <<EOF
+  - label: ":snake: prod <-> :batfish: dev"
+    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    command:
+      - ".buildkite/test_batfish_container.sh"
+    env:
+      # Skip notebook ref tests
+      PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
+${COMMON_STEP_ATTRIBUTES}
+      # Install specific version of Pybatfish from PyPI
+      PYBATFISH_VERSION: "pybatfish[dev]"
+EOF
+
+cat <<EOF
   - label: ":python: Test PyPI release"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
