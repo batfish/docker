@@ -8,7 +8,9 @@
 # instead of the default testing tag. (e.g. test-1234).
 # If env var PYBATFISH_PYTEST_ARGS is set, that is added as extra args
 # passed into pytest when running Pybatfish integration tests.
-# If env var PYBATFISH_VERSION is set (e.g. pybatfish[dev]==2019.11.01), that package is installed from PyPI instead of using the buildkite artifacts
+# If env var PYBATFISH_VERSION is set (e.g. pybatfish[dev]==2019.11.01),
+# that package is installed from PyPI instead of using the buildkite
+# artifacts
 
 set -euxo pipefail
 
