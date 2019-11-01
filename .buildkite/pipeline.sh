@@ -226,9 +226,9 @@ cat <<EOF
     env:
       # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
-${COMMON_STEP_ATTRIBUTES}
       # Install specific version of Pybatfish from PyPI
       PYBATFISH_VERSION: "pybatfish[dev]==${pybf_tag}"
+${COMMON_STEP_ATTRIBUTES}
 EOF
 fi
 fi
@@ -244,9 +244,9 @@ cat <<EOF
     env:
       # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
-${COMMON_STEP_ATTRIBUTES}
       # Install specific version of Pybatfish from PyPI
       PYBATFISH_VERSION: "pybatfish[dev]"
+${COMMON_STEP_ATTRIBUTES}
 EOF
 
 cat <<EOF
