@@ -8,6 +8,7 @@
 # instead of the default testing tag. (e.g. test-1234).
 # If env var PYBATFISH_PYTEST_ARGS is set, that is added as extra args
 # passed into pytest when running Pybatfish integration tests.
+# If env var PYBATFISH_VERSION is set (e.g. pybatfish[dev]==2019.11.01), that package is installed from PyPI instead of using the buildkite artifacts
 
 set -euxo pipefail
 
@@ -62,6 +63,7 @@ docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
   -v $ABS_SOURCE_DIR/tests/test_batfish_container.sh:/test.sh \
   --env PYBATFISH_PYTEST_ARGS="${PYBATFISH_PYTEST_ARGS:-}" \
   --env bf_version="${BATFISH_VERSION}" \
+  --env PYBATFISH_VERSION="${PYBATFISH_VERSION}" \
   --entrypoint /bin/bash batfish/ci-base:latest /test.sh
 
 docker stop ${BATFISH_CONTAINER}
