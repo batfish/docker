@@ -204,7 +204,7 @@ EOF
 
 # Get available Pybatfish versions from test PyPI for now (until it is on real PyPI)
 python -m pip install --user requests >/dev/null
-PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
+PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://test.pypi.org/pypi/pybatfish/json').json()['releases'].keys()))")
 # PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
 
 while read pybf_tag; do
