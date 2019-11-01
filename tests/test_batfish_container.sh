@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euox pipefail
 
-PYBF_VERSION=$(cat /assets/pybatfish-version.txt)
 MAX_BATFISH_STARTUP_WAIT=20
 
 # Setup conda so we can avoid permission issues setting up Python as non-root user
@@ -11,7 +10,15 @@ export PATH="$HOME/miniconda/bin:$PATH"
 conda create -y -n conda_env python=3.7
 source activate conda_env
 
-pip install /assets/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl[dev]
+# Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
+if [ "${PYBATFISH_VERSION-}" == "" ]; then
+    PYBF_VERSION=$(cat /assets/pybatfish-version.txt)
+    pip install /assets/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl[dev]
+else
+    # Install from test PyPI for now (until it is on real PyPI)
+    pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple ${PYBATFISH_VERSION}
+    # pip install ${PYBATFISH_VERSION}
+fi
 
 # Poll until we can connect to the container
 COUNTER=0
