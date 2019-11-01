@@ -208,9 +208,9 @@ PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://te
 # PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
 
 while read pybf_tag; do
-# Convert tag from YYYY.M.D to YYYY-M-D and just drop tags that do not start with four digits
 echo "# processing ${pybf_tag}"
-PARSED_TAG=$(echo ${pybf_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' | sed 's/\./-/g')
+# Convert tag from YYYY.M.D to YYYY-M-D and just drop tags that do not start with four digits (need || true; to avoid erroring when regex doesn't match)
+PARSED_TAG=$(echo ${pybf_tag} | { grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' || true; } | sed 's/\./-/g')
 echo "# parsed ${PARSED_TAG}"
 # Only consider tags that look like dates
 if [[ "${PARSED_TAG}" != "" ]]; then
