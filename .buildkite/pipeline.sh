@@ -289,7 +289,7 @@ cat <<EOF
         key: "artifacts-to-release"
         multiple: true
         options:
-          - label: "Pybf (note: does not automatically push to PyPI yet)"
+          - label: "Pybf"
             value: "pybf"
           - label: "Bf containers"
             value: "bf"
