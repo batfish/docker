@@ -32,7 +32,8 @@ if [ "${BUILDKITE_PIPELINE_ID}" == "${BATFISH_UPLOAD_PIPELINE}" ]; then
 COMMON_STEP_ATTRIBUTES=$(cat <<EOF
     agents:
       queue: 'open-source-default'
-EOF)
+EOF
+)
 fi
 
 cat <<EOF
