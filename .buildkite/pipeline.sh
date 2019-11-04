@@ -36,7 +36,6 @@ EOF
 )
 fi
 
-
 cat <<EOF
 steps:
 EOF
