@@ -16,8 +16,7 @@ if [ "${PYBATFISH_VERSION-}" == "" ]; then
     pip install /assets/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl[dev]
 else
     # Install from test PyPI for now (until it is on real PyPI)
-    pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple ${PYBATFISH_VERSION}
-    # pip install ${PYBATFISH_VERSION}
+    pip install ${PYBATFISH_VERSION}
 fi
 
 # Poll until we can connect to the container

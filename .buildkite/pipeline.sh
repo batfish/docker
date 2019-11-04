@@ -202,10 +202,9 @@ ${COMMON_STEP_ATTRIBUTES}
 ${COMMON_STEP_ATTRIBUTES}
 EOF
 
-# Get available Pybatfish versions from test PyPI for now (until it is on real PyPI)
+# Get available Pybatfish versions from PyPI
 python -m pip install --user requests >/dev/null
-PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://test.pypi.org/pypi/pybatfish/json').json()['releases'].keys()))")
-# PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
+PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
 
 while read pybf_tag; do
 # Convert tag from YYYY.M.D to YYYY-M-D and just drop tags that do not start with four digits (need || true; to avoid erroring when regex doesn't match)
@@ -290,7 +289,7 @@ cat <<EOF
         key: "artifacts-to-release"
         multiple: true
         options:
-          - label: "Pybf (note: does not automatically push to PyPI yet)"
+          - label: "Pybf"
             value: "pybf"
           - label: "Bf containers"
             value: "bf"
@@ -311,29 +310,28 @@ ${COMMON_STEP_ATTRIBUTES}
 EOF
 
 cat <<EOF
-### Pybatfish PyPI project does not exist yet, so can cannot automatically push yet
-#  - label: ":python::rocket: PyPI release"
-#    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
-#    command:
-#      - ".buildkite/publish_pybf.sh"
-#    agents:
-#      queue: 'open-source-default'
-#    plugins:
-#      - docker#${DOCKER_PLUGIN_VERSION}:
-#          image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
-#          always-pull: true
-#          mount-buildkite-agent: true
-#          mount-ssh-agent: true
-#          volumes:
-#            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
-#          environment:
-#            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
-#            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
-#            - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
-#            - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
-#      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
-#          download:
-#            - artifacts/pybatfish-tag.txt
-#            - artifacts/pybatfish-version.txt
-#            - artifacts/pybatfish-*.whl
+  - label: ":python::rocket: PyPI release"
+    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    command:
+      - ".buildkite/publish_pybf.sh"
+    agents:
+      queue: 'open-source-default'
+    plugins:
+      - docker#${DOCKER_PLUGIN_VERSION}:
+          image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
+          always-pull: true
+          mount-buildkite-agent: true
+          mount-ssh-agent: true
+          volumes:
+            - "${HOME}/.ssh/known_hosts:/home/batfish/.ssh/known_hosts"
+          environment:
+            - "BATFISH_VERSION_STRING=${BATFISH_VERSION_STRING}"
+            - "PYBF_PYPI_TOKEN=${PYBF_PYPI_TOKEN-}"
+            - "BATFISH_GITHUB_PYBATFISH_REF=${BATFISH_GITHUB_PYBATFISH_REF}"
+            - "BATFISH_GITHUB_PYBATFISH_REPO=${BATFISH_GITHUB_PYBATFISH_REPO}"
+      - artifacts#${ARTIFACTS_PLUGIN_VERSION}:
+          download:
+            - artifacts/pybatfish-tag.txt
+            - artifacts/pybatfish-version.txt
+            - artifacts/pybatfish-*.whl
 EOF
