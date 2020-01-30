@@ -32,9 +32,9 @@ echo "$(date) - connected to Batfish"
 
 echo Starting unit tests
 # Skip generating .pytest_cache
-pytest -p no:cacheprovider --ignore tests/integration tests
+pytest -p no:cacheprovider --ignore tests/integration --ignore docs tests
 echo Starting integration tests
-pytest -p no:cacheprovider tests/integration
+pytest -p no:cacheprovider --ignore docs tests/integration
 echo Done with tests
 # Remove pycache
 py3clean .
