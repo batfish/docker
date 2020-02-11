@@ -4,12 +4,13 @@ LABEL vendor="The Batfish Open Source Project"
 
 ARG GOOGLE_JAVA_FORMAT_VERSION=1.7
 ARG JACOCO_VERSION=0.8.2
-ARG MAVEN_VERSION=3.6.2
-ARG BAZEL_VERSION=1.1.0
+ARG MAVEN_VERSION=3.6.3
+ARG BAZELISK_VERSION=1.3.0
 ARG USERNAME=batfish
 ARG UID=2000
 
 # Set a Working Dir
+User root
 WORKDIR /root/workdir
 
 # Installing Java, python, z3 dependencies
@@ -43,6 +44,12 @@ RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/t
 && rm -r ~/.batfish_z3_cache \
 && rm install_z3.sh
 
+# Install bazelisk
+RUN wget https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-linux-amd64 \
+&&  install -m0755 bazelisk-linux-amd64 /usr/local/bin/bazelisk \
+&&  ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel \
+&&  rm bazelisk-linux-amd64
+
 ##### Switch to non-root-user
 
 RUN groupadd -g ${UID} ${USERNAME} \
@@ -55,12 +62,6 @@ WORKDIR /home/${USERNAME}/workdir
 # Create AWS-CLI virtualenv
 RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install awscli && deactivate
 
-# Install bazel
-RUN wget --no-verbose https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh -O install_bazel.sh \
-&& chmod +x install_bazel.sh \
-&& ./install_bazel.sh --user \
-&& rm -f install_bazel.sh
-
 # Install maven
 RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip \
 && unzip apache-maven-${MAVEN_VERSION}-bin.zip \
@@ -71,14 +72,16 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 # Set Java to obey cgroup limits
 ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1
 
-# Add Bazel and Maven to PATH
+# Add Maven to PATH
 ENV PATH $PATH:/home/${USERNAME}/workdir/apache-maven-${MAVEN_VERSION}/bin:/home/${USERNAME}/bin
 
-# Fetch all the current Maven and bazel dependencies
+# Fetch all the current Maven dependencies and bazel version
 RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && cd batfish \
 && mvn -f projects verify -DskipTests=false \
 && mvn -f projects dependency:get -Dartifact=com.google.googlejavaformat:google-java-format:${GOOGLE_JAVA_FORMAT_VERSION}:jar:all-deps \
 && mvn -f projects dependency:get -Dartifact=org.jacoco:org.jacoco.cli:${JACOCO_VERSION}:jar:nodeps \
+&& bazel version \
 && cd .. \
 && rm -rf batfish
+
