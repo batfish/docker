@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install pip and virtualenv
 RUN curl https://bootstrap.pypa.io/get-pip.py | python3 \
-&& python3 -m pip install virtualenv
+&& python3 -m pip install 'virtualenv==20.0.5'
 
 # Install Z3
 RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh \
@@ -60,7 +60,7 @@ USER ${USERNAME}
 WORKDIR /home/${USERNAME}/workdir
 
 # Create AWS-CLI virtualenv
-RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install awscli && deactivate
+RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install 'awscli==1.18.5' && deactivate
 
 # Install maven
 RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip \
@@ -84,4 +84,3 @@ RUN git clone --depth=1 --branch=master https://github.com/batfish/batfish \
 && bazel version \
 && cd .. \
 && rm -rf batfish
-

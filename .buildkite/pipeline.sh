@@ -204,7 +204,7 @@ ${COMMON_STEP_ATTRIBUTES}
 EOF
 
 # Get available Pybatfish versions from PyPI
-python -m pip install --user requests >/dev/null
+python -m pip install --user 'requests==2.23.0' >/dev/null
 PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
 
 while read pybf_tag; do

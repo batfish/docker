@@ -4,12 +4,12 @@ set -euox pipefail
 MAX_BATFISH_STARTUP_WAIT=20
 
 # Setup conda so we can avoid permission issues setting up Python as non-root user
-curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh
 bash conda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 conda create -y -n conda_env python=3.7
 source activate conda_env
-pip install 'pandas<1'
+pip install 'pandas==0.25.3'
 
 # Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
 if [ "${PYBATFISH_VERSION-}" == "" ]; then
