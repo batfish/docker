@@ -16,7 +16,7 @@ if echo "$ARTIFACTS_TO_RELEASE" | grep --quiet ^pybf$; then
 
     python3 -m virtualenv .venv
     . .venv/bin/activate
-    pip install twine
+    pip install 'twine==3.1.1'
     export TWINE_USERNAME="__token__"
 
     if [ "$RELEASE_TAG" == "test" ]; then

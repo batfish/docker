@@ -100,7 +100,7 @@ fi
 # Create virtual env + dependencies so we can build the wheel
 virtualenv -p python3 .env
 source .env/bin/activate
-pip install pytest wheel
+pip install 'pytest==5.3.5' 'wheel==0.34.2'
 python setup.py sdist bdist_wheel
 PYBATFISH_TAG=$(git rev-parse --short HEAD)
 PYBATFISH_VERSION=$(python setup.py --version)

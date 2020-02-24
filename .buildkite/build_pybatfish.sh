@@ -17,7 +17,7 @@ pushd ${PYBF_DIR}
   fi
   python3 -m virtualenv .venv
   source .venv/bin/activate
-  pip install setuptools
+  pip install 'setuptools==45.2.0'
   python setup.py bdist_wheel
   PYBF_VERSION=$(python setup.py --version)
 popd
