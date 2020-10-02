@@ -10,6 +10,8 @@ git clone --depth=1 --branch=${BATFISH_GITHUB_BATFISH_REF} ${BATFISH_GITHUB_BATF
 pushd ${BF_DIR}
   BATFISH_TAG=$(git rev-parse --short HEAD)
 popd
+# Update version and build jar
+mvn -f ${BF_DIR}/projects versions:set -DnewVersion=${BATFISH_VERSION_STRING}
 mvn -f ${BF_DIR}/projects package
 
 # Copy artifacts
