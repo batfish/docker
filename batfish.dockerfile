@@ -31,6 +31,7 @@ RUN bash install_z3.sh \
 # Batfish
 EXPOSE 9996-9997
 CMD ["java", \
+    "-XX:-UseCompressedOops", \
     "-XX:+UnlockExperimentalVMOptions", \
     "-XX:+UseCGroupMemoryLimitForHeap", \
     "-XX:MaxRAMFraction=1", \
