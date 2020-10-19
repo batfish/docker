@@ -69,8 +69,6 @@ RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSI
 
 # Setup JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
-# Set Java to obey cgroup limits
-ENV _JAVA_OPTIONS -XX:+UseContainerSupport -XX:MaxRAMPercentage=80
 
 # Add Maven to PATH
 ENV PATH $PATH:/home/${USERNAME}/workdir/apache-maven-${MAVEN_VERSION}/bin:/home/${USERNAME}/bin
