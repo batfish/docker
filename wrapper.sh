@@ -2,7 +2,7 @@
 # Copied from docker docs https://docs.docker.com/config/containers/multi-service_container/
 
 # Start Batfish
-java -XX:-UseCompressedOops -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 \
+java -XX:-UseCompressedOops -XX:+UseContainerSupport -XX:MaxRAMPercentage=80 \
   -cp allinone-bundle.jar org.batfish.allinone.Main \
   -runclient false \
   -loglevel warn \
