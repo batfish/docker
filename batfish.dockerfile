@@ -8,7 +8,7 @@ ARG ASSETS
 RUN mkdir -p /data
 RUN chmod a+rw /data
 COPY ${ASSETS} ./
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 ENV JAVA_LIBRARY_PATH /usr/lib
 ENV HOME /data
 
@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     binutils \
     libgomp1 \
     lsb-release \
-    openjdk-8-jre-headless \
+    openjdk-11-jre-headless \
     wget \
     zip \
     && apt-get clean \
@@ -32,9 +32,8 @@ RUN bash install_z3.sh \
 EXPOSE 9996-9997
 CMD ["java", \
     "-XX:-UseCompressedOops", \
-    "-XX:+UnlockExperimentalVMOptions", \
-    "-XX:+UseCGroupMemoryLimitForHeap", \
-    "-XX:MaxRAMFraction=1", \
+    "-XX:+UseContainerSupport", \
+    "-XX:MaxRAMPercentage=80", \
     "-cp", "allinone-bundle.jar", \
     "org.batfish.allinone.Main", \
     "-runclient", "false", \
