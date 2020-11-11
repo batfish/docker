@@ -9,7 +9,6 @@ bash conda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 conda create -y -n conda_env python=3.7
 source activate conda_env
-pip install 'pandas==0.25.3'
 
 # Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
 if [ "${PYBATFISH_VERSION-}" == "" ]; then
