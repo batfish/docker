@@ -13,8 +13,6 @@ apt-get install -y curl
 
 pushd pybatfish
 # Install test dependencies
-# Pre-install pandas
-pip3 install 'pandas<1'
 pip3 install dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl[dev]
 
 echo Waiting for batfish to start
