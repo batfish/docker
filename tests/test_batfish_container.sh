@@ -34,7 +34,6 @@ done
 echo "$(date) - connected to Batfish"
 
 TEMP_DIR=$(mktemp -d)
-tar xzf /assets/questions.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-tests.tgz -C ${TEMP_DIR}
 tar xzf /assets/pybatfish-notebooks.tgz -C ${TEMP_DIR}
 
