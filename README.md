@@ -1,26 +1,17 @@
 **Got questions, feedback, or feature requests? Join our community on [Slack!](https://join.slack.com/t/batfish-org/shared_invite/enQtMzA0Nzg2OTAzNzQ1LTUxOTJlY2YyNTVlNGQ3MTJkOTIwZTU2YjY3YzRjZWFiYzE4ODE5ODZiNjA4NGI5NTJhZmU2ZTllOTMwZDhjMzA)**
 
-# Batfish Docker Containers
+# Batfish Docker
 
 This repo has the source files to build `Batfish` and `allinone` docker containers that provide a quick way to start using Batfish.
 
-Follow the instructions in the [Batfish README](https://github.com/batfish/batfish/blob/master/README.md) to start using the container.
+Follow the [instructions on readthedocs to get started using Batfish](https://pybatfish.readthedocs.io/en/latest/getting_started.html).
 
+## Building and pushing Batfish artifacts
 
-## Upgrading the `Batfish` container
+This repo defines a couple buildkite pipelines, including an `upload` pipeline. The `upload` pipeline builds and tests candidate release artifacts: docker images and the Pybatfish wheel.
 
-```
-docker stop $(docker ps -f "ancestor=batfish/batfish" -q)
-docker pull batfish/batfish
-```
+This pipeline runs several cross-version tests: different versions of Batfish versus different versions of Pybatfish to ensure backward compatibility of new releases.  For example, the pipeline step `:snake: dev <-> :batfish: prod` tests the new Pybatfish Python wheel (dev) versus the most recent release of Batfish (prod). Each of these cross-version checks run the integration tests defined in the [Pybatfish repo](https://github.com/batfish/pybatfish).
 
-## Upgrading the `allinone` container
+### Fixing new-feature tests
 
-```
-docker stop $(docker ps -f "ancestor=batfish/allinone" -q)
-docker pull batfish/allinone
-```
-
-## Building and pushing containers
-
-If you are a developer of Batfish, see [dev instructions](https://docs.google.com/document/d/15XWSdyHApnVbmZCg3FKpu6ree2HGDysmgYNFhbqTj1Q) on how to build images and push them to Docker Hub.
+The most common cross-version test failure we see comes from adding tests for something not supported in old versions of Batfish or Pybatfish. In this case, the new integration test needs to have a minimum-version annotation ([see details in the Pybatfish developer readme, here](https://github.com/batfish/pybatfish/blob/master/README.dev.md#adding-tests)) attached in order to run the test to only on that version (or later) Batfish and Pybatfish.
