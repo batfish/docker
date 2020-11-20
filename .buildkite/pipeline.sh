@@ -139,15 +139,31 @@ ${COMMON_STEP_ATTRIBUTES}
 EOF
 
 
-###### End pre-commit-only steps and begin upload steps here
+###### Upload containers
 cat <<EOF
-  - label: ":arrow_up::docker: Upload test containers"
+  - label: ":arrow_up::docker: Upload Batfish container"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    key:
+      - bf-upload
     depends_on:
       - bf
-      - allinone
     command:
       - ".buildkite/push_test_image.sh batfish.tar batfish"
+    plugins:
+      - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
+          username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
+          password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
+${COMMON_STEP_ATTRIBUTES}
+EOF
+
+cat <<EOF
+  - label: ":arrow_up::docker: Upload Allinone container"
+    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    key:
+      - allinone-upload
+    depends_on:
+      - allinone
+    command:
       - ".buildkite/push_test_image.sh allinone.tar allinone"
     plugins:
       - docker-login#${DOCKER_LOGIN_PLUGIN_VERSION}:
@@ -198,7 +214,7 @@ cat <<EOF
 ${COMMON_STEP_ATTRIBUTES}
   - label: ":snake: dev <-> :batfish: dev"
     depends_on:
-      - bf
+      - bf-upload
       - pybf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
@@ -220,7 +236,7 @@ TAG_TIMESTAMP=$(date -d "${PARSED_TAG}" +"%s")
 if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
 cat <<EOF
   - label: ":snake: ${pybf_tag} <-> :batfish: dev"
-    depends_on: bf
+    depends_on: bf-upload
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
@@ -237,7 +253,7 @@ done <<< "${PYBF_TAGS}"
 
 cat <<EOF
   - label: ":snake: prod <-> :batfish: dev"
-    depends_on: bf
+    depends_on: bf-upload
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
