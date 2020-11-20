@@ -143,8 +143,7 @@ EOF
 cat <<EOF
   - label: ":arrow_up::docker: Upload Batfish container"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
-    key:
-      - bf-upload
+    key: bf-upload
     depends_on:
       - bf
     command:
@@ -159,8 +158,7 @@ EOF
 cat <<EOF
   - label: ":arrow_up::docker: Upload Allinone container"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
-    key:
-      - allinone-upload
+    key: allinone-upload
     depends_on:
       - allinone
     command:
