@@ -47,6 +47,7 @@ EOF
 
 cat <<EOF
   - label: ":java: Build batfish"
+    key: bf-jar
     command:
       - ".buildkite/build_batfish.sh"
     artifact_paths:
@@ -67,6 +68,7 @@ EOF
 cat <<EOF
   - label: ":ferris_wheel: Build pybatfish"
 ${COMMON_STEP_ATTRIBUTES}
+    key: pybf
     command:
       - ".buildkite/build_pybatfish.sh"
     artifact_paths:
@@ -93,13 +95,10 @@ cat <<EOF
 EOF
 fi
 
-###### WAIT between initial build and docker container build
-cat <<EOF
-  - wait
-EOF
-
 cat <<EOF
   - label: ":docker: Build Batfish container"
+    key: bf
+    depends_on: bf-jar
     command:
       - ".buildkite/docker_build_batfish.sh batfish.tar"
     env:
@@ -109,17 +108,19 @@ cat <<EOF
 ${COMMON_STEP_ATTRIBUTES}
 EOF
 
-###### WAIT between initial docker build and initial tests
-cat <<EOF
-  - wait
-EOF
-
 cat <<EOF
   - label: ":pytest: Test Batfish container w/ Pybatfish"
+    depends_on:
+      - bf
+      - pybf
     command:
       - ".buildkite/test_batfish_container.sh batfish.tar"
 ${COMMON_STEP_ATTRIBUTES}
   - label: ":docker: Build Allinone container"
+    key: allinone
+    depends_on:
+      - bf
+      - pybf
     command:
       - ".buildkite/docker_build_allinone.sh batfish.tar allinone.tar"
     artifact_paths:
@@ -127,13 +128,11 @@ ${COMMON_STEP_ATTRIBUTES}
 ${COMMON_STEP_ATTRIBUTES}
 EOF
 
-###### WAIT between allinone docker build and allinone tests
-cat <<EOF
-  - wait
-EOF
-
 cat <<EOF
   - label: ":pytest: Test Allinone container"
+    depends_on:
+      - allinone
+      - pybf
     command:
       - ".buildkite/test_allinone_container.sh allinone.tar"
 ${COMMON_STEP_ATTRIBUTES}
@@ -144,6 +143,9 @@ EOF
 cat <<EOF
   - label: ":arrow_up::docker: Upload test containers"
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    depends_on:
+      - bf
+      - allinone
     command:
       - ".buildkite/push_test_image.sh batfish.tar batfish"
       - ".buildkite/push_test_image.sh allinone.tar allinone"
@@ -152,11 +154,6 @@ cat <<EOF
           username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
           password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
 ${COMMON_STEP_ATTRIBUTES}
-EOF
-
-###### WAIT between container upload and final testing
-cat <<EOF
-  - wait
 EOF
 
 # Get (Unix time) timestamp for the oldest container we would test
@@ -173,6 +170,7 @@ TAG_TIMESTAMP=$(date -d $(echo ${bf_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0
 if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
 cat <<EOF
   - label: ":snake: dev <-> :batfish: ${bf_tag}"
+    depends_on: pybf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
@@ -189,6 +187,7 @@ done <<< "${DATE_TAGS}"
 
 cat <<EOF
   - label: ":snake: dev <-> :batfish: prod"
+    depends_on: pybf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
@@ -198,6 +197,9 @@ cat <<EOF
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
 ${COMMON_STEP_ATTRIBUTES}
   - label: ":snake: dev <-> :batfish: dev"
+    depends_on:
+      - bf
+      - pybf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
@@ -218,6 +220,7 @@ TAG_TIMESTAMP=$(date -d "${PARSED_TAG}" +"%s")
 if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
 cat <<EOF
   - label: ":snake: ${pybf_tag} <-> :batfish: dev"
+    depends_on: bf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
@@ -234,6 +237,7 @@ done <<< "${PYBF_TAGS}"
 
 cat <<EOF
   - label: ":snake: prod <-> :batfish: dev"
+    depends_on: bf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
@@ -247,6 +251,7 @@ EOF
 
 cat <<EOF
   - label: ":python: Test PyPI release"
+    depends_on: pybf
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/publish_pybf_test.sh"
@@ -269,6 +274,10 @@ cat <<EOF
 ${COMMON_STEP_ATTRIBUTES}
 EOF
 
+###### WAIT for all tests to let users unblock
+cat <<EOF
+  - wait
+EOF
 
 cat <<EOF
   - block: ":chrome::firefox::ie::safari::edge: Manual testing"
