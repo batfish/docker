@@ -7,7 +7,9 @@ MAX_BATFISH_STARTUP_WAIT=20
 curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh
 bash conda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
-conda create -y -n conda_env python=3.7
+# pip 20.3 has problems resolving dependencies correctly, so pin to last working version
+# See related resolver issue: https://github.com/pypa/pip/issues/9187
+conda create -y -n conda_env python=3.7 pip=20.2.4
 source activate conda_env
 
 # Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
