@@ -11,7 +11,7 @@ conda create -y -n conda_env python=3.7
 source activate conda_env
 
 # pip 20.3 has problems resolving dependencies correctly
-pip install 'pip<20.3'
+pip install 'pip!=20.3'
 
 # Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
 if [ "${PYBATFISH_VERSION-}" == "" ]; then
