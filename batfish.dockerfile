@@ -14,19 +14,9 @@ ENV HOME /data
 
 # Base package setup
 RUN apt-get update && apt-get install -y \
-    binutils \
-    libgomp1 \
-    lsb-release \
     openjdk-11-jre-headless \
-    wget \
-    zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
-
-# Z3
-ADD https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh .
-RUN bash install_z3.sh \
-    && rm -r ~/.batfish_z3_cache/
 
 # Batfish
 EXPOSE 9996-9997
