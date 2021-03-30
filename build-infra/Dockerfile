@@ -13,39 +13,29 @@ ARG UID=2000
 User root
 WORKDIR /root/workdir
 
-# Installing Java, python, z3 dependencies
+# Installing Java, python
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     binutils \
     ca-certificates \
     curl \
-    gcc \
     git \
     jq \
-    lsb-release \
     net-tools \
     openjdk-11-jdk \
-    python3-dev \
-    rsync \
+    python3-distutils \
     software-properties-common \
     unzip \
-    wget \
     zip \
 &&  rm -rf /var/lib/apt/lists/* \
 &&  apt-get clean
 
 # Install pip and virtualenv
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3 \
+RUN curl -L https://bootstrap.pypa.io/get-pip.py | python3 \
 && python3 -m pip install 'virtualenv==20.0.5'
 
-# Install Z3
-RUN wget --no-verbose https://raw.githubusercontent.com/batfish/batfish/master/tools/install_z3.sh \
-&& bash install_z3.sh \
-&& rm -r ~/.batfish_z3_cache \
-&& rm install_z3.sh
-
 # Install bazelisk
-RUN wget https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-linux-amd64 \
+RUN curl -L https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-linux-amd64 -o bazelisk-linux-amd64 \
 &&  install -m0755 bazelisk-linux-amd64 /usr/local/bin/bazelisk \
 &&  ln -s /usr/local/bin/bazelisk /usr/local/bin/bazel \
 &&  rm bazelisk-linux-amd64
@@ -63,7 +53,7 @@ WORKDIR /home/${USERNAME}/workdir
 RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install 'awscli==1.18.5' && deactivate
 
 # Install maven
-RUN wget --no-verbose https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip \
+RUN curl -L https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip -o apache-maven-${MAVEN_VERSION}-bin.zip \
 && unzip apache-maven-${MAVEN_VERSION}-bin.zip \
 && rm -f apache-maven-${MAVEN_VERSION}-bin.zip
 
