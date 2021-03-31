@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     net-tools \
     openjdk-11-jdk \
     python3-distutils \
+    rsync \
     software-properties-common \
     unzip \
     zip \
