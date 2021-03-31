@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     binutils \
     ca-certificates \
     curl \
+    gcc \
     git \
     jq \
     net-tools \
