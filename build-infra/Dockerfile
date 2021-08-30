@@ -55,7 +55,7 @@ WORKDIR /home/${USERNAME}/workdir
 RUN python3 -m virtualenv .venv-aws && . .venv-aws/bin/activate && python3 -m pip install 'awscli==1.18.5' && deactivate
 
 # Install maven
-RUN curl -L https://www-us.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip -o apache-maven-${MAVEN_VERSION}-bin.zip \
+RUN curl -L https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.zip -o apache-maven-${MAVEN_VERSION}-bin.zip \
 && unzip apache-maven-${MAVEN_VERSION}-bin.zip \
 && rm -f apache-maven-${MAVEN_VERSION}-bin.zip
 
