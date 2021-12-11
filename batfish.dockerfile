@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # ASSETS is the directory containing allinone-bundle.jar (the Batfish jar)
 # and questions/ directory (containing question templates to be loaded by Batfish)
