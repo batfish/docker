@@ -14,6 +14,7 @@ User root
 WORKDIR /root/workdir
 
 # Installing Java, python
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     binutils \
