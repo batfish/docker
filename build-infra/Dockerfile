@@ -1,5 +1,5 @@
 # Setting the parent image to ubuntu
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL vendor="The Batfish Open Source Project"
 
 ARG GOOGLE_JAVA_FORMAT_VERSION=1.10.0
