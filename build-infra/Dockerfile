@@ -1,10 +1,10 @@
 # Setting the parent image to ubuntu
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL vendor="The Batfish Open Source Project"
 
 ARG GOOGLE_JAVA_FORMAT_VERSION=1.10.0
 ARG JACOCO_VERSION=0.8.2
-ARG MAVEN_VERSION=3.8.3
+ARG MAVEN_VERSION=3.8.4
 ARG BAZELISK_VERSION=1.10.1
 ARG USERNAME=batfish
 ARG UID=2000
@@ -14,6 +14,7 @@ User root
 WORKDIR /root/workdir
 
 # Installing Java, python
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     binutils \
