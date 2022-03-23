@@ -13,8 +13,9 @@ ENV JAVA_LIBRARY_PATH /usr/lib
 ENV HOME /data
 
 # Base package setup
-RUN apt-get update && apt-get install -y \
-    openjdk-11-jre-headless \
+RUN apt-get update \
+    && apt-get install -y openjdk-11-jre-headless \
+    && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
 
