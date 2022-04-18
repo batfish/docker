@@ -82,6 +82,7 @@ echo "BATFISH_VERSION is $BATFISH_VERSION"
 popd
 cp batfish/projects/allinone/target/allinone-bundle-${BATFISH_VERSION}.jar ${ASSETS_FULL_PATH}/allinone-bundle.jar
 cp -r batfish/questions ${ASSETS_FULL_PATH}
+cp ${WORK_DIR}/log4j2.yaml ${ASSETS_FULL_PATH}
 popd
 docker build -f ${WORK_DIR}/batfish.dockerfile -t batfish/batfish:sha_${BATFISH_TAG} --build-arg ASSETS=${ASSETS_REL_PATH} .
 
