@@ -23,6 +23,7 @@ BF_TAG=$(cat ${ARTIFACT_DIR}/batfish-tag.txt)
 # Setup assets for the Batfish image
 tar xzf ${ARTIFACT_DIR}/questions.tgz -C ${ASSET_DIR}
 cp ${ARTIFACT_DIR}/allinone-bundle.jar ${ASSET_DIR}
+cp ${ABS_SOURCE_DIR}/log4j2.yaml ${ASSET_DIR}
 
 docker build -f ${ABS_SOURCE_DIR}/batfish.dockerfile \
   -t batfish/batfish:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} \
