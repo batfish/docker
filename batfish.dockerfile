@@ -26,6 +26,7 @@ CMD ["java", \
     "-XX:+UseContainerSupport", \
     "-XX:MaxRAMPercentage=80", \
     "-cp", "allinone-bundle.jar", \
+    "-Dlog4j.configurationFile=log4j2.yaml", \
     "org.batfish.allinone.Main", \
     "-runclient", "false", \
     "-loglevel", "warn", \
