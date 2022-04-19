@@ -3,6 +3,7 @@
 
 # Start Batfish
 java -XX:-UseCompressedOops -XX:+UseContainerSupport -XX:MaxRAMPercentage=80 \
+  -Dlog4j.configurationFile=log4j2.yaml \
   -cp allinone-bundle.jar org.batfish.allinone.Main \
   -runclient false \
   -loglevel warn \

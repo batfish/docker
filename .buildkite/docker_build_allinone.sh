@@ -39,6 +39,7 @@ tar xzf ${ARTIFACT_DIR}/pybatfish-notebooks.tgz -C ${TEMP_DIR}
 cp -r ${TEMP_DIR}/jupyter_notebooks/ ${ASSET_DIR}/notebooks/
 # Script that starts Batfish + Jupyter server
 cp ${ABS_SOURCE_DIR}/wrapper.sh ${ASSET_DIR}
+cp ${ABS_SOURCE_DIR}/log4j2.yaml ${ASSET_DIR}
 
 docker build -f ${ABS_SOURCE_DIR}/allinone.dockerfile \
   -t batfish/allinone:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} \
