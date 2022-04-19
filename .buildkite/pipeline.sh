@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+BUILDKITE_DIR="$(dirname "${BASH_SOURCE[0]}")"
+source "${BUILDKITE_DIR}/common_vars.sh"
+
 BATFISH_UPLOAD_PIPELINE="f283deec-7e26-4f46-b8c6-b95b0cc1d974"
 
 BATFISH_DOCKER_CI_BASE_IMAGE="${BATFISH_DOCKER_CI_BASE_IMAGE:-batfish/ci-base:5d92c2f-14e42dd2de}"
@@ -167,6 +170,29 @@ cat <<EOF
           username: ${DOCKER_LOGIN_PLUGIN_USERNAME}
           password-env: DOCKER_LOGIN_PLUGIN_PASSWORD
 ${COMMON_STEP_ATTRIBUTES}
+EOF
+
+cat <<EOF
+  - group: ":trivy::docker: Scan containers"
+    if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
+    depends_on:
+      - bf-upload
+      - allinone-upload
+    steps:
+      - name: "{{matrix.container}}"
+        command:
+          - "trivy image --ignore-unfixed --exit-code 1 --severity HIGH,CRITICAL batfish/{{matrix.container}}:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}"
+        plugins:
+          - docker#${DOCKER_PLUGIN_VERSION}:
+              image: "${BATFISH_DOCKER_CI_BASE_IMAGE}"
+              always-pull: true
+        agents:
+          queue: 'open-source-default'
+        matrix:
+          setup:
+            container:
+              - batfish
+              - allinone
 EOF
 
 # Get (Unix time) timestamp for the oldest container we would test
