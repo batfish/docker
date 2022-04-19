@@ -188,6 +188,11 @@ cat <<EOF
               always-pull: true
         agents:
           queue: 'open-source-default'
+        matrix:
+          setup:
+            container:
+              - batfish
+              - allinone
 EOF
 
 # Get (Unix time) timestamp for the oldest container we would test
