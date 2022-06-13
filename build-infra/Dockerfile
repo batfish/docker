@@ -4,11 +4,11 @@ LABEL vendor="The Batfish Open Source Project"
 
 ARG GOOGLE_JAVA_FORMAT_VERSION=1.15.0
 ARG JACOCO_VERSION=0.8.2
-ARG MAVEN_VERSION=3.8.5
+ARG MAVEN_VERSION=3.8.6
 ARG BAZELISK_VERSION=1.11.0
 ARG USERNAME=batfish
 ARG UID=2000
-ARG TRIVY_VERSION=0.24.4
+ARG TRIVY_VERSION=0.28.1
 
 # Set a Working Dir
 User root
@@ -31,6 +31,7 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     unzip \
     zip \
+&&  apt-get upgrade -y \
 &&  curl -L https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb -o trivy.deb \
 &&  dpkg -i trivy.deb \
 &&  rm trivy.deb \
