@@ -25,7 +25,10 @@ DOCKER_PLUGIN_VERSION="${DOCKER_PLUGIN_VERSION:-v3.3.0}"
 BATFISH_VERSION_STRING="${BATFISH_VERSION_STRING:-$(date +'%Y.%m.%d').${BUILDKITE_BUILD_NUMBER}}"
 
 # Only test Bf containers less than this many days old
-BATFISH_MAX_TEST_CONTAINER_AGE="${BATFISH_MAX_TEST_CONTAINER_AGE:-190}"
+BATFISH_MAX_TEST_CONTAINER_AGE="${BATFISH_MAX_TEST_CONTAINER_AGE:-90}"
+# Minimum number of releases to test
+BATFISH_MIN_RELEASE_TEST_COUNT=3
+PYBATFISH_MIN_RELEASE_TEST_COUNT=3
 
 # Attributes common to all command steps
 COMMON_STEP_ATTRIBUTES=
@@ -200,14 +203,17 @@ MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} d
 
 # Newline separated, double quoted container tags that contain '202', e.g. "2022.08.22.1234" or "test-1202"
 CONTAINER_TAGS="$(wget -q -O - 'https://hub.docker.com/v2/repositories/batfish/batfish/tags/?name=202&page_size=100' | grep -Po '(?<="name":)"[^"]*"')"
-# Get tags that start with dates (e.g. YYYY.M.D.# or YYYY.MM.DD) and remove double quotes
-DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?"' | sed 's/"//g')
+# Get tags that start with dates (e.g. YYYY.M.D.# or YYYY.MM.DD), remove double quotes, sort newest-first
+DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?"' | sed 's/"//g' | sort -r)
 
+# Keep track of how many versions we're testing
+count=0
 # Run integration tests on recent Batfish containers
 while read bf_tag; do
 # Convert YYYY.M.D format into (Unix time) timestamp that we can compare
 TAG_TIMESTAMP=$(date -d $(echo ${bf_tag} | grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' | sed 's/\./-/g') +"%s")
-if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
+if (( count < BATFISH_MIN_RELEASE_TEST_COUNT )) || [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
+count=$((count + 1))
 cat <<EOF
   - label: ":snake: dev <-> :batfish: ${bf_tag}"
     depends_on: pybf
@@ -248,8 +254,9 @@ EOF
 
 # Get available Pybatfish versions from PyPI
 python -m pip install --user 'requests==2.23.0' >/dev/null
-PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))")
-
+PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))" | sort -r)
+# Keep track of how many versions we're testing
+count=0
 while read pybf_tag; do
 # Convert tag from YYYY.M.D to YYYY-M-D and just drop tags that do not start with four digits (need || true; to avoid erroring when regex doesn't match)
 PARSED_TAG=$(echo ${pybf_tag} | { grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}' || true; } | sed 's/\./-/g')
@@ -257,7 +264,8 @@ PARSED_TAG=$(echo ${pybf_tag} | { grep -o '[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\
 if [[ "${PARSED_TAG}" != "" ]]; then
 # Convert YYYY-M-D format into (comparable Unix time) timestamp
 TAG_TIMESTAMP=$(date -d "${PARSED_TAG}" +"%s")
-if [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
+if (( count < PYBATFISH_MIN_RELEASE_TEST_COUNT )) || [[ ${MIN_TIMESTAMP} -le ${TAG_TIMESTAMP} ]]; then
+count=$((count + 1))
 cat <<EOF
   - label: ":snake: ${pybf_tag} <-> :batfish: dev"
     depends_on: bf-upload
