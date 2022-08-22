@@ -24,8 +24,8 @@ DOCKER_PLUGIN_VERSION="${DOCKER_PLUGIN_VERSION:-v3.3.0}"
 
 BATFISH_VERSION_STRING="${BATFISH_VERSION_STRING:-$(date +'%Y.%m.%d').${BUILDKITE_BUILD_NUMBER}}"
 
-# Test all Bf containers released in the last N days
-BATFISH_MAX_TEST_CONTAINER_AGE="${BATFISH_MAX_TEST_CONTAINER_AGE:-90}"
+# Test all Bf containers and Pybf wheels released in the last N days
+BATFISH_MAX_TEST_ARTIFACT_AGE="${BATFISH_MAX_TEST_ARTIFACT_AGE:-90}"
 # Minimum number of releases to test
 BATFISH_MIN_RELEASE_TEST_COUNT=3
 PYBATFISH_MIN_RELEASE_TEST_COUNT=3
@@ -199,7 +199,7 @@ cat <<EOF
 EOF
 
 # Get (Unix time) timestamp for the oldest container we would test
-MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} day" +%s)
+MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_ARTIFACT_AGE} day" +%s)
 
 # Newline separated, double quoted container tags that contain '202', e.g. "2022.08.22.1234" or "test-1202"
 CONTAINER_TAGS="$(wget -q -O - 'https://hub.docker.com/v2/repositories/batfish/batfish/tags/?name=202&page_size=100' | grep -Po '(?<="name":)"[^"]*"')"
