@@ -24,7 +24,7 @@ DOCKER_PLUGIN_VERSION="${DOCKER_PLUGIN_VERSION:-v3.3.0}"
 
 BATFISH_VERSION_STRING="${BATFISH_VERSION_STRING:-$(date +'%Y.%m.%d').${BUILDKITE_BUILD_NUMBER}}"
 
-# Only test Bf containers less than this many days old
+# Test all Bf containers released in the last N days
 BATFISH_MAX_TEST_CONTAINER_AGE="${BATFISH_MAX_TEST_CONTAINER_AGE:-90}"
 # Minimum number of releases to test
 BATFISH_MIN_RELEASE_TEST_COUNT=3
