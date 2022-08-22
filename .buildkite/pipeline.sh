@@ -198,8 +198,9 @@ EOF
 # Get (Unix time) timestamp for the oldest container we would test
 MIN_TIMESTAMP=$(date -d "$(date +%Y-%m-%d) - ${BATFISH_MAX_TEST_CONTAINER_AGE} day" +%s)
 
-CONTAINER_TAGS=$(wget -q -O - https://registry.hub.docker.com/v1/repositories/batfish/batfish/tags)
-# Get tags that start with dates (e.g. YYYY.M.D.# or YYYY.MM.DD)
+# Newline separated, double quoted container tags that contain '202', e.g. "2022.08.22.1234"
+CONTAINER_TAGS="$(wget -q -O - 'https://hub.docker.com/v2/repositories/batfish/batfish/tags/?name=202&page_size=100' | grep -Po '(?<="name":)"[^"]*"')"
+# Get tags that start with dates (e.g. YYYY.M.D.# or YYYY.MM.DD) and remote double quotes
 DATE_TAGS=$(echo "$CONTAINER_TAGS" | grep -o '"[0-9]\{4\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}\(\.[0-9]\+\)\?"' | sed 's/"//g')
 
 # Run integration tests on recent Batfish containers
