@@ -254,7 +254,12 @@ EOF
 
 # Get available Pybatfish versions from PyPI
 python -m pip install --user 'requests==2.23.0' >/dev/null
-PYBF_TAGS=$(python -c "import requests; print('\n'.join(requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()))" | sort -r)
+PYBF_TAGS=$(python -c "
+from datetime import datetime
+import requests
+releases = requests.get('https://pypi.python.org/pypi/pybatfish/json').json()['releases'].keys()
+print('\n'.join(sorted(releases, key=lambda x: datetime.strptime(x, '%Y.%m.%d.%f'), reverse=True)))
+")
 # Keep track of how many versions we're testing
 count=0
 while read pybf_tag; do
