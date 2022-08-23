@@ -3,6 +3,9 @@ set -euox pipefail
 
 MAX_BATFISH_STARTUP_WAIT=20
 
+echo "fs data of /tmp"
+df -h /tmp
+
 # Setup conda so we can avoid permission issues setting up Python as non-root user
 curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh
 bash conda.sh -b -p $HOME/miniconda

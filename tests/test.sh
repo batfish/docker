@@ -3,6 +3,9 @@ set -e
 
 MAX_BATFISH_STARTUP_WAIT=20
 
+echo "fs data of /tmp"
+df -h /tmp
+
 # Start both Jupyter and Batfish
 echo Starting wrapper
 sh wrapper.sh&
