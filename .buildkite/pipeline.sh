@@ -32,6 +32,11 @@ PYBATFISH_MIN_RELEASE_TEST_COUNT=3
 
 # Attributes common to all command steps
 COMMON_STEP_ATTRIBUTES=
+EPHEMERAL_STEP_ATTRIBUTES=$(cat <<EOF
+    agents:
+      queue: 'ephemeral'
+EOF
+)
 # Specify queue for upload builds
 if [ "${BUILDKITE_PIPELINE_ID}" == "${BATFISH_UPLOAD_PIPELINE}" ]; then
 COMMON_STEP_ATTRIBUTES=$(cat <<EOF
@@ -39,6 +44,8 @@ COMMON_STEP_ATTRIBUTES=$(cat <<EOF
       queue: 'open-source-default'
 EOF
 )
+# open-source-default is ephemeral already
+EPHEMERAL_STEP_ATTRIBUTES="${COMMON_STEP_ATTRIBUTES}"
 fi
 
 cat <<EOF
@@ -120,7 +127,7 @@ cat <<EOF
       - pybf
     command:
       - ".buildkite/test_batfish_container.sh batfish.tar"
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
   - label: ":docker: Build Allinone container"
     key: allinone
     depends_on:
@@ -140,7 +147,7 @@ cat <<EOF
       - pybf
     command:
       - ".buildkite/test_allinone_container.sh allinone.tar"
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
 EOF
 
 
@@ -226,7 +233,7 @@ cat <<EOF
       bf_version: ${bf_tag}
       # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
 EOF
 fi
 done <<< "${DATE_TAGS}"
@@ -241,7 +248,7 @@ cat <<EOF
       BATFISH_CONTAINER_TAG: latest
       # Skip notebook ref tests
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
   - label: ":snake: dev <-> :batfish: dev"
     depends_on:
       - bf-upload
@@ -249,7 +256,7 @@ ${COMMON_STEP_ATTRIBUTES}
     if: pipeline.id == "${BATFISH_UPLOAD_PIPELINE}"
     command:
       - ".buildkite/test_batfish_container.sh"
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
 EOF
 
 # Get available Pybatfish versions from PyPI
@@ -282,7 +289,7 @@ cat <<EOF
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
       # Install specific version of Pybatfish from PyPI
       PYBATFISH_VERSION: "pybatfish[dev]==${pybf_tag}"
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
 EOF
 fi
 fi
@@ -299,7 +306,7 @@ cat <<EOF
       PYBATFISH_PYTEST_ARGS: '-k "not test_notebook_output"'
       # Install specific version of Pybatfish from PyPI
       PYBATFISH_VERSION: "pybatfish[dev]"
-${COMMON_STEP_ATTRIBUTES}
+${EPHEMERAL_STEP_ATTRIBUTES}
 EOF
 
 cat <<EOF
