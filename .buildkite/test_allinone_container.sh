@@ -41,6 +41,7 @@ docker run -v ${ABS_SOURCE_DIR}/tests/test.sh:/test.sh:ro \
   -v ${TEMP_DIR}/questions/:/pybatfish/questions/ \
   -v ${ABS_ARTIFACT_DIR}/${PYBF_WHEEL}:/pybatfish/dist/${PYBF_WHEEL} \
   -e PYBATFISH_VERSION=${PYBF_VERSION} \
+  --memory=3328m \
   --entrypoint /bin/bash \
   batfish/allinone:${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER} \
   test.sh

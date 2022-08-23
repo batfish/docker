@@ -50,7 +50,7 @@ fi
 BATFISH_CONTAINER_TAG="${BATFISH_CONTAINER_TAG:-${TESTING_TAG}-${BUILDKITE_BUILD_NUMBER}}"
 
 # Use host network so Batfish is accessible at localhost from inside test container
-BATFISH_CONTAINER=$(docker run --memory=1280m -d --net=host batfish/batfish:${BATFISH_CONTAINER_TAG})
+BATFISH_CONTAINER=$(docker run --memory=2560m -d --net=host batfish/batfish:${BATFISH_CONTAINER_TAG})
 
 if [ "${bf_version-}" == "" ]; then
   # Pull batfish version from container label if none is supplied via env var
@@ -65,7 +65,7 @@ docker run --net=host -v $(pwd)/${ARTIFACT_DIR}:/assets/ \
   --env PYBATFISH_PYTEST_ARGS="${PYBATFISH_PYTEST_ARGS:-}" \
   --env bf_version="${BATFISH_VERSION}" \
   --env PYBATFISH_VERSION="${PYBATFISH_VERSION:-}" \
-  --memory=512m \
+  --memory=768m \
   --entrypoint /bin/bash batfish/ci-base:latest /test.sh
 
 docker stop ${BATFISH_CONTAINER}
