@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - spencer-github-action
 
 jobs:
   precommit:
