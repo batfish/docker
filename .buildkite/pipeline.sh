@@ -116,6 +116,7 @@ cat <<EOF
       - bf
       - pybf
     command:
+      - "df -h /tmp"
       - ".buildkite/test_batfish_container.sh batfish.tar"
 ${COMMON_STEP_ATTRIBUTES}
   - label: ":docker: Build Allinone container"
@@ -136,6 +137,7 @@ cat <<EOF
       - allinone
       - pybf
     command:
+      - "df -h /tmp"
       - ".buildkite/test_allinone_container.sh allinone.tar"
 ${COMMON_STEP_ATTRIBUTES}
 EOF
