@@ -13,7 +13,7 @@ apt-get install -y curl
 
 pushd pybatfish
 # Install test dependencies
-pip3 install dist/pybatfish-${PYBATFISH_VERSION}-py2.py3-none-any.whl[dev]
+pip3 install "$(ls dist/pybatfish-*-py2.py3-none-any.whl)[dev]"
 
 echo Waiting for batfish to start
 # Poll until we can connect to the coordinator
