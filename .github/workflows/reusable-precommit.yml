@@ -278,7 +278,7 @@ jobs:
       - name: Setup pybf
         run: pip install "$(ls pybatfish-*.whl)"[dev]
       - name: Wait for bf
-        run: .buildkite/wait_for_bf.sh
+        run: tests/wait_for_bf.sh
       - name: Run tests
         run: |
             TEMP_DIR=$(mktemp -d)
