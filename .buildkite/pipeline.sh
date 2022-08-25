@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+while true; do sleep 10; done
+
 BUILDKITE_DIR="$(dirname "${BASH_SOURCE[0]}")"
 source "${BUILDKITE_DIR}/common_vars.sh"
 
