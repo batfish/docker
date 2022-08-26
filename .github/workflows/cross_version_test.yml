@@ -4,9 +4,35 @@ on:
   push:
     branches:
       - master
+      - precommit-triggers
+  schedule:
+    - cron: '0 0,15,19 * * *'  # 8AM, 12PM, 5PM Pacific; daily
+  workflow_dispatch:
+    inputs:
+      batfish_repo:
+        description: "GitHub repo containing Batfish"
+        type: string
+        required: false
+        default: 'batfish/batfish'
+      batfish_ref:
+        description: "Batfish ref to build a container from"
+        type: string
+        required: false
+        default: 'master'
+      pybatfish_repo:
+        description: "GitHub repo containing Pybatfish"
+        type: string
+        required: false
+        default: 'batfish/pybatfish'
+      pybatfish_ref:
+        description: "Pybatfish ref to build a wheel from"
+        type: string
+        required: false
+        default: 'master'
 
 jobs:
   precommit:
+    if: github.event_name != 'workflow_dispatch'
     uses: ./.github/workflows/reusable-precommit.yml
     with:
       BATFISH_GITHUB_BATFISH_REPO: 'batfish/batfish'
@@ -14,6 +40,26 @@ jobs:
       BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
       BATFISH_GITHUB_PYBATFISH_REF: 'master'
   test:
+    if: github.event_name != 'workflow_dispatch'
+    needs: precommit
+    uses: ./.github/workflows/reusable-integration-tests.yml
+    with:
+      bf_version: ${{ needs.precommit.outputs.bf_version }}
+      bf_test_artifact_age: "90"
+      bf_min_release_test_count: "3"
+      pybf_min_release_test_count: "3"
+      run_cross_version_tests: true
+
+  precommit_manual_trigger:
+    if: github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-precommit.yml
+    with:
+      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo }}"
+      BATFISH_GITHUB_BATFISH_REF: "${{ github.event.inputs.batfish_ref }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
+  test_manual_trigger:
+    if: github.event_name == 'workflow_dispatch'
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
