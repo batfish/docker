@@ -39,7 +39,7 @@ jobs:
         run: python -m pip install 'requests==2.23.0'
       - id: set_versions
         run: |
-          # --pattern=202 filters container tags to those containing '202', e.g. "2022.08.22.1234" or "test-1202"
+          # --pattern=202 filters container tags to those containing "202", e.g. "2022.08.22.1234"
           DATE_TAGS="$(python get_docker_versions.py --image batfish/batfish --days=${{ inputs.bf_test_artifact_age }} --minimum=${{ inputs.bf_min_release_test_count }} --json-format --pattern=202)"
           echo "::set-output name=versions::$DATE_TAGS"
     outputs:

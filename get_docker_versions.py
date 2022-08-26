@@ -37,7 +37,7 @@ def parse(args: List[str]) -> argparse.Namespace:
     parser.add_argument('--image', type=str, required=True,
                         help='Name of the image on Docker Hub.')
     parser.add_argument('--pattern', type=str, default=None,
-                        help='Pattern for tag to match, to be considered as a relevant release. Must be in the format accepted by Docker Hub\'s REST APIs.')
+                        help='Pattern for tag to match, to be considered as a relevant release. Must be in the format accepted by Docker Hub\'s REST APIs. Note: additional filtering is done to include only release tags that look like dates e.g. 2022.08.26.1234')
     parser.add_argument('--json-format', action='store_true',
                         help='Print the output as a JSON list instead of newline separated list.')
     return parser.parse_args(args)
