@@ -44,7 +44,6 @@ jobs:
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
-      bf_version: ${{ needs.precommit.outputs.bf_version }}
       bf_test_artifact_age: "90"
       bf_min_release_test_count: "3"
       pybf_min_release_test_count: "3"
@@ -60,10 +59,9 @@ jobs:
       BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
   test_manual_trigger:
     if: github.event_name == 'workflow_dispatch'
-    needs: precommit
+    needs: precommit_manual_trigger
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
-      bf_version: ${{ needs.precommit.outputs.bf_version }}
       bf_test_artifact_age: "90"
       bf_min_release_test_count: "3"
       pybf_min_release_test_count: "3"
