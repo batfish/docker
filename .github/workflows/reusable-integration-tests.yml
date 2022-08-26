@@ -1,0 +1,159 @@
+name: Integration Tests (reusable; depends on precommit workflow running before this)
+on:
+  workflow_call:
+    inputs:
+      bf_version:
+        description: "Batfish version string (in the format YYYY.MM.DD.####)"
+        required: true
+        type: string
+      bf_test_artifact_age:
+        description: "Test all artifacts released in the last N days"
+        required: false
+        default: "90"
+        type: string
+      bf_min_release_test_count:
+        description: "Minimum number of Batfish releases to test (will look futher back than `bf_test_artifact_age` if needed)"
+        required: false
+        default: "3"
+        type: string
+      pybf_min_release_test_count:
+        description: "Minimum number of Pybatfish releases to test (will look futher back than `bf_test_artifact_age` if needed)"
+        required: false
+        default: "3"
+        type: string
+      run_cross_version_tests:
+        description: "Whether or not to run cross-version tests"
+        required: true
+        type: boolean
+
+jobs:
+  get_bf_versions:
+    runs-on: ubuntu-latest
+    if: inputs.run_cross_version_tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install requests
+        run: python -m pip install 'requests==2.23.0'
+      - id: set_versions
+        run: |
+          DATE_TAGS="$(python get_docker_versions.py --image batfish/batfish --days=${{ inputs.bf_test_artifact_age }} --minimum=${{ inputs.bf_min_release_test_count }} --json-format --pattern=202)"
+          echo "::set-output name=versions::$DATE_TAGS"
+    outputs:
+      versions: ${{ steps.set_versions.outputs.versions }}
+  get_pybf_versions:
+    runs-on: ubuntu-latest
+    if: inputs.run_cross_version_tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install requests
+        run: python -m pip install 'requests==2.23.0'
+      - id: set_versions
+        run: |
+          PYBF_TAGS="$(python get_pypi_versions.py --package pybatfish --days=${{ inputs.bf_test_artifact_age }} --minimum=${{ inputs.pybf_min_release_test_count }} --json-format)"
+          echo "::set-output name=versions::$PYBF_TAGS"
+    outputs:
+      versions: ${{ steps.set_versions.outputs.versions }}
+  bf_cross_version_tests:
+    runs-on: ubuntu-latest
+    if: inputs.run_cross_version_tests
+    needs:
+      - get_bf_versions
+    strategy:
+      matrix:
+        bf_version: ${{ fromJson(needs.get_bf_versions.outputs.versions) }}
+    services:
+      bf:
+        image: batfish/batfish:${{ matrix.bf_version }}
+        ports:
+          - 9997:9997
+          - 9996:9996
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download pybf whl
+        uses: actions/download-artifact@v3
+        with:
+          name: pybf_whl
+      - name: Download pybf tests
+        uses: actions/download-artifact@v3
+        with:
+          name: pybf_tests
+      - name: Download pybf notebooks
+        uses: actions/download-artifact@v3
+        with:
+          name: pybf_notebooks
+      - name: Download questions
+        uses: actions/download-artifact@v3
+        with:
+          name: bf_questions
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+      - name: Setup pybf
+        run: pip install "$(ls pybatfish-*.whl)"[dev]
+      - name: Wait for bf
+        run: tests/wait_for_bf.sh
+      - name: Run tests
+        run: |
+            TEMP_DIR=$(mktemp -d)
+            tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
+            tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+            pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
+  pybf_cross_version_tests:
+    runs-on: ubuntu-latest
+    if: inputs.run_cross_version_tests
+    needs:
+      - get_pybf_versions
+    strategy:
+      matrix:
+        pybf_version: ${{ fromJson(needs.get_pybf_versions.outputs.versions) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download bf image
+        uses: actions/download-artifact@v3
+        with:
+          name: bf_image
+      - name: Download pybf tests
+        uses: actions/download-artifact@v3
+        with:
+          name: pybf_tests
+      - name: Download pybf notebooks
+        uses: actions/download-artifact@v3
+        with:
+          name: pybf_notebooks
+      - name: Download questions
+        uses: actions/download-artifact@v3
+        with:
+          name: bf_questions
+      - name: Start bf
+        run: |
+          docker load --input bf.tar
+          docker run -d --net=host batfish/batfish:dev-${{ github.run_number }}
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.7
+      - name: Setup pybf
+        run: pip install "pybatfish[dev]==${{ matrix.pybf_version }}"
+      - name: Wait for bf
+        run: tests/wait_for_bf.sh
+      - name: Run tests
+        run: |
+            TEMP_DIR=$(mktemp -d)
+            tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
+            tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+            pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
+      - name: Stop bf
+        run: docker stop $(docker ps -q)
