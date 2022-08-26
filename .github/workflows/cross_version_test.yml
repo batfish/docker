@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - spencer-github-actions-tests2
 
 jobs:
   precommit:
