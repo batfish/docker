@@ -1,4 +1,4 @@
-name: Pre-commit
+name: Cross-Version Tests
 on:
   pull_request:
   push:
@@ -13,9 +13,12 @@ jobs:
       BATFISH_GITHUB_BATFISH_REF: 'master'
       BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
       BATFISH_GITHUB_PYBATFISH_REF: 'master'
-  tests:
+  test:
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
       bf_version: ${{ needs.precommit.outputs.bf_version }}
-      run_cross_version_tests: false
+      bf_test_artifact_age: "90"
+      bf_min_release_test_count: "3"
+      pybf_min_release_test_count: "3"
+      run_cross_version_tests: true
