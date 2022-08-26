@@ -2,6 +2,7 @@
 Filters based on requested minimum number of releases and release age."""
 import argparse
 from datetime import datetime, timedelta
+import sys
 from typing import List
 
 import requests
@@ -17,13 +18,14 @@ def get_relevant_releases(package: str, days: int, minimum: int) -> List[str]:
     }
     versions = sorted(dates.keys(), key=lambda r: dates.get(r), reverse=True)
     res = list()
+    threshold = datetime.now() - timedelta(days=days)
     for v in versions:
-        recent = dates.get(v) > datetime.now() - timedelta(days=days)
+        recent = dates.get(v) > threshold
         if recent or len(res) < minimum:
             res.append(v)
     return res
 
-if __name__ == "__main__":
+def parse(args: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Get PyPI versions for a date-versioned package, e.g. Pybatfish.')
     parser.add_argument('--days', type=int, default=90,
                         help='List all versions from the past N days.')
@@ -33,7 +35,10 @@ if __name__ == "__main__":
                         help='Name of the package as it appears on PyPI.')
     parser.add_argument('--json-format', action='store_true',
                         help='Print the output as a JSON list instead of newline separated list.')
-    args = parser.parse_args()
+    return parser.parse_args(args)
+
+if __name__ == "__main__":
+    args = parse(sys.argv[1:])
 
     releases = get_relevant_releases(args.package, args.days, args.minimum)
     if args.json_format:

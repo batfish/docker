@@ -3,6 +3,7 @@ Filters based on requested minimum number of releases and release age."""
 import argparse
 from datetime import datetime, timedelta
 import re
+import sys
 from typing import List, Optional
 
 import requests
@@ -20,13 +21,14 @@ def get_relevant_releases(image: str, days: int, minimum: int, pattern: Optional
     }
     versions = sorted(dates.keys(), key=lambda r: dates.get(r), reverse=True)
     res = list()
+    threshold = datetime.now() - timedelta(days=days)
     for v in versions:
-        recent = dates.get(v) > datetime.now() - timedelta(days=days)
+        recent = dates.get(v) > threshold
         if recent or len(res) < minimum:
             res.append(v)
     return res
 
-if __name__ == "__main__":
+def parse(args: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Get PyPI versions for a date-versioned package, e.g. Pybatfish.')
     parser.add_argument('--days', type=int, default=90,
                         help='List all versions from the past N days.')
@@ -38,7 +40,10 @@ if __name__ == "__main__":
                         help='Pattern for tag to match, to be considered as a relevant release. Must be in the format accepted by Docker Hub\'s REST APIs.')
     parser.add_argument('--json-format', action='store_true',
                         help='Print the output as a JSON list instead of newline separated list.')
-    args = parser.parse_args()
+    return parser.parse_args(args)
+
+if __name__ == "__main__":
+    args = parse(sys.argv[1:])
 
     releases = get_relevant_releases(args.image, args.days, args.minimum, args.pattern)
     if args.json_format:
