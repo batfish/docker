@@ -159,9 +159,6 @@ jobs:
         run: docker stop $(docker ps -q)
   bf_image_test:
     runs-on: ubuntu-latest
-    needs:
-      - bf_image_build
-      - pybf_build
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -207,9 +204,6 @@ jobs:
         run: docker stop $(docker ps -q)
   allinone_image_test:
     runs-on: ubuntu-latest
-    needs:
-      - allinone_image_build
-      - pybf_build
     steps:
       - name: Checkout
         uses: actions/checkout@v3
