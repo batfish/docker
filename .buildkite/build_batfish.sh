@@ -9,14 +9,13 @@ BF_DIR=$(mktemp -d)
 git clone --depth=1 --branch=${BATFISH_GITHUB_BATFISH_REF} ${BATFISH_GITHUB_BATFISH_REPO} ${BF_DIR}
 pushd ${BF_DIR}
   BATFISH_TAG=$(git rev-parse --short HEAD)
+  mvn -f projects/pom.xml versions:set -DnewVersion=${BATFISH_VERSION_STRING}
+  bazel build //projects/allinone:allinone_main_deploy.jar
 popd
-# Update version and build jar
-mvn -f ${BF_DIR}/projects versions:set -DnewVersion=${BATFISH_VERSION_STRING}
-mvn -f ${BF_DIR}/projects package
 
 # Copy artifacts
 # 1. The jar
-cp ${BF_DIR}/projects/allinone/target/allinone-bundle*.jar ${ARTIFACT_DIR}/allinone-bundle.jar
+cp ${BF_DIR}/bazel-bin/projects/allinone/allinone_main_deploy.jar ${ARTIFACT_DIR}/allinone-bundle.jar
 
 # 2. Questions from Batfish
 TMP_DIR=$(mktemp -d)
