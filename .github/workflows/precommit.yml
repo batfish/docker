@@ -13,3 +13,9 @@ jobs:
       BATFISH_GITHUB_BATFISH_REF: 'master'
       BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
       BATFISH_GITHUB_PYBATFISH_REF: 'master'
+  tests:
+    needs: precommit
+    uses: ./.github/workflows/reusable-integration-tests.yml
+    with:
+      bf_version: ${{ needs.precommit.outputs.bf_version }}
+      run_cross_version_tests: false
