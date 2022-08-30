@@ -19,5 +19,4 @@ jobs:
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
-      bf_version: ${{ needs.precommit.outputs.bf_version }}
       run_cross_version_tests: false
