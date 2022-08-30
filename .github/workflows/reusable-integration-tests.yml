@@ -2,10 +2,6 @@ name: Integration Tests (reusable; depends on precommit workflow running before 
 on:
   workflow_call:
     inputs:
-      bf_version:
-        description: "Batfish version string (in the format YYYY.MM.DD.####)"
-        required: true
-        type: string
       bf_test_artifact_age:
         description: "Test all artifacts released in the last N days"
         required: false
