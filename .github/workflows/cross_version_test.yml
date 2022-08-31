@@ -1,7 +1,11 @@
 name: Cross-Version Tests
 on:
   schedule:
-    - cron: '0 0,15,19 * * *'  # 8AM, 12PM, 5PM Pacific; daily
+    - cron: '0 0,19 * * *'  # 12PM, 5PM Pacific; daily
+    - cron: '0 15 * * *'    # 8AM Pacific; daily (separate trigger for uploading release candidate)
+  push:
+    branches:
+      - spencer-upload
   workflow_dispatch:
     inputs:
       batfish_repo:
@@ -39,10 +43,30 @@ jobs:
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
+      bf_version: ${{ needs.precommit.outputs.bf_version }}
       bf_test_artifact_age: "90"
       bf_min_release_test_count: "3"
       pybf_min_release_test_count: "3"
       run_cross_version_tests: true
+  upload:
+    if: github.event_name != 'workflow_dispatch'
+    needs:
+      - precommit
+      - test
+    uses: ./.github/workflows/reusable-upload.yml
+    with:
+      bf_version: ${{ needs.precommit.outputs.bf_version }}
+      # Consider each 8AM scheduled build as a release candidate
+      queue_prod_release: ${{ github.event.schedule == '0 15 * * *' }}
+      test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
+      # TODO remote the manual-test- prefix
+      release_tag: "manual-test-${{ needs.precommit.outputs.bf_version }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
+      BATFISH_GITHUB_PYBATFISH_REF: 'master'
+    secrets:
+      PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
+      PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
+      BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
 
   precommit_manual_trigger:
     if: github.event_name == 'workflow_dispatch'
@@ -57,7 +81,26 @@ jobs:
     needs: precommit_manual_trigger
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
+      bf_version: ${{ needs.precommit_manual_trigger.outputs.bf_version }}
       bf_test_artifact_age: "90"
       bf_min_release_test_count: "3"
       pybf_min_release_test_count: "3"
       run_cross_version_tests: true
+  upload_manual_trigger:
+    if: github.event_name == 'workflow_dispatch'
+    needs:
+      - precommit_manual_trigger
+      - test_manual_trigger
+    uses: ./.github/workflows/reusable-upload.yml
+    with:
+      bf_version: ${{ needs.precommit_manual_trigger.outputs.bf_version }}
+      queue_prod_release: true
+      test_tag: "test-${{ needs.precommit_manual_trigger.outputs.bf_version }}"
+      # TODO remote the manual-test- prefix
+      release_tag: "manual-test-${{ needs.precommit_manual_trigger.outputs.bf_version }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
+    secrets:
+      PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
+      PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
+      BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
