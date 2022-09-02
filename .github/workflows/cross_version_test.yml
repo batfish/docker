@@ -61,8 +61,6 @@ jobs:
       test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
       # TODO remote the manual-test- prefix
       release_tag: "manual-test-${{ needs.precommit.outputs.bf_version }}"
-      BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
-      BATFISH_GITHUB_PYBATFISH_REF: 'master'
     secrets:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
@@ -99,6 +97,7 @@ jobs:
       test_tag: "test-${{ needs.precommit_manual_trigger.outputs.bf_version }}"
       # TODO remote the manual-test- prefix
       release_tag: "manual-test-${{ needs.precommit_manual_trigger.outputs.bf_version }}"
+      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo }}"
       BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
       BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
     secrets:
