@@ -177,7 +177,7 @@ jobs:
           git config user.name "open-source-buildkitebot"
           git config user.email "open-source-buildkitebot@intentionet.com"
           git commit -am "Prepare for release ${{ inputs.bf_version }}: Updating version number"
-          git push https://${{ OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}@github.com/batfish/pybatfish.git "$BRANCH_NAME"
+          git push https://${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}@github.com/batfish/pybatfish.git "$BRANCH_NAME"
       # TODO run these steps to actually publish the artifact
       # - name: Publish to PyPI
       #   uses: pypa/gh-action-pypi-publish@release/v1
