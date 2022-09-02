@@ -53,7 +53,7 @@ jobs:
     uses: ./.github/workflows/reusable-upload.yml
     with:
       bf_version: ${{ needs.precommit.outputs.bf_version }}
-      # Consider each 8AM scheduled build as a release candidate
+      # Consider each 8AM Pacific scheduled build as a release candidate
       queue_prod_release: ${{ github.event.schedule == '0 15 * * *' }}
       test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
       # TODO remote the manual-test- prefix
