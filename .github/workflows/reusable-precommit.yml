@@ -26,34 +26,17 @@ on:
       bf_version:
         description: "Batfish version string (in the format YYYY.MM.DD.####)"
         value: ${{ jobs.bf_version.outputs.bf_version }}
-      ymd:
-        description: "Year, month, and date string; separated by hyphens (e.g. 2022-08-22)"
-        value: ${{ jobs.get_date.outputs.ymd }}
-      ymd_dotted:
-        description: "Year, month, and date string; separated by periods (e.g. 2022.08.22)"
-        value: ${{ jobs.get_date.outputs.ymd_dotted }}
 
 jobs:
-  get_date:
+  bf_version:
     runs-on: ubuntu-latest
     steps:
-      - name: Get date string
-        id: date
-        run: echo "::set-output name=ymd::$(date +'%Y-%m-%d')"
       - name: Get dotted date string
         id: date_dotted
         run: echo "::set-output name=ymd_dotted::$(date +'%Y.%m.%d')"
-    outputs:
-      ymd: ${{ steps.date.outputs.ymd }}
-      ymd_dotted: ${{ steps.date_dotted.outputs.ymd_dotted }}
-  bf_version:
-    runs-on: ubuntu-latest
-    needs:
-      - get_date
-    steps:
       - name: Get Batfish version string
         id: get_version
-        run: echo "::set-output name=bf_version::${{ needs.get_date.outputs.ymd_dotted }}.${{ github.run_number }}"
+        run: echo "::set-output name=bf_version::${{ steps.date_dotted.outputs.ymd_dotted }}.${{ github.run_number }}"
     outputs:
       bf_version: ${{ steps.get_version.outputs.bf_version }}
   bf_build:
@@ -62,6 +45,9 @@ jobs:
       - bf_version
       - get_date
     steps:
+      - name: Get date
+        id: date
+        run: echo "::set-output name=ymd::$(date +'%Y-%m-%d')"
       - name: Checkout Docker repo
         uses: actions/checkout@v3
       - name: Checkout Batfish repo
@@ -74,7 +60,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: "~/.m2/repository"
-          key: ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-build-${{ needs.get_date.outputs.ymd }}
+          key: ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-build-${{ steps.date.outputs.ymd }}
           restore-keys: |
             ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-build-
             ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-
