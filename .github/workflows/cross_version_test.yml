@@ -27,6 +27,7 @@ on:
         default: 'master'
 
 jobs:
+  # Initial checks and build artifacts
   precommit:
     if: github.event_name != 'workflow_dispatch'
     uses: ./.github/workflows/reusable-precommit.yml
@@ -35,6 +36,7 @@ jobs:
       BATFISH_GITHUB_BATFISH_REF: 'master'
       BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
       BATFISH_GITHUB_PYBATFISH_REF: 'master'
+  # Integration tests
   test:
     if: github.event_name != 'workflow_dispatch'
     needs: precommit
@@ -45,6 +47,7 @@ jobs:
       bf_min_release_test_count: "3"
       pybf_min_release_test_count: "3"
       run_cross_version_tests: true
+  # Push public artifacts
   upload:
     if: github.event_name != 'workflow_dispatch'
     needs:
@@ -64,6 +67,7 @@ jobs:
       BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
       OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}
 
+  # Initial checks and build artifacts
   precommit_manual_trigger:
     if: github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/reusable-precommit.yml
@@ -72,6 +76,7 @@ jobs:
       BATFISH_GITHUB_BATFISH_REF: "${{ github.event.inputs.batfish_ref }}"
       BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
       BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
+  # Integration tests
   test_manual_trigger:
     if: github.event_name == 'workflow_dispatch'
     needs: precommit_manual_trigger
@@ -82,6 +87,7 @@ jobs:
       bf_min_release_test_count: "3"
       pybf_min_release_test_count: "3"
       run_cross_version_tests: true
+  # Push public artifacts
   upload_manual_trigger:
     if: github.event_name == 'workflow_dispatch'
     needs:
