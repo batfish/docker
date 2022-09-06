@@ -2,6 +2,10 @@ name: Integration Tests (reusable; depends on precommit workflow running before 
 on:
   workflow_call:
     inputs:
+      bf_version:
+        description: "Batfish version string (in the format YYYY.MM.DD.####)"
+        required: true
+        type: string
       bf_test_artifact_age:
         description: "Test all artifacts released in the last N days"
         required: false
@@ -130,7 +134,7 @@ jobs:
       - name: Start bf
         run: |
           docker load --input bf.tar
-          docker run -d --net=host batfish/batfish:dev-${{ github.run_number }}
+          docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
@@ -173,7 +177,7 @@ jobs:
       - name: Start bf
         run: |
           docker load --input bf.tar
-          docker run -d --net=host batfish/batfish:dev-${{ github.run_number }}
+          docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
@@ -235,5 +239,5 @@ jobs:
             -v ${TEMP_DIR}/questions/:/pybatfish/questions/ \
             -v ${TEMP_DIR}/${PYBF_WHEEL}:/pybatfish/dist/${PYBF_WHEEL} \
             --entrypoint /bin/bash \
-            batfish/allinone:dev-${{ github.run_number }} \
+            batfish/allinone:test-${{ inputs.bf_version }} \
             test.sh
