@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - precommit-drop-date-step
   schedule:
     - cron: '0 0,19 * * *'  # 12PM and 5PM Pacific; daily
 
