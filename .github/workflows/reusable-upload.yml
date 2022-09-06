@@ -146,8 +146,8 @@ jobs:
           docker tag "batfish/batfish:${TEST_TAG}" "batfish/batfish:${RELEASE_TAG}"
           docker tag "batfish/batfish:${TEST_TAG}" "batfish/batfish:latest"
           echo placeholder for pushing "batfish/batfish:${RELEASE_TAG}" and "batfish/batfish:latest"
-          # TODO uncomment these
-          #docker push "batfish/batfish:${RELEASE_TAG}"
+          docker push "batfish/batfish:${RELEASE_TAG}"
+          # TODO uncomment this
           #docker push "batfish/batfish:latest"
       - name: Upload Allinone image
         run: |
@@ -158,8 +158,8 @@ jobs:
           docker tag "batfish/allinone:${TEST_TAG}" "batfish/allinone:${RELEASE_TAG}"
           docker tag "batfish/allinone:${TEST_TAG}" "batfish/allinone:latest"
           echo placeholder for pushing "batfish/allinone:${RELEASE_TAG}" and "batfish/allinone:latest"
-          # TODO uncomment these
-          #docker push "batfish/allinone:${RELEASE_TAG}"
+          docker push "batfish/allinone:${RELEASE_TAG}"
+          # TODO uncomment this
           #docker push "batfish/allinone:latest"
   prod_whl_upload:
     if: inputs.queue_prod_release && inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
