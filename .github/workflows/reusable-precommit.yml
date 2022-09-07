@@ -55,6 +55,20 @@ jobs:
           repository: "${{ inputs.BATFISH_GITHUB_BATFISH_REPO }}"
           path: batfish
           ref: "${{ inputs.BATFISH_GITHUB_BATFISH_REF }}"
+      - name: Bazelisk cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.cache/bazelisk"
+          key: ${{runner.os}}-bazelisk-${{ hashFiles('batfish/.bazelversion') }}
+      - name: Bazel cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.cache/bazel"
+          key: ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-${{ steps.date.outputs.ymd }}
+          restore-keys: |
+            ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-test-
+            ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-
+            ${{runner.os}}-bazel-build-
       - name: Maven cache
         uses: actions/cache@v3
         with:
@@ -70,9 +84,11 @@ jobs:
           java-version: '11'
       - name: Build JAR
         run: |
-          mvn -B -f batfish/projects versions:set -DnewVersion=${{ needs.bf_version.outputs.bf_version }}
-          mvn -B -f batfish/projects package
-          cp batfish/projects/allinone/target/allinone-bundle*.jar allinone-bundle.jar
+          pushd batfish
+          mvn -B -f projects/pom.xml versions:set -DnewVersion=${{ needs.bf_version.outputs.bf_version }}
+          bazel build //projects/allinone:allinone_main_deploy.jar
+          popd
+          cp batfish/bazel-bin/projects/allinone/allinone_main_deploy.jar allinone-bundle.jar
       - name: Questions tar
         run: |
           TMP_DIR=$(mktemp -d)
