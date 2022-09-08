@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Get Build ID
         id: get_build_id
-        run: echo "::set-output name=build_id::$(date +'%Y.%m.%d').${{ github.run_number }}"
+        run: echo "::set-output name=build_id::$(TZ=America/Los_Angeles date +'%Y.%m.%d').${{ github.run_number }}"
       - name: Checkout Batfish repo
         uses: actions/checkout@v3
         with:
@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Get date
         id: date
-        run: echo "::set-output name=ymd::$(date +'%Y-%m-%d')"
+        run: echo "::set-output name=ymd::$(TZ=America/Los_Angeles date +'%Y-%m-%d')"
       - name: Checkout Docker repo
         uses: actions/checkout@v3
       - name: Checkout Batfish repo
