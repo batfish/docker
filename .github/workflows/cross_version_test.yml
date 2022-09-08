@@ -29,16 +29,14 @@ on:
 jobs:
   # Initial checks and build artifacts
   precommit:
-    if: github.event_name != 'workflow_dispatch'
     uses: ./.github/workflows/reusable-precommit.yml
     with:
-      BATFISH_GITHUB_BATFISH_REPO: 'batfish/batfish'
-      BATFISH_GITHUB_BATFISH_REF: 'master'
-      BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
-      BATFISH_GITHUB_PYBATFISH_REF: 'master'
+      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo || 'batfish/batfish' }}"
+      BATFISH_GITHUB_BATFISH_REF: "${{ github.event.inputs.batfish_ref || 'master' }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo || 'batfish/pybatfish' }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref || 'master' }}"
   # Integration tests
   test:
-    if: github.event_name != 'workflow_dispatch'
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml
     with:
@@ -49,58 +47,19 @@ jobs:
       run_cross_version_tests: true
   # Push public artifacts
   upload:
-    if: github.event_name != 'workflow_dispatch'
     needs:
       - precommit
       - test
     uses: ./.github/workflows/reusable-upload.yml
     with:
       bf_version: ${{ needs.precommit.outputs.bf_version }}
-      # Consider each 8AM Pacific scheduled build as a release candidate
-      queue_prod_release: ${{ github.event.schedule == '0 15 * * *' }}
+      # Consider manual builds or 8AM Pacific scheduled builds as a release candidate
+      queue_prod_release: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * *' }}
       test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
       release_tag: "${{ needs.precommit.outputs.bf_version }}"
-    secrets:
-      PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
-      PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
-      BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
-      OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}
-
-  # Initial checks and build artifacts
-  precommit_manual_trigger:
-    if: github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/reusable-precommit.yml
-    with:
-      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo }}"
-      BATFISH_GITHUB_BATFISH_REF: "${{ github.event.inputs.batfish_ref }}"
-      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
-      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
-  # Integration tests
-  test_manual_trigger:
-    if: github.event_name == 'workflow_dispatch'
-    needs: precommit_manual_trigger
-    uses: ./.github/workflows/reusable-integration-tests.yml
-    with:
-      bf_version: ${{ needs.precommit_manual_trigger.outputs.bf_version }}
-      bf_test_artifact_age: "90"
-      bf_min_release_test_count: "3"
-      pybf_min_release_test_count: "3"
-      run_cross_version_tests: true
-  # Push public artifacts
-  upload_manual_trigger:
-    if: github.event_name == 'workflow_dispatch'
-    needs:
-      - precommit_manual_trigger
-      - test_manual_trigger
-    uses: ./.github/workflows/reusable-upload.yml
-    with:
-      bf_version: ${{ needs.precommit_manual_trigger.outputs.bf_version }}
-      queue_prod_release: true
-      test_tag: "test-${{ needs.precommit_manual_trigger.outputs.bf_version }}"
-      release_tag: "${{ needs.precommit_manual_trigger.outputs.bf_version }}"
-      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo }}"
-      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
-      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
+      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo || 'batfish/batfish' }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo || 'batfish/pybatfish' }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref || 'master' }}"
     secrets:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
