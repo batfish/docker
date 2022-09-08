@@ -60,6 +60,9 @@ jobs:
       queue_prod_release: ${{ github.event.schedule == '0 15 * * *' }}
       test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
       release_tag: "${{ needs.precommit.outputs.bf_version }}"
+      BATFISH_GITHUB_BATFISH_REPO: "${{ needs.precommit.inputs.BATFISH_GITHUB_BATFISH_REPO }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ needs.precommit.inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ needs.precommit.outputs.pybatfish_resolved_sha }}"
     secrets:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
@@ -98,9 +101,9 @@ jobs:
       queue_prod_release: true
       test_tag: "test-${{ needs.precommit_manual_trigger.outputs.bf_version }}"
       release_tag: "${{ needs.precommit_manual_trigger.outputs.bf_version }}"
-      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo }}"
-      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo }}"
-      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref }}"
+      BATFISH_GITHUB_BATFISH_REPO: "${{ needs.precommit_manual_trigger.inputs.BATFISH_GITHUB_BATFISH_REPO }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ needs.precommit_manual_trigger.inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ needs.precommit_manual_trigger.outputs.pybatfish_resolved_sha }}"
     secrets:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
