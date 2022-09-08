@@ -26,6 +26,12 @@ on:
       bf_version:
         description: "Batfish version string (in the format YYYY.MM.DD.####)"
         value: ${{ jobs.bf_version.outputs.bf_version }}
+      batfish_resolved_sha:
+        description: "The resolved Batfish SHA at which the release was built"
+        value: ${{ jobs.bf_version.outputs.bf_resolved_sha }}
+      pybatfish_resolved_sha:
+        description: "The resolved pybatfish SHA at which the release was built"
+        value: ${{ jobs.bf_version.outputs.pybf_resolved_sha }}
 
 jobs:
   bf_version:
