@@ -1,8 +1,5 @@
 name: Cross-Version Tests and Upload
 on:
-  push:
-    branches:
-      - gha-consolidate-upload
   schedule:
     - cron: '0 0,19 * * *'  # 12PM, 5PM Pacific; daily
     - cron: '0 15 * * *'    # 8AM Pacific; daily (separate trigger for uploading release candidate)
