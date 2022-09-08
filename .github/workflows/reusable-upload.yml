@@ -20,18 +20,15 @@ on:
         type: string
       BATFISH_GITHUB_BATFISH_REPO:
         description: 'Git repo containing Batfish'
-        required: false
-        default: 'batfish/batfish'
+        required: true
         type: string
       BATFISH_GITHUB_PYBATFISH_REPO:
         description: 'Git repo containing Pybatfish'
-        required: false
-        default: 'batfish/pybatfish'
+        required: true
         type: string
       BATFISH_GITHUB_PYBATFISH_REF:
         description: 'Git ref for Pybatfish version to release'
-        required: false
-        default: 'master'
+        required: true
         type: string
     secrets:
       # Only needed when `queue_prod_release` is true
