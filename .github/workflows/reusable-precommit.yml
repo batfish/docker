@@ -29,16 +29,42 @@ on:
 
 jobs:
   bf_version:
+    name: Setup Build Metadata
     runs-on: ubuntu-latest
     steps:
-      - name: Get dotted date string
-        id: date_dotted
-        run: echo "::set-output name=ymd_dotted::$(date +'%Y.%m.%d')"
-      - name: Get Batfish version string
-        id: get_version
-        run: echo "::set-output name=bf_version::${{ steps.date_dotted.outputs.ymd_dotted }}.${{ github.run_number }}"
+      - name: Get Build ID
+        id: get_build_id
+        run: echo "::set-output name=build_id::$(date +'%Y.%m.%d').${{ github.run_number }}"
+      - name: Checkout Batfish repo
+        uses: actions/checkout@v3
+        with:
+          repository: "${{ inputs.BATFISH_GITHUB_BATFISH_REPO }}"
+          path: batfish
+          ref: "${{ inputs.BATFISH_GITHUB_BATFISH_REF }}"
+      - name: Get Batfish SHA
+        id: get_bf_sha
+        run: |
+          cd batfish
+          echo "::set-output name=batfish_sha::$(git rev-parse --short HEAD)"
+          echo "::set-output name=batfish_resolved_sha::$(git rev-parse HEAD)"
+      - name: Checkout pybatfish repo
+        uses: actions/checkout@v3
+        with:
+          repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
+          path: pybatfish
+          ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
+      - name: Get pybatfish SHA
+        id: get_pybf_sha
+        run: |
+          cd pybatfish
+          echo "::set-output name=pybatfish_sha::$(git rev-parse --short HEAD)"
+          echo "::set-output name=pybatfish_resolved_sha::$(git rev-parse HEAD)"
     outputs:
-      bf_version: ${{ steps.get_version.outputs.bf_version }}
+      bf_version: ${{ steps.get_build_id.outputs.build_id }}
+      bf_sha: ${{ steps.get_bf_sha.outputs.batfish_sha }}
+      bf_resolved_sha: ${{ steps.get_bf_sha.outputs.batfish_resolved_sha }}
+      pybf_sha: ${{ steps.get_pybf_sha.outputs.pybatfish_sha }}
+      pybf_resolved_sha: ${{ steps.get_pybf_sha.outputs.pybatfish_resolved_sha }}
   bf_build:
     runs-on: ubuntu-latest
     needs:
@@ -54,7 +80,7 @@ jobs:
         with:
           repository: "${{ inputs.BATFISH_GITHUB_BATFISH_REPO }}"
           path: batfish
-          ref: "${{ inputs.BATFISH_GITHUB_BATFISH_REF }}"
+          ref: "${{ needs.bf_version.outputs.bf_resolved_sha }}"
       - name: Bazelisk cache
         uses: actions/cache@v3
         with:
@@ -117,7 +143,7 @@ jobs:
         with:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
-          ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
+          ref: "${{ needs.bf_version.outputs.pybf_resolved_sha }}"
       - name: Update version number
         run: |
           cd pybatfish
@@ -182,6 +208,9 @@ jobs:
           file: batfish.dockerfile
           build-args: ASSETS=./assets
           tags: batfish/batfish:test-${{ needs.bf_version.outputs.bf_version }}
+          labels: |
+            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
+            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
           outputs: type=docker,dest=/tmp/bf.tar
           context: .
       - name: Upload docker image
@@ -235,6 +264,11 @@ jobs:
           file: allinone.dockerfile
           build-args: ASSETS=./assets
           tags: batfish/allinone:test-${{ needs.bf_version.outputs.bf_version }}
+          labels: |
+            org.batfish.allinone-tag=${{ needs.bf_version.outputs.bf_sha }}_${{ needs.bf_version.outputs.pybf_sha }}
+            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
+            org.batfish.pybatfish-tag=${{ needs.bf_version.outputs.pybf_sha }}
+            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
           outputs: type=docker,dest=/tmp/allinone.tar
           context: .
       - name: Upload docker image
