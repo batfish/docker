@@ -95,15 +95,6 @@ jobs:
             ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-test-
             ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-
             ${{runner.os}}-bazel-build-
-      - name: Maven cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.m2/repository"
-          key: ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-build-${{ steps.date.outputs.ymd }}
-          restore-keys: |
-            ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-build-
-            ${{runner.os}}-maven-${{ hashFiles('**/pom.xml') }}-
-            ${{runner.os}}-maven-
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -111,10 +102,12 @@ jobs:
       - name: Build JAR
         run: |
           pushd batfish
-          mvn -B -f projects/pom.xml versions:set -DnewVersion=${{ needs.bf_version.outputs.bf_version }}
+          echo -n "${{ needs.bf_version.outputs.bf_version }}" > projects/VERSION
           bazel build //projects/allinone:allinone_main_deploy.jar
           popd
           cp batfish/bazel-bin/projects/allinone/allinone_main_deploy.jar allinone-bundle.jar
+          java -jar allinone-bundle.jar -version
+          java -jar allinone-bundle.jar -version | grep "Batfish version: ${{ needs.bf_version.outputs.bf_version }}"
       - name: Questions tar
         run: |
           TMP_DIR=$(mktemp -d)
