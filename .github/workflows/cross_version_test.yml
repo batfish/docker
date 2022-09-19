@@ -1,30 +1,30 @@
 name: Cross-Version Tests and Upload
 on:
   schedule:
-    - cron: '0 0,19 * * *'  # 12PM, 5PM Pacific; daily
-    - cron: '0 15 * * *'    # 8AM Pacific; daily (separate trigger for uploading release candidate)
+    - cron: "0 0,19 * * *" # 12PM, 5PM Pacific; daily
+    - cron: "0 15 * * *" # 8AM Pacific; daily (separate trigger for uploading release candidate)
   workflow_dispatch:
     inputs:
       batfish_repo:
         description: "GitHub repo containing Batfish"
         type: string
         required: false
-        default: 'batfish/batfish'
+        default: "batfish/batfish"
       batfish_ref:
         description: "Batfish ref to build a container from"
         type: string
         required: false
-        default: 'master'
+        default: "master"
       pybatfish_repo:
         description: "GitHub repo containing Pybatfish"
         type: string
         required: false
-        default: 'batfish/pybatfish'
+        default: "batfish/pybatfish"
       pybatfish_ref:
         description: "Pybatfish ref to build a wheel from"
         type: string
         required: false
-        default: 'master'
+        default: "master"
 
 jobs:
   # Initial checks and build artifacts
@@ -57,9 +57,9 @@ jobs:
       queue_prod_release: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * *' }}
       test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
       release_tag: "${{ needs.precommit.outputs.bf_version }}"
-      BATFISH_GITHUB_BATFISH_REPO: "${{ github.event.inputs.batfish_repo || 'batfish/batfish' }}"
-      BATFISH_GITHUB_PYBATFISH_REPO: "${{ github.event.inputs.pybatfish_repo || 'batfish/pybatfish' }}"
-      BATFISH_GITHUB_PYBATFISH_REF: "${{ github.event.inputs.pybatfish_ref || 'master' }}"
+      BATFISH_GITHUB_BATFISH_REPO: "${{ needs.precommit.outputs.batfish_repo }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ needs.precommit.outputs.pybatfish_repo }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ needs.precommit.outputs.pybatfish_resolved_sha }}"
     secrets:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}

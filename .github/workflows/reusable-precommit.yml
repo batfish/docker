@@ -3,29 +3,37 @@ on:
   workflow_call:
     inputs:
       BATFISH_GITHUB_BATFISH_REPO:
-        description: 'Git repo containing Batfish'
-        required: false
-        default: 'batfish/batfish'
+        description: "Git repo containing Batfish"
+        required: true
         type: string
       BATFISH_GITHUB_BATFISH_REF:
-        description: 'Git ref for Batfish version to release'
-        required: false
-        default: 'master'
+        description: "Git ref for Batfish version to release"
+        required: true
         type: string
       BATFISH_GITHUB_PYBATFISH_REPO:
-        description: 'Git repo containing Pybatfish'
-        required: false
-        default: 'batfish/pybatfish'
+        description: "Git repo containing Pybatfish"
+        required: true
         type: string
       BATFISH_GITHUB_PYBATFISH_REF:
-        description: 'Git ref for Pybatfish version to release'
-        required: false
-        default: 'master'
+        description: "Git ref for Pybatfish version to release"
+        required: true
         type: string
     outputs:
       bf_version:
         description: "Batfish version string (in the format YYYY.MM.DD.####)"
         value: ${{ jobs.bf_version.outputs.bf_version }}
+      batfish_repo:
+        description: "Batfish repository used for this pre-commit"
+        value: ${{ inputs.BATFISH_GITHUB_BATFISH_REPO }}
+      batfish_resolved_sha:
+        description: "The resolved Batfish SHA at which the release was built"
+        value: ${{ jobs.bf_version.outputs.bf_resolved_sha }}
+      pybatfish_repo:
+        description: "Pybatfish repository used for this pre-commit"
+        value: ${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}
+      pybatfish_resolved_sha:
+        description: "The resolved pybatfish SHA at which the release was built"
+        value: ${{ jobs.bf_version.outputs.pybf_resolved_sha }}
 
 jobs:
   bf_version:
@@ -97,8 +105,8 @@ jobs:
             ${{runner.os}}-bazel-build-
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
+          distribution: "temurin"
+          java-version: "11"
       - name: Build JAR
         run: |
           pushd batfish
