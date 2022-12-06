@@ -13,19 +13,28 @@ def get_relevant_releases(image: str, days: int, minimum: int, pattern: Optional
 
     Tries to return at least `minimum` releases, including all releases younger than the specified number of `days` old. Only considers tags containing the specified pattern."""
     name_filter = f"&name={pattern}" if pattern else ""
-    releases = requests.get(f'https://hub.docker.com/v2/repositories/{image}/tags/?page_size=100{name_filter}').json()['results']
-    # Dict of release version to release datetime
-    dates = {
-        r['name']: datetime.strptime(r['last_updated'], "%Y-%m-%dT%H:%M:%S.%fZ") for r in releases
-        if re.match('\d{4}\.\d{2}\.\d{2}\.\d+', r['name'])
-    }
-    versions = sorted(dates.keys(), key=lambda r: dates.get(r), reverse=True)
+    url = f'https://hub.docker.com/v2/repositories/{image}/tags/?page_size=100{name_filter}'
     res = list()
-    threshold = datetime.now() - timedelta(days=days)
-    for v in versions:
-        recent = dates.get(v) > threshold
-        if recent or len(res) < minimum:
-            res.append(v)
+    while True:
+        resp_json = requests.get(url).json()
+        releases = resp_json['results']
+        # Dict of release version to release datetime
+        dates = {
+            r['name']: datetime.strptime(r['last_updated'], "%Y-%m-%dT%H:%M:%S.%fZ") for r in releases
+            if re.match('\d{4}\.\d{2}\.\d{2}\.\d+', r['name'])
+        }
+        versions = sorted(dates.keys(), key=lambda r: dates.get(r), reverse=True)
+        threshold = datetime.now() - timedelta(days=days)
+        for v in versions:
+            recent = dates.get(v) > threshold
+            if recent or len(res) < minimum:
+                res.append(v)
+        if len(res) >= minimum:
+            break
+        if not 'next' in resp_json:
+            break
+        url = resp_json['next']
+
     return res
 
 def parse(args: List[str]) -> argparse.Namespace:

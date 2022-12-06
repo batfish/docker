@@ -15,7 +15,7 @@ source activate conda_env
 # Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
 if [ "${PYBATFISH_VERSION-}" == "" ]; then
     PYBF_VERSION=$(cat /assets/pybatfish-version.txt)
-    pip install /assets/pybatfish-${PYBF_VERSION}-py2.py3-none-any.whl[dev]
+    pip install /assets/pybatfish-${PYBF_VERSION}-py3-none-any.whl[dev]
 else
     # Install from test PyPI for now (until it is on real PyPI)
     pip install ${PYBATFISH_VERSION}
