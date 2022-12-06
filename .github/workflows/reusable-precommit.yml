@@ -157,8 +157,8 @@ jobs:
       - name: Build wheel
         run: |
           cd pybatfish
-          pip install wheel 'setuptools==45.2.0'
-          python setup.py bdist_wheel
+          pip install --upgrade setuptools wheel build
+          python -m build
       - name: Tar tests and notebooks
         run: |
           tar -czf pybatfish-tests.tgz -C pybatfish tests
@@ -167,7 +167,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pybf_whl
-          path: pybatfish/dist/pybatfish*.whl
+          path: pybatfish/dist/*
       - name: Upload tests
         uses: actions/upload-artifact@v3
         with:

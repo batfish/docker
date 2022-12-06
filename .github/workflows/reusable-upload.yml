@@ -85,10 +85,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: pybf_whl
-      - name: Prep whl
-        run: |
-          mkdir dist
-          mv pybatfish*.whl dist/
+          path: dist
       - name: Publish to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
