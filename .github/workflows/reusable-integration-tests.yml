@@ -19,7 +19,7 @@ on:
       pybf_min_release_test_count:
         description: "Minimum number of Pybatfish releases to test (will look futher back than `bf_test_artifact_age` if needed)"
         required: false
-        default: "3"
+        default: "1" # todo: increment back to 3 once we make more releases that do not require removed APIs
         type: string
       run_cross_version_tests:
         description: "Whether or not to run cross-version tests"
