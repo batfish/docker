@@ -139,7 +139,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Setup pybf
-        run: pip install "pybatfish[dev]==${{ matrix.pybf_version }}"
+        run: pip install "pybatfish[dev]==${{ matrix.pybf_version }}" "urllib3<2"
       - name: Wait for bf
         run: tests/wait_for_bf.sh
       - name: Run tests
