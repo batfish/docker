@@ -20,7 +20,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
 
 # Batfish
-EXPOSE 9996-9997
+EXPOSE 9996
 CMD ["java", \
     "-XX:-UseCompressedOops", \
     "-XX:+UseContainerSupport", \
