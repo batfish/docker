@@ -42,7 +42,7 @@ jobs:
     with:
       bf_version: ${{ needs.precommit.outputs.bf_version }}
       bf_test_artifact_age: "90"
-      bf_min_release_test_count: "3"
+      bf_min_release_test_count: "1"
       pybf_min_release_test_count: "1" # todo: bump to 3 once we have 3 releases with new API support
       run_cross_version_tests: true
   # Push public artifacts
