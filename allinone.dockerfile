@@ -8,9 +8,9 @@ ARG ASSETS
 RUN mkdir -p /data
 RUN chmod a+rw /data
 COPY ${ASSETS} ./
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
-ENV JAVA_LIBRARY_PATH /usr/lib
-ENV HOME /data
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+ENV JAVA_LIBRARY_PATH=/usr/lib
+ENV HOME=/data
 
 COPY ${ASSETS} ./
 RUN chmod a+x wrapper.sh
