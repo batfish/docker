@@ -5,16 +5,16 @@ on:
     branches:
       - master
   schedule:
-    - cron: '0 0,19 * * *'  # 12PM and 5PM Pacific; daily
+    - cron: "0 0,19 * * *" # 12PM and 5PM Pacific; daily
 
 jobs:
   precommit:
     uses: ./.github/workflows/reusable-precommit.yml
     with:
-      BATFISH_GITHUB_BATFISH_REPO: 'batfish/batfish'
-      BATFISH_GITHUB_BATFISH_REF: 'master'
-      BATFISH_GITHUB_PYBATFISH_REPO: 'batfish/pybatfish'
-      BATFISH_GITHUB_PYBATFISH_REF: 'master'
+      BATFISH_GITHUB_BATFISH_REPO: "batfish/batfish"
+      BATFISH_GITHUB_BATFISH_REF: "master"
+      BATFISH_GITHUB_PYBATFISH_REPO: "batfish/pybatfish"
+      BATFISH_GITHUB_PYBATFISH_REF: "master"
   tests:
     needs: precommit
     uses: ./.github/workflows/reusable-integration-tests.yml

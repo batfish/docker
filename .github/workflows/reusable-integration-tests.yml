@@ -101,12 +101,12 @@ jobs:
         run: tests/wait_for_bf.sh
       - name: Run tests
         run: |
-            TEMP_DIR=$(mktemp -d)
-            tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
-            tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
-            pushd ${TEMP_DIR}
-            pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
-            popd
+          TEMP_DIR=$(mktemp -d)
+          tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
+          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+          pushd ${TEMP_DIR}
+          pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
+          popd
   pybf_cross_version_tests:
     runs-on: ubuntu-latest
     if: inputs.run_cross_version_tests
@@ -146,12 +146,12 @@ jobs:
         run: tests/wait_for_bf.sh
       - name: Run tests
         run: |
-            TEMP_DIR=$(mktemp -d)
-            tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
-            tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
-            pushd ${TEMP_DIR}
-            pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
-            popd
+          TEMP_DIR=$(mktemp -d)
+          tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
+          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+          pushd ${TEMP_DIR}
+          pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
+          popd
       - name: Stop bf
         run: docker stop $(docker ps -q)
   bf_image_test:
@@ -191,12 +191,12 @@ jobs:
         run: tests/wait_for_bf.sh
       - name: Run tests
         run: |
-            TEMP_DIR=$(mktemp -d)
-            tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
-            tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
-            pushd ${TEMP_DIR}
-            pytest "${TEMP_DIR}/tests/integration"
-            popd
+          TEMP_DIR=$(mktemp -d)
+          tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
+          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+          pushd ${TEMP_DIR}
+          pytest "${TEMP_DIR}/tests/integration"
+          popd
       - name: Stop bf
         run: docker stop $(docker ps -q)
   allinone_image_test:
