@@ -178,48 +178,7 @@ jobs:
         with:
           name: pybf_notebooks
           path: pybatfish-notebooks.tgz
-  bf_image_build:
-    runs-on: ubuntu-latest
-    needs:
-      - bf_build
-      - bf_version
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Download jar
-        uses: actions/download-artifact@v3
-        with:
-          name: bf_jar
-      - name: Download questions
-        uses: actions/download-artifact@v3
-        with:
-          name: bf_questions
-      - name: Setup assets
-        run: |
-          mkdir assets
-          tar xzf questions.tgz -C assets
-          cp allinone-bundle.jar assets
-          cp log4j2.yaml assets
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build
-        uses: docker/build-push-action@v3
-        with:
-          push: false
-          file: batfish.dockerfile
-          build-args: ASSETS=./assets
-          tags: batfish/batfish:test-${{ needs.bf_version.outputs.bf_version }}
-          labels: |
-            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
-            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
-          outputs: type=docker,dest=/tmp/bf.tar
-          context: .
-      - name: Upload docker image
-        uses: actions/upload-artifact@v3
-        with:
-          name: bf_image
-          path: /tmp/bf.tar
-  allinone_image_build:
+  image_build:
     runs-on: ubuntu-latest
     needs:
       - bf_build
@@ -236,6 +195,31 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: bf_questions
+      - name: Setup Batfish image assets
+        run: |
+          mkdir assets
+          tar xzf questions.tgz -C assets
+          cp allinone-bundle.jar assets
+          cp log4j2.yaml assets
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build Batfish image
+        uses: docker/build-push-action@v3
+        with:
+          push: false
+          file: batfish.dockerfile
+          build-args: ASSETS=./assets
+          tags: batfish/batfish:test-${{ needs.bf_version.outputs.bf_version }}
+          labels: |
+            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
+            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
+          outputs: type=docker,dest=/tmp/bf.tar
+          context: .
+      - name: Upload docker image
+        uses: actions/upload-artifact@v3
+        with:
+          name: bf_image
+          path: /tmp/bf.tar
       - name: Download pybf whl
         uses: actions/download-artifact@v3
         with:
@@ -244,21 +228,15 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: pybf_notebooks
-      - name: Setup assets
+      - name: Setup Allinone image assets
         run: |
-          mkdir assets
-          tar xzf questions.tgz -C assets
-          cp allinone-bundle.jar assets
-          cp log4j2.yaml assets
           cp pybatfish-*.whl assets
           TEMP_DIR=$(mktemp -d)
           tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
           cp -r ${TEMP_DIR}/jupyter_notebooks/ assets/notebooks/
           # Script that starts Batfish + Jupyter server
           cp wrapper.sh assets
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build
+      - name: Build allinone image
         uses: docker/build-push-action@v3
         with:
           push: false
