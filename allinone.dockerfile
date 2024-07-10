@@ -12,14 +12,15 @@ RUN apt-get update \
     && apt-get install -y \
        python3 \
        python3-pip \
+       python3-wheel \
     && apt-get upgrade -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 install --upgrade pip
+    && rm -rf /var/lib/apt/lists/*
 
 # Pybatfish + Jupyter
 EXPOSE 8888
-RUN pip3 install $(ls pybatfish-*.whl) \
+RUN pip3 install --break-system-packages \
+    $(ls pybatfish-*.whl) \
     attrdict \
     jupyter \
     matplotlib \
