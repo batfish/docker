@@ -31,8 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run_cross_version_tests
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Install requests
@@ -48,8 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run_cross_version_tests
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Install requests
@@ -75,7 +75,7 @@ jobs:
           - 9997:9997
           - 9996:9996
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download pybf whl
         uses: actions/download-artifact@v3
         with:
@@ -92,7 +92,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: bf_questions
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Setup pybf
@@ -116,7 +116,7 @@ jobs:
       matrix:
         pybf_version: ${{ fromJson(needs.get_pybf_versions.outputs.versions) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download bf image
         uses: actions/download-artifact@v3
         with:
@@ -137,7 +137,7 @@ jobs:
         run: |
           docker load --input bf.tar
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Setup pybf
@@ -157,7 +157,7 @@ jobs:
   bf_image_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download bf image
         uses: actions/download-artifact@v3
         with:
@@ -182,7 +182,7 @@ jobs:
         run: |
           docker load --input bf.tar
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Setup pybf
@@ -202,7 +202,7 @@ jobs:
   allinone_image_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download allinone image
         uses: actions/download-artifact@v3
         with:
@@ -223,7 +223,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: bf_questions
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Setup pybf

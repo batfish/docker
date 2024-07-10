@@ -44,7 +44,7 @@ jobs:
         id: get_build_id
         run: echo "::set-output name=build_id::$(TZ=America/Los_Angeles date +'%Y.%m.%d').${{ github.run_number }}"
       - name: Checkout Batfish repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "${{ inputs.BATFISH_GITHUB_BATFISH_REPO }}"
           path: batfish
@@ -56,7 +56,7 @@ jobs:
           echo "::set-output name=batfish_sha::$(git rev-parse --short HEAD)"
           echo "::set-output name=batfish_resolved_sha::$(git rev-parse HEAD)"
       - name: Checkout pybatfish repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
@@ -82,20 +82,20 @@ jobs:
         id: date
         run: echo "::set-output name=ymd::$(TZ=America/Los_Angeles date +'%Y-%m-%d')"
       - name: Checkout Docker repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout Batfish repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "${{ inputs.BATFISH_GITHUB_BATFISH_REPO }}"
           path: batfish
           ref: "${{ needs.bf_version.outputs.bf_resolved_sha }}"
       - name: Bazelisk cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: "~/.cache/bazelisk"
           key: ${{runner.os}}-bazelisk-${{ hashFiles('batfish/.bazelversion') }}
       - name: Bazel cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: "~/.cache/bazel"
           key: ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-${{ steps.date.outputs.ymd }}
@@ -103,7 +103,7 @@ jobs:
             ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-test-
             ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-
             ${{runner.os}}-bazel-build-
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
@@ -138,9 +138,9 @@ jobs:
     needs:
       - bf_version
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Checkout pybf repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
@@ -151,7 +151,7 @@ jobs:
           sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${{ needs.bf_version.outputs.bf_version }}\"/" pybatfish/__init__.py
           rm -f pybatfish/__init__.py.bak
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.7
       - name: Build wheel
@@ -186,7 +186,7 @@ jobs:
       - bf_version
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download jar
         uses: actions/download-artifact@v3
         with:

@@ -92,7 +92,7 @@ jobs:
           password: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Verify uploaded artifact
@@ -167,7 +167,7 @@ jobs:
           mkdir dist
           mv pybatfish*.whl dist/
       - name: Checkout pybf repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
@@ -189,7 +189,7 @@ jobs:
         with:
           password: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
       - name: Verify uploaded artifact
