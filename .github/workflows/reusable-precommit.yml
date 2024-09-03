@@ -188,11 +188,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Download jar
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: bf_jar
       - name: Download questions
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: bf_questions
       - name: Setup Batfish image assets
@@ -221,11 +221,11 @@ jobs:
           name: bf_image
           path: /tmp/bf.tar
       - name: Download pybf whl
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: pybf_whl
       - name: Download pybf notebooks
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: pybf_notebooks
       - name: Setup Allinone image assets
