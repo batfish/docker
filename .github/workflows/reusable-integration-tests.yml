@@ -77,19 +77,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download pybf whl
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_whl
       - name: Download pybf tests
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_tests
       - name: Download pybf notebooks
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_notebooks
       - name: Download questions
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bf_questions
       - uses: actions/setup-python@v5
@@ -118,19 +118,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download bf image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bf_image
       - name: Download pybf tests
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_tests
       - name: Download pybf notebooks
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_notebooks
       - name: Download questions
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bf_questions
       - name: Start bf
@@ -159,23 +159,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download bf image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bf_image
       - name: Download pybf whl
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_whl
       - name: Download pybf notebooks
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_notebooks
       - name: Download pybf tests
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_tests
       - name: Download questions
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bf_questions
       - name: Start bf
@@ -204,23 +204,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download allinone image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: allinone_image
       - name: Download pybf whl
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_whl
       - name: Download pybf notebooks
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_notebooks
       - name: Download pybf tests
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pybf_tests
       - name: Download questions
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bf_questions
       - uses: actions/setup-python@v5
