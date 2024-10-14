@@ -9,7 +9,7 @@ bash conda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 # pip 20.3 has problems resolving dependencies correctly, so pin to last working version
 # See related resolver issue: https://github.com/pypa/pip/issues/9187
-conda create -y -n conda_env python=3.7 pip=20.2.4
+conda create -y -n conda_env python=3.9 pip=20.2.4
 source activate conda_env
 
 # Install specific version of Pybatfish if specified, otherwise use the available version/wheel artifacts
