@@ -90,7 +90,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
