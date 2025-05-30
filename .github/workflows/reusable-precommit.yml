@@ -149,7 +149,8 @@ jobs:
         run: |
           cd pybatfish
           sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${{ needs.bf_version.outputs.bf_version }}\"/" pybatfish/__init__.py
-          rm -f pybatfish/__init__.py.bak
+          sed -i.bak -e "s/^version = .*$/version = \"${{ needs.bf_version.outputs.bf_version }}\"/" pyproject.toml
+          rm -f pybatfish/__init__.py.bak pyproject.toml.bak
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
