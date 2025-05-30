@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Get Build ID
         id: get_build_id
-        run: echo "::set-output name=build_id::$(TZ=America/Los_Angeles date +'%Y.%m.%d').${{ github.run_number }}"
+        run: echo "build_id=$(TZ=America/Los_Angeles date +'%Y.%m.%d').${{ github.run_number }}" >> $GITHUB_OUTPUT
       - name: Checkout Batfish repo
         uses: actions/checkout@v4
         with:
@@ -53,8 +53,8 @@ jobs:
         id: get_bf_sha
         run: |
           cd batfish
-          echo "::set-output name=batfish_sha::$(git rev-parse --short HEAD)"
-          echo "::set-output name=batfish_resolved_sha::$(git rev-parse HEAD)"
+          echo "batfish_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "batfish_resolved_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
       - name: Checkout pybatfish repo
         uses: actions/checkout@v4
         with:
@@ -65,8 +65,8 @@ jobs:
         id: get_pybf_sha
         run: |
           cd pybatfish
-          echo "::set-output name=pybatfish_sha::$(git rev-parse --short HEAD)"
-          echo "::set-output name=pybatfish_resolved_sha::$(git rev-parse HEAD)"
+          echo "pybatfish_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "pybatfish_resolved_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
     outputs:
       bf_version: ${{ steps.get_build_id.outputs.build_id }}
       bf_sha: ${{ steps.get_bf_sha.outputs.batfish_sha }}
@@ -80,7 +80,7 @@ jobs:
     steps:
       - name: Get date
         id: date
-        run: echo "::set-output name=ymd::$(TZ=America/Los_Angeles date +'%Y-%m-%d')"
+        run: echo "ymd=$(TZ=America/Los_Angeles date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
       - name: Checkout Docker repo
         uses: actions/checkout@v4
       - name: Checkout Batfish repo

@@ -41,7 +41,7 @@ jobs:
         run: |
           # --pattern=202 filters container tags to those containing "202", e.g. "2022.08.22.1234"
           DATE_TAGS="$(python get_docker_versions.py --image batfish/batfish --days=${{ inputs.bf_test_artifact_age }} --minimum=${{ inputs.bf_min_release_test_count }} --json-format --pattern=202)"
-          echo "::set-output name=versions::$DATE_TAGS"
+          echo "versions=$DATE_TAGS" >> $GITHUB_OUTPUT
     outputs:
       versions: ${{ steps.set_versions.outputs.versions }}
   get_pybf_versions:
@@ -57,7 +57,7 @@ jobs:
       - id: set_versions
         run: |
           PYBF_TAGS="$(python get_pypi_versions.py --package pybatfish --days=${{ inputs.bf_test_artifact_age }} --minimum=${{ inputs.pybf_min_release_test_count }} --json-format)"
-          echo "::set-output name=versions::$PYBF_TAGS"
+          echo "versions=$PYBF_TAGS" >> $GITHUB_OUTPUT
     outputs:
       versions: ${{ steps.set_versions.outputs.versions }}
   bf_cross_version_tests:
