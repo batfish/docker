@@ -65,3 +65,69 @@ jobs:
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
       BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
       OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}
+
+  # Send Slack notification on failure for scheduled or post-merge jobs on master branch
+  notify_slack_on_failure:
+    needs:
+      - precommit
+      - test
+      - upload
+    if: |
+      failure() &&
+      github.ref == 'refs/heads/master' &&
+      (github.event_name == 'schedule' || github.event_name == 'push') &&
+      !(github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * *')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "*Docker cross-version tests and upload workflow failed*",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Docker cross-version tests and upload workflow failed*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow:*\n${{ github.workflow }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Status:*\nFailed"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Trigger:*\n${{ github.event_name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch:*\nmaster"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View in GitHub Actions"
+                      },
+                      "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
