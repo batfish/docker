@@ -61,7 +61,6 @@ jobs:
       BATFISH_GITHUB_PYBATFISH_REPO: "${{ needs.precommit.outputs.pybatfish_repo }}"
       BATFISH_GITHUB_PYBATFISH_REF: "${{ needs.precommit.outputs.pybatfish_resolved_sha }}"
     secrets:
-      PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
       BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
       OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}
