@@ -34,8 +34,7 @@ on:
       # Only needed when `queue_prod_release` is true
       OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN:
         required: false
-      PYBATFISH_TEST_PYPI_TOKEN:
-        required: true
+      # Only needed for production PyPI uploads, not for TestPyPI (which uses trusted publisher)
       PYBATFISH_PYPI_TOKEN:
         required: true
       BATFISH_DOCKER_LOGIN_TOKEN:
@@ -80,6 +79,9 @@ jobs:
   dev_whl_upload:
     if: inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
     runs-on: ubuntu-latest
+    permissions:
+      # Required for trusted publisher
+      id-token: write
     steps:
       - name: Download pybf whl
         uses: actions/download-artifact@v4
@@ -89,7 +91,6 @@ jobs:
       - name: Publish to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
       - name: Set up Python
         uses: actions/setup-python@v5
