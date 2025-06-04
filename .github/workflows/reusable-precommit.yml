@@ -214,6 +214,7 @@ jobs:
           labels: |
             org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
             org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
+          outputs: type=docker,dest=/tmp/bf.tar
           context: .
           platforms: linux/amd64, linux/arm64
       - name: Upload docker image
@@ -249,6 +250,7 @@ jobs:
             org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
             org.batfish.pybatfish-tag=${{ needs.bf_version.outputs.pybf_sha }}
             org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
+          outputs: type=docker,dest=/tmp/allinone.tar
           context: .
           platforms: linux/amd64, linux/arm64
       - name: Upload docker image
