@@ -204,7 +204,11 @@ jobs:
           cp log4j2.yaml assets
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+<<<<<<< HEAD
       - name: Build Batfish image
+=======
+      - name: Build for amd64
+>>>>>>> 58f4e75 (duplicate build & upload tasks as docker type in buildx outputs is incompatible with multi-platform images)
         uses: docker/build-push-action@v3
         with:
           push: false
@@ -214,13 +218,61 @@ jobs:
           labels: |
             org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
             org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
-          outputs: type=docker,dest=/tmp/bf.tar
+          platforms: linux/amd64
+          outputs: type=docker,dest=/tmp/bf-amd64.tar
           context: .
+<<<<<<< HEAD
       - name: Upload docker image
         uses: actions/upload-artifact@v4
         with:
           name: bf_image
           path: /tmp/bf.tar
+=======
+      - name: Upload linux/amd64 docker image
+        uses: actions/upload-artifact@v3
+        with:
+          name: bf_image
+          path: /tmp/bf-amd64.tar
+      - name: Build for arm64
+        uses: docker/build-push-action@v3
+        with:
+          push: false
+          file: batfish.dockerfile
+          build-args: ASSETS=./assets
+          tags: batfish/batfish:test-${{ needs.bf_version.outputs.bf_version }}
+          labels: |
+            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
+            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
+          platforms: linux/arm64
+          outputs: type=docker,dest=/tmp/bf-arm64.tar
+          context: .
+      - name: Upload linux/arm64 docker image
+        uses: actions/upload-artifact@v3
+        with:
+          name: bf_image
+          path: /tmp/bf-arm64.tar
+  allinone_image_build:
+    runs-on: ubuntu-latest
+    needs:
+      - bf_build
+      - pybf_build
+      - bf_version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'arm64'
+      - name: Download jar
+        uses: actions/download-artifact@v3
+        with:
+          name: bf_jar
+      - name: Download questions
+        uses: actions/download-artifact@v3
+        with:
+          name: bf_questions
+>>>>>>> 58f4e75 (duplicate build & upload tasks as docker type in buildx outputs is incompatible with multi-platform images)
       - name: Download pybf whl
         uses: actions/download-artifact@v4
         with:
@@ -237,7 +289,13 @@ jobs:
           cp -r ${TEMP_DIR}/jupyter_notebooks/ assets/notebooks/
           # Script that starts Batfish + Jupyter server
           cp wrapper.sh assets
+<<<<<<< HEAD
       - name: Build allinone image
+=======
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build for linux/amd64
+>>>>>>> 58f4e75 (duplicate build & upload tasks as docker type in buildx outputs is incompatible with multi-platform images)
         uses: docker/build-push-action@v3
         with:
           push: false
@@ -249,10 +307,36 @@ jobs:
             org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
             org.batfish.pybatfish-tag=${{ needs.bf_version.outputs.pybf_sha }}
             org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
-          outputs: type=docker,dest=/tmp/allinone.tar
+          platforms: linux/amd64
+          outputs: type=docker,dest=/tmp/allinone-amd64.tar
           context: .
+<<<<<<< HEAD
       - name: Upload docker image
         uses: actions/upload-artifact@v4
+=======
+      - name: Upload linux/amd64 docker image
+        uses: actions/upload-artifact@v3
+>>>>>>> 58f4e75 (duplicate build & upload tasks as docker type in buildx outputs is incompatible with multi-platform images)
         with:
           name: allinone_image
-          path: /tmp/allinone.tar
+          path: /tmp/allinone-amd64.tar
+      - name: Build for linux/arm64
+        uses: docker/build-push-action@v3
+        with:
+          push: false
+          file: allinone.dockerfile
+          build-args: ASSETS=./assets
+          tags: batfish/allinone:test-${{ needs.bf_version.outputs.bf_version }}
+          labels: |
+            org.batfish.allinone-tag=${{ needs.bf_version.outputs.bf_sha }}_${{ needs.bf_version.outputs.pybf_sha }}
+            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
+            org.batfish.pybatfish-tag=${{ needs.bf_version.outputs.pybf_sha }}
+            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
+          platforms: linux/arm64
+          outputs: type=docker,dest=/tmp/allinone-arm64.tar
+          context: .
+      - name: Upload linux/arm64 docker image
+        uses: actions/upload-artifact@v3
+        with:
+          name: allinone_image
+          path: /tmp/allinone-arm64.tar
