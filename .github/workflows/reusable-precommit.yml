@@ -222,39 +222,39 @@ jobs:
         with:
           name: bf_image
           path: /tmp/bf.tar
-      - name: Download pybf whl
-        uses: actions/download-artifact@v4
-        with:
-          name: pybf_whl
-      - name: Download pybf notebooks
-        uses: actions/download-artifact@v4
-        with:
-          name: pybf_notebooks
-      - name: Setup Allinone image assets
-        run: |
-          cp pybatfish-*.whl assets
-          TEMP_DIR=$(mktemp -d)
-          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
-          cp -r ${TEMP_DIR}/jupyter_notebooks/ assets/notebooks/
-          # Script that starts Batfish + Jupyter server
-          cp wrapper.sh assets
-      - name: Build allinone image
-        uses: docker/build-push-action@v6
-        with:
-          push: false
-          file: allinone.dockerfile
-          build-args: ASSETS=./assets
-          tags: batfish/allinone:test-${{ needs.bf_version.outputs.bf_version }}
-          labels: |
-            org.batfish.allinone-tag=${{ needs.bf_version.outputs.bf_sha }}_${{ needs.bf_version.outputs.pybf_sha }}
-            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
-            org.batfish.pybatfish-tag=${{ needs.bf_version.outputs.pybf_sha }}
-            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
-          outputs: type=oci,dest=/tmp/allinone.tar
-          context: .
-          platforms: linux/amd64, linux/arm64
-      - name: Upload docker image
-        uses: actions/upload-artifact@v4
-        with:
-          name: allinone_image
-          path: /tmp/allinone.tar
+#      - name: Download pybf whl
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: pybf_whl
+#      - name: Download pybf notebooks
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: pybf_notebooks
+#      - name: Setup Allinone image assets
+#        run: |
+#          cp pybatfish-*.whl assets
+#          TEMP_DIR=$(mktemp -d)
+#          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+#          cp -r ${TEMP_DIR}/jupyter_notebooks/ assets/notebooks/
+#          # Script that starts Batfish + Jupyter server
+#          cp wrapper.sh assets
+#      - name: Build allinone image
+#        uses: docker/build-push-action@v6
+#        with:
+#          push: false
+#          file: allinone.dockerfile
+#          build-args: ASSETS=./assets
+#          tags: batfish/allinone:test-${{ needs.bf_version.outputs.bf_version }}
+#          labels: |
+#            org.batfish.allinone-tag=${{ needs.bf_version.outputs.bf_sha }}_${{ needs.bf_version.outputs.pybf_sha }}
+#            org.batfish.batfish-tag=${{ needs.bf_version.outputs.bf_sha }}
+#            org.batfish.pybatfish-tag=${{ needs.bf_version.outputs.pybf_sha }}
+#            org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
+#          outputs: type=oci,dest=/tmp/allinone.tar
+#          context: .
+#          platforms: linux/amd64, linux/arm64
+#      - name: Upload docker image
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allinone_image
+#          path: /tmp/allinone.tar
