@@ -182,6 +182,9 @@ jobs:
         run: |
           ls -la bf.tar
           tar tvf bf.tar
+          dpkg -l |grep docker
+          docker --version
+          cat /etc/lsb-release
           docker load --input bf.tar
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
       - uses: actions/setup-python@v5
