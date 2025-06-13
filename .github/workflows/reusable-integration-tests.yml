@@ -188,7 +188,8 @@ jobs:
           docker --version
           docker image load --help
           cat /etc/lsb-release
-          docker load --input bf.tar
+          docker image load --input bf.tar --platform linux/amd64
+          docker images
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
       - uses: actions/setup-python@v5
         with:
