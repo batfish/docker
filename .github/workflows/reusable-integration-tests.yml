@@ -186,6 +186,7 @@ jobs:
           tar tvf bf.tar
           dpkg -l |grep docker
           docker --version
+          docker image load --help
           cat /etc/lsb-release
           docker load --input bf.tar
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
