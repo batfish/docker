@@ -178,6 +178,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: bf_questions
+      - name: Set up docker-ce
+        uses: docker/setup-docker-action@v4
       - name: Start bf
         run: |
           ls -la bf.tar
