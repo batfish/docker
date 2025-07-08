@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: Install requests
         run: python -m pip install 'requests==2.23.0'
       - id: set_versions
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: Install requests
         run: python -m pip install 'requests==2.23.0'
       - id: set_versions
@@ -94,7 +94,7 @@ jobs:
           name: bf_questions
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: Setup pybf
         run: pip install "$(ls pybatfish-*.whl)"[dev]
       - name: Wait for bf
@@ -139,7 +139,7 @@ jobs:
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: Setup pybf
         run: pip install "pybatfish[dev]==${{ matrix.pybf_version }}" "urllib3<2"
       - name: Wait for bf
@@ -184,7 +184,7 @@ jobs:
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: Setup pybf
         run: pip install "$(ls pybatfish-*.whl)"[dev]
       - name: Wait for bf
@@ -225,7 +225,7 @@ jobs:
           name: bf_questions
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.10"
       - name: Setup pybf
         run: pip install "$(ls pybatfish-*.whl)"[dev]
       - name: Run tests inside allinone container
