@@ -45,16 +45,51 @@ jobs:
       bf_min_release_test_count: "2"
       pybf_min_release_test_count: "2" # todo: bump to 3 once we have 3 releases with new API support
       run_cross_version_tests: true
-  # Push public artifacts
-  upload:
+  # Push test/dev artifacts
+  upload_dev:
     needs:
       - precommit
       - test
     uses: ./.github/workflows/reusable-upload.yml
     with:
       bf_version: ${{ needs.precommit.outputs.bf_version }}
-      # Consider manual builds or 8AM Pacific scheduled builds as a release candidate
-      queue_prod_release: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * *' }}
+      # Only upload dev/test artifacts, not production
+      queue_prod_release: false
+      test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
+      release_tag: "${{ needs.precommit.outputs.bf_version }}"
+      BATFISH_GITHUB_BATFISH_REPO: "${{ needs.precommit.outputs.batfish_repo }}"
+      BATFISH_GITHUB_PYBATFISH_REPO: "${{ needs.precommit.outputs.pybatfish_repo }}"
+      BATFISH_GITHUB_PYBATFISH_REF: "${{ needs.precommit.outputs.pybatfish_resolved_sha }}"
+    secrets:
+      PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
+      PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
+      BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
+      OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}
+
+  # Validate the uploaded test artifacts with lab-validation
+  lab_validation:
+    needs:
+      - precommit
+      - upload_dev
+    uses: batfish/lab-validation/.github/workflows/reusable-lab-validation.yml@main
+    with:
+      batfish_docker: "batfish/batfish:test-${{ needs.precommit.outputs.bf_version }}"
+      pybatfish_version: "${{ needs.precommit.outputs.bf_version }}"
+      pybatfish_pypi_repo: "test"
+
+  # Push production artifacts only if lab validation passes
+  upload_prod:
+    needs:
+      - precommit
+      - test
+      - lab_validation
+    # Only run production uploads if this is a release candidate AND lab validation passed
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * *'
+    uses: ./.github/workflows/reusable-upload.yml
+    with:
+      bf_version: ${{ needs.precommit.outputs.bf_version }}
+      # Only upload production artifacts
+      queue_prod_release: true
       test_tag: "test-${{ needs.precommit.outputs.bf_version }}"
       release_tag: "${{ needs.precommit.outputs.bf_version }}"
       BATFISH_GITHUB_BATFISH_REPO: "${{ needs.precommit.outputs.batfish_repo }}"
@@ -71,7 +106,9 @@ jobs:
     needs:
       - precommit
       - test
-      - upload
+      - upload_dev
+      - lab_validation
+      - upload_prod
     if: |
       failure() &&
       github.ref == 'refs/heads/master' &&
