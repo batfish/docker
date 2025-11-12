@@ -205,7 +205,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Build Batfish image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: false
           file: batfish.dockerfile
@@ -238,7 +238,7 @@ jobs:
           # Script that starts Batfish + Jupyter server
           cp wrapper.sh assets
       - name: Build allinone image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           push: false
           file: allinone.dockerfile
