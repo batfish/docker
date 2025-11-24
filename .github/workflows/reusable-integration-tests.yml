@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run_cross_version_tests
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run_cross_version_tests
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -75,7 +75,7 @@ jobs:
           - 9997:9997
           - 9996:9996
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download pybf whl
         uses: actions/download-artifact@v6
         with:
@@ -116,7 +116,7 @@ jobs:
       matrix:
         pybf_version: ${{ fromJson(needs.get_pybf_versions.outputs.versions) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download bf image
         uses: actions/download-artifact@v6
         with:
@@ -157,7 +157,7 @@ jobs:
   bf_image_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download bf image
         uses: actions/download-artifact@v6
         with:
@@ -202,7 +202,7 @@ jobs:
   allinone_image_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download allinone image
         uses: actions/download-artifact@v6
         with:
