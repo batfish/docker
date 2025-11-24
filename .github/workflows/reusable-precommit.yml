@@ -152,7 +152,7 @@ jobs:
           sed -i.bak -e "s/^version = .*$/version = \"${{ needs.bf_version.outputs.bf_version }}\"/" pyproject.toml
           rm -f pybatfish/__init__.py.bak pyproject.toml.bak
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Build wheel

@@ -32,7 +32,7 @@ jobs:
     if: inputs.run_cross_version_tests
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Install requests
@@ -49,7 +49,7 @@ jobs:
     if: inputs.run_cross_version_tests
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Install requests
@@ -92,7 +92,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: bf_questions
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Setup pybf
@@ -137,7 +137,7 @@ jobs:
         run: |
           docker load --input bf.tar
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Setup pybf
@@ -182,7 +182,7 @@ jobs:
         run: |
           docker load --input bf.tar
           docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Setup pybf
@@ -223,7 +223,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: bf_questions
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Setup pybf
