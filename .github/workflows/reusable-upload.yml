@@ -92,7 +92,7 @@ jobs:
           password: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Verify uploaded artifact
@@ -191,7 +191,7 @@ jobs:
         with:
           password: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Verify uploaded artifact
