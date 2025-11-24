@@ -167,7 +167,7 @@ jobs:
           mkdir dist
           mv pybatfish*.whl dist/
       - name: Checkout pybf repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
