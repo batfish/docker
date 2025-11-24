@@ -65,7 +65,7 @@ jobs:
         with:
           name: allinone_image
       - name: DockerHub Login
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ env.BATFISH_DOCKER_LOGIN_USERNAME }}
           password: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
@@ -127,7 +127,7 @@ jobs:
         with:
           name: allinone_image
       - name: DockerHub Login
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ env.BATFISH_DOCKER_LOGIN_USERNAME }}
           password: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
