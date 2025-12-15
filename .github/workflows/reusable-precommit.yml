@@ -90,12 +90,12 @@ jobs:
           path: batfish
           ref: "${{ needs.bf_version.outputs.bf_resolved_sha }}"
       - name: Bazelisk cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: "~/.cache/bazelisk"
           key: ${{runner.os}}-bazelisk-${{ hashFiles('batfish/.bazelversion') }}
       - name: Bazel cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: "~/.cache/bazel"
           key: ${{runner.os}}-bazel-build-${{ hashFiles('batfish/.bazelversion', 'batfish/WORKSPACE', 'batfish/maven_install.json') }}-${{ steps.date.outputs.ymd }}
