@@ -124,12 +124,12 @@ jobs:
           cp -r batfish/questions/{stable,experimental} ${QUESTION_DIR}
           tar -czf questions.tgz -C ${TMP_DIR} questions
       - name: Upload JAR
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: bf_jar
           path: allinone-bundle.jar
       - name: Upload questions
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: bf_questions
           path: questions.tgz
@@ -165,17 +165,17 @@ jobs:
           tar -czf pybatfish-tests.tgz -C pybatfish tests
           tar -czf pybatfish-notebooks.tgz -C pybatfish jupyter_notebooks
       - name: Upload pybf wheel
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: pybf_whl
           path: pybatfish/dist/*
       - name: Upload tests
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: pybf_tests
           path: pybatfish-tests.tgz
       - name: Upload notebooks
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: pybf_notebooks
           path: pybatfish-notebooks.tgz
@@ -217,7 +217,7 @@ jobs:
           outputs: type=docker,dest=/tmp/bf.tar
           context: .
       - name: Upload docker image
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: bf_image
           path: /tmp/bf.tar
@@ -252,7 +252,7 @@ jobs:
           outputs: type=docker,dest=/tmp/allinone.tar
           context: .
       - name: Upload docker image
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: allinone_image
           path: /tmp/allinone.tar
