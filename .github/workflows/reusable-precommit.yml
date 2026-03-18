@@ -180,11 +180,20 @@ jobs:
           name: pybf_notebooks
           path: pybatfish-notebooks.tgz
   image_build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     needs:
       - bf_build
       - pybf_build
       - bf_version
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            bf_artifact: bf_image
+            allinone_artifact: allinone_image
+          - runner: ubuntu-24.04-arm
+            bf_artifact: bf_image_arm64
+            allinone_artifact: allinone_image_arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -216,10 +225,10 @@ jobs:
             org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
           outputs: type=docker,dest=/tmp/bf.tar
           context: .
-      - name: Upload docker image
+      - name: Upload Batfish image
         uses: actions/upload-artifact@v7
         with:
-          name: bf_image
+          name: ${{ matrix.bf_artifact }}
           path: /tmp/bf.tar
       - name: Download pybf whl
         uses: actions/download-artifact@v8
@@ -251,8 +260,8 @@ jobs:
             org.batfish.batfish-version=${{ needs.bf_version.outputs.bf_version }}
           outputs: type=docker,dest=/tmp/allinone.tar
           context: .
-      - name: Upload docker image
+      - name: Upload allinone image
         uses: actions/upload-artifact@v7
         with:
-          name: allinone_image
+          name: ${{ matrix.allinone_artifact }}
           path: /tmp/allinone.tar

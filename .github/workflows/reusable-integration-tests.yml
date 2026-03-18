@@ -108,19 +108,24 @@ jobs:
           pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
           popd
   pybf_cross_version_tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platform.runner }}
     if: inputs.run_cross_version_tests
     needs:
       - get_pybf_versions
     strategy:
       matrix:
+        platform:
+          - runner: ubuntu-latest
+            bf_artifact: bf_image
+          - runner: ubuntu-24.04-arm
+            bf_artifact: bf_image_arm64
         pybf_version: ${{ fromJson(needs.get_pybf_versions.outputs.versions) }}
     steps:
       - uses: actions/checkout@v6
       - name: Download bf image
         uses: actions/download-artifact@v8
         with:
-          name: bf_image
+          name: ${{ matrix.platform.bf_artifact }}
       - name: Download pybf tests
         uses: actions/download-artifact@v8
         with:
@@ -155,13 +160,20 @@ jobs:
       - name: Stop bf
         run: docker stop $(docker ps -q)
   bf_image_test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            bf_artifact: bf_image
+          - runner: ubuntu-24.04-arm
+            bf_artifact: bf_image_arm64
     steps:
       - uses: actions/checkout@v6
       - name: Download bf image
         uses: actions/download-artifact@v8
         with:
-          name: bf_image
+          name: ${{ matrix.bf_artifact }}
       - name: Download pybf whl
         uses: actions/download-artifact@v8
         with:
@@ -200,13 +212,20 @@ jobs:
       - name: Stop bf
         run: docker stop $(docker ps -q)
   allinone_image_test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            image_artifact: allinone_image
+          - runner: ubuntu-24.04-arm
+            image_artifact: allinone_image_arm64
     steps:
       - uses: actions/checkout@v6
       - name: Download allinone image
         uses: actions/download-artifact@v8
         with:
-          name: allinone_image
+          name: ${{ matrix.image_artifact }}
       - name: Download pybf whl
         uses: actions/download-artifact@v8
         with:
