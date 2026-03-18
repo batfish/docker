@@ -154,6 +154,53 @@ jobs:
           popd
       - name: Stop bf
         run: docker stop $(docker ps -q)
+  pybf_cross_version_tests_arm64:
+    runs-on: ubuntu-24.04-arm
+    if: inputs.run_cross_version_tests
+    needs:
+      - get_pybf_versions
+    strategy:
+      matrix:
+        pybf_version: ${{ fromJson(needs.get_pybf_versions.outputs.versions) }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Download bf image
+        uses: actions/download-artifact@v8
+        with:
+          name: bf_image_arm64
+      - name: Download pybf tests
+        uses: actions/download-artifact@v8
+        with:
+          name: pybf_tests
+      - name: Download pybf notebooks
+        uses: actions/download-artifact@v8
+        with:
+          name: pybf_notebooks
+      - name: Download questions
+        uses: actions/download-artifact@v8
+        with:
+          name: bf_questions
+      - name: Start bf
+        run: |
+          docker load --input bf.tar
+          docker run -d --net=host batfish/batfish:test-${{ inputs.bf_version }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - name: Setup pybf
+        run: pip install "pybatfish[dev]==${{ matrix.pybf_version }}" "urllib3<2"
+      - name: Wait for bf
+        run: tests/wait_for_bf.sh
+      - name: Run tests
+        run: |
+          TEMP_DIR=$(mktemp -d)
+          tar xzf pybatfish-tests.tgz -C ${TEMP_DIR}
+          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
+          pushd ${TEMP_DIR}
+          pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
+          popd
+      - name: Stop bf
+        run: docker stop $(docker ps -q)
   bf_image_test:
     runs-on: ubuntu-latest
     steps:
