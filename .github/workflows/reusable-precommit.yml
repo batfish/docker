@@ -223,6 +223,15 @@ jobs:
         with:
           name: bf_image
           path: /tmp/bf.tar
+      - name: Build Batfish image (linux/arm64)
+        uses: docker/build-push-action@v7
+        with:
+          push: false
+          file: batfish.dockerfile
+          platforms: linux/arm64
+          build-args: ASSETS=./assets
+          tags: batfish/batfish:test-${{ needs.bf_version.outputs.bf_version }}
+          context: .
       - name: Download pybf whl
         uses: actions/download-artifact@v8
         with:
@@ -258,3 +267,12 @@ jobs:
         with:
           name: allinone_image
           path: /tmp/allinone.tar
+      - name: Build allinone image (linux/arm64)
+        uses: docker/build-push-action@v7
+        with:
+          push: false
+          file: allinone.dockerfile
+          platforms: linux/arm64
+          build-args: ASSETS=./assets
+          tags: batfish/allinone:test-${{ needs.bf_version.outputs.bf_version }}
+          context: .
