@@ -8,7 +8,8 @@ ARG ASSETS
 RUN mkdir -p /data
 RUN chmod a+rw /data
 COPY ${ASSETS} ./
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+ARG TARGETARCH
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-${TARGETARCH}
 ENV JAVA_LIBRARY_PATH=/usr/lib
 ENV HOME=/data
 
