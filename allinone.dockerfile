@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # ASSETS is the directory containing allinone-bundle.jar (the Batfish jar)
 # and questions/ directory (containing question templates to be loaded by Batfish)
@@ -9,7 +9,7 @@ RUN mkdir -p /data
 RUN chmod a+rw /data
 COPY ${ASSETS} ./
 ARG TARGETARCH
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-${TARGETARCH}
+ENV JAVA_HOME=/usr/lib/jvm/java-25-openjdk-${TARGETARCH}
 ENV JAVA_LIBRARY_PATH=/usr/lib
 ENV HOME=/data
 
@@ -19,7 +19,7 @@ RUN chmod a+x wrapper.sh
 # Base package setup
 RUN apt-get update \
     && apt-get install -y \
-       openjdk-17-jre-headless \
+       openjdk-25-jre-headless \
        python3 \
        python3-pip \
        python3-wheel \
