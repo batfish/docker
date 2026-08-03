@@ -85,7 +85,7 @@ jobs:
             ((COUNTER+=1))
           done
       - name: Start bf
-        run: docker run -d --name bf -p 9997:9997 -p 9996:9996 batfish/batfish:${{ matrix.bf_version }}
+        run: docker run -d --name bf -p 9996:9996 batfish/batfish:${{ matrix.bf_version }}
       - name: Download pybf whl
         uses: actions/download-artifact@v8
         with:
