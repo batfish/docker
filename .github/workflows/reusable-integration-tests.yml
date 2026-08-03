@@ -68,14 +68,24 @@ jobs:
     strategy:
       matrix:
         bf_version: ${{ fromJson(needs.get_bf_versions.outputs.versions) }}
-    services:
-      bf:
-        image: batfish/batfish:${{ matrix.bf_version }}
-        ports:
-          - 9997:9997
-          - 9996:9996
     steps:
       - uses: actions/checkout@v7
+      - name: Pull bf image (with retries)
+        run: |
+          MAX_RETRIES=5
+          COUNTER=0
+          while ! docker pull batfish/batfish:${{ matrix.bf_version }}
+          do
+            if [ $COUNTER -ge $MAX_RETRIES ]; then
+              echo "Could not pull Batfish Docker image after ${MAX_RETRIES} retries"
+              exit 1
+            fi
+            echo "Retrying Docker pull (attempt $((COUNTER+1))/${MAX_RETRIES})..."
+            sleep 15
+            ((COUNTER+=1))
+          done
+      - name: Start bf
+        run: docker run -d --name bf -p 9996:9996 batfish/batfish:${{ matrix.bf_version }}
       - name: Download pybf whl
         uses: actions/download-artifact@v8
         with:
@@ -107,6 +117,9 @@ jobs:
           pushd ${TEMP_DIR}
           pytest -k "not test_notebook_output" "${TEMP_DIR}/tests/integration"
           popd
+      - name: Stop bf
+        if: always()
+        run: docker stop bf || true
   pybf_cross_version_tests:
     runs-on: ${{ matrix.platform.runner }}
     if: inputs.run_cross_version_tests

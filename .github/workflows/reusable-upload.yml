@@ -114,6 +114,21 @@ jobs:
           build-args: ASSETS=./assets
           tags: batfish/allinone:${{ inputs.test_tag }}
           context: .
+      - name: Verify Docker image upload
+        run: |
+          MAX_RETRIES=5
+          COUNTER=0
+          while ! docker pull batfish/batfish:${{ inputs.test_tag }}
+          do
+            if [ $COUNTER -ge $MAX_RETRIES ]; then
+              echo "Could not pull Batfish Docker image after ${MAX_RETRIES} retries"
+              exit 1
+            fi
+            echo "Retrying Docker pull (attempt $((COUNTER+1))/${MAX_RETRIES})..."
+            sleep 15
+            ((COUNTER+=1))
+          done
+          echo "Batfish Docker image verified!"
   dev_whl_upload:
     if: inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
     runs-on: ubuntu-latest
