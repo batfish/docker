@@ -4,9 +4,38 @@ import argparse
 from datetime import datetime, timedelta
 import re
 import sys
+import time
 from typing import List, Optional
 
 import requests
+
+_MAX_RETRIES = 3
+_RETRY_BACKOFF_SECONDS = 5
+
+
+def _get_json(url: str) -> dict:
+    """Fetch URL and return parsed JSON, with retries on transient errors."""
+    for attempt in range(1, _MAX_RETRIES + 1):
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            return resp.json()
+        excerpt = resp.text[:200]
+        if resp.status_code in (429, 500, 502, 503, 504) and attempt < _MAX_RETRIES:
+            wait = _RETRY_BACKOFF_SECONDS * attempt
+            print(
+                f"Warning: Docker Hub returned {resp.status_code} (attempt {attempt}/{_MAX_RETRIES}), "
+                f"retrying in {wait}s. Response: {excerpt!r}",
+                file=sys.stderr,
+            )
+            time.sleep(wait)
+            continue
+        raise RuntimeError(
+            f"Docker Hub request failed: HTTP {resp.status_code} for {url!r}. "
+            f"Response excerpt: {excerpt!r}"
+        )
+    # Should not be reached, but satisfy type checker
+    raise RuntimeError(f"Exhausted retries for {url!r}")
+
 
 def get_relevant_releases(image: str, days: int, minimum: int, pattern: Optional[str]) -> List[str]:
     """Returns a list of relevant releases, sorted newest first. Only includes release tags that look like dates e.g. 2022.08.26.1234
@@ -16,7 +45,13 @@ def get_relevant_releases(image: str, days: int, minimum: int, pattern: Optional
     url = f'https://hub.docker.com/v2/repositories/{image}/tags/?page_size=100{name_filter}'
     res = list()
     while True:
-        resp_json = requests.get(url).json()
+        resp_json = _get_json(url)
+        if 'results' not in resp_json:
+            raise RuntimeError(
+                f"Unexpected Docker Hub response: 'results' key missing. "
+                f"Keys present: {list(resp_json.keys())!r}. "
+                f"Response excerpt: {str(resp_json)[:200]!r}"
+            )
         releases = resp_json['results']
         # Dict of release version to release datetime
         dates = {
