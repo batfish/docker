@@ -31,9 +31,6 @@ on:
         required: true
         type: string
     secrets:
-      # Only needed when `queue_prod_release` is true
-      OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN:
-        required: false
       PYBATFISH_TEST_PYPI_TOKEN:
         required: true
       PYBATFISH_PYPI_TOKEN:
