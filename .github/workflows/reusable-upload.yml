@@ -31,9 +31,6 @@ on:
         required: true
         type: string
     secrets:
-      # Only needed when `queue_prod_release` is true
-      OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN:
-        required: false
       PYBATFISH_TEST_PYPI_TOKEN:
         required: true
       PYBATFISH_PYPI_TOKEN:
@@ -253,7 +250,7 @@ jobs:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
           ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
-          token: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN || github.token }}
+          token: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN }}
       - name: Push test branch
         run: |
           cd pybatfish
