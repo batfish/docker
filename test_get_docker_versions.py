@@ -96,3 +96,62 @@ class TestGetRelevantReleases:
             )
         assert "2023.01.15.1001" in result
         assert "2023.01.10.1000" in result
+
+    def test_test_tags_excluded_when_pattern_matches_both(self):
+        resp = _make_response(
+            200,
+            {
+                "results": [
+                    _tag("test-2026.08.09.4001"),
+                    _tag("2026.08.09.4001"),
+                ],
+                "next": None,
+            },
+        )
+        with patch("get_docker_versions.requests.get", return_value=resp):
+            result = get_docker_versions.get_relevant_releases(
+                "batfish/batfish", days=9999, minimum=1, pattern="202"
+            )
+        assert result == ["2026.08.09.4001"]
+
+    def test_falls_back_to_registry_when_hub_offset_limit_hit(self):
+        page1 = _make_response(
+            200,
+            {
+                "results": [_tag("test-2026.08.09.4001")],
+                "next": "https://hub.docker.com/v2/repositories/batfish/batfish/tags/?name=202&page=11&page_size=100",
+            },
+        )
+        hub_limit = _make_response(
+            403,
+            {"message": "pagination offset too large for anonymous requests; sign in to page further"},
+        )
+        token = _make_response(200, {"token": "token-value"})
+        registry = _make_response(
+            200,
+            {"name": "batfish/batfish", "tags": ["test-2026.08.09.4001", "2026.08.09.4001", "2026.08.08.3999"]},
+        )
+
+        responses = [page1, hub_limit, token, registry]
+        with patch("get_docker_versions.requests.get", side_effect=responses):
+            result = get_docker_versions.get_relevant_releases(
+                "batfish/batfish", days=9999, minimum=2, pattern="202"
+            )
+        assert result == ["2026.08.09.4001", "2026.08.08.3999"]
+
+    def test_old_prod_tags_still_meet_minimum(self):
+        resp = _make_response(
+            200,
+            {
+                "results": [
+                    _tag("2020.01.03.2", last_updated="2026-08-01"),
+                    _tag("2020.01.02.1", last_updated="2026-08-01"),
+                ],
+                "next": None,
+            },
+        )
+        with patch("get_docker_versions.requests.get", return_value=resp):
+            result = get_docker_versions.get_relevant_releases(
+                "batfish/batfish", days=1, minimum=2, pattern=None
+            )
+        assert result == ["2020.01.03.2", "2020.01.02.1"]
