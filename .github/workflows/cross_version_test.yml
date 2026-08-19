@@ -64,6 +64,7 @@ jobs:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
       BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
+      PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH: ${{ secrets.PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH }}
 
   # Validate the uploaded test artifacts with lab-validation
   lab_validation:
@@ -98,6 +99,7 @@ jobs:
       PYBATFISH_TEST_PYPI_TOKEN: ${{ secrets.PYBATFISH_TEST_PYPI_TOKEN }}
       PYBATFISH_PYPI_TOKEN: ${{ secrets.PYBATFISH_PYPI_TOKEN }}
       BATFISH_DOCKER_LOGIN_TOKEN: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
+      PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH: ${{ secrets.PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH }}
 
   # Send Slack notification on failure for scheduled or post-merge jobs on master branch
   notify_slack_on_failure:
