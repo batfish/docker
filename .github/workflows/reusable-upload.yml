@@ -234,6 +234,8 @@ jobs:
   prod_whl_upload:
     if: inputs.queue_prod_release && inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
     environment: Release Pybatfish
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Download pybf whl
@@ -250,7 +252,7 @@ jobs:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
           ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
-          token: ${{ secrets.PYBATFISH_RELEASE_PUSH_TOKEN || github.token }}
+          token: ${{ github.token }}
       - name: Push test branch
         run: |
           cd pybatfish
