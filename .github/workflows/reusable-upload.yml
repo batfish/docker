@@ -37,6 +37,8 @@ on:
         required: true
       BATFISH_DOCKER_LOGIN_TOKEN:
         required: true
+      OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN:
+        required: true
 
 env:
   BATFISH_DOCKER_LOGIN_USERNAME: batfishbuildkitebot
