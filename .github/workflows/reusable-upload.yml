@@ -37,6 +37,8 @@ on:
         required: true
       BATFISH_DOCKER_LOGIN_TOKEN:
         required: true
+      PYBATFISH_GITHUB_TOKEN:
+        required: true
 
 env:
   BATFISH_DOCKER_LOGIN_USERNAME: batfishbuildkitebot
@@ -252,7 +254,7 @@ jobs:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
           ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
-          token: ${{ github.token }}
+          token: ${{ secrets.PYBATFISH_GITHUB_TOKEN }}
       - name: Push test branch
         run: |
           cd pybatfish
