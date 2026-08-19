@@ -250,7 +250,7 @@ jobs:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
           ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
-          token: ${{ secrets.OPEN_SOURCE_BUILDKITEBOT_PUBLIC_REPO_TOKEN || github.token }}
+          token: ${{ secrets.PYBATFISH_RELEASE_PUSH_TOKEN || github.token }}
       - name: Push test branch
         run: |
           cd pybatfish
