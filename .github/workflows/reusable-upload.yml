@@ -38,7 +38,7 @@ on:
       BATFISH_DOCKER_LOGIN_TOKEN:
         required: true
       PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH:
-        required: true
+        required: false  # only used by prod_whl_upload, which only runs when queue_prod_release is true
 
 env:
   BATFISH_DOCKER_LOGIN_USERNAME: batfishbuildkitebot
