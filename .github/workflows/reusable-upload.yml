@@ -37,7 +37,7 @@ on:
         required: true
       BATFISH_DOCKER_LOGIN_TOKEN:
         required: true
-      PYBATFISH_GITHUB_TOKEN:
+      PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH:
         required: true
 
 env:
@@ -236,8 +236,6 @@ jobs:
   prod_whl_upload:
     if: inputs.queue_prod_release && inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
     environment: Release Pybatfish
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Download pybf whl
@@ -248,14 +246,22 @@ jobs:
         run: |
           mkdir dist
           mv pybatfish*.whl dist/
+      - name: Configure SSH for pybatfish deploy key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH }}" > ~/.ssh/pybatfish_deploy_key
+          chmod 600 ~/.ssh/pybatfish_deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
       - name: Checkout pybf repo
         uses: actions/checkout@v7
         with:
           repository: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REPO }}"
           path: pybatfish
           ref: "${{ inputs.BATFISH_GITHUB_PYBATFISH_REF }}"
-          token: ${{ secrets.PYBATFISH_GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.PYBATFISH_DEPLOY_KEY_FOR_PUSHING_RELEASE_BRANCH }}
       - name: Push test branch
+        env:
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/pybatfish_deploy_key -o IdentitiesOnly=yes"
         run: |
           cd pybatfish
           sed -i.bak -e "s/^__version__ = .*$/__version__ = \"${{ inputs.bf_version }}\"/" pybatfish/__init__.py
