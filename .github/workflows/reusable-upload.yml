@@ -148,16 +148,19 @@ jobs:
           python-version: "3.10"
       - name: Verify uploaded artifact
         run: |
-          MAX_RETRIES=3
-          COUNTER=0
-          while ! pip install -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple pybatfish==${{ inputs.bf_version }}
-          do
-            if [ $COUNTER -gt $MAX_RETRIES ]; then
-              echo "Could not install Pybf"
+          MAX_ATTEMPTS=10
+          RETRY_DELAY=15
+          for ATTEMPT in $(seq "$MAX_ATTEMPTS"); do
+            echo "Checking TestPyPI for Pybf (attempt ${ATTEMPT}/${MAX_ATTEMPTS})..."
+            if pip install --no-cache-dir -i https://test.pypi.org/simple --extra-index-url https://pypi.org/simple pybatfish==${{ inputs.bf_version }}; then
+              break
+            fi
+            if [ "$ATTEMPT" -eq "$MAX_ATTEMPTS" ]; then
+              echo "Could not install Pybf after ${MAX_ATTEMPTS} attempts"
               exit 1
             fi
-            sleep 5
-            ((COUNTER+=1))
+            echo "Pybf is not available yet; retrying in ${RETRY_DELAY}s..."
+            sleep "$RETRY_DELAY"
           done
           echo "Pybf installed"
           # Assume successful import means a working artifact
@@ -284,16 +287,19 @@ jobs:
           python-version: "3.10"
       - name: Verify uploaded artifact
         run: |
-          MAX_RETRIES=3
-          COUNTER=0
-          while ! pip install pybatfish==${{ inputs.bf_version }}
-          do
-            if [ $COUNTER -gt $MAX_RETRIES ]; then
-              echo "Could not install Pybf"
+          MAX_ATTEMPTS=10
+          RETRY_DELAY=15
+          for ATTEMPT in $(seq "$MAX_ATTEMPTS"); do
+            echo "Checking PyPI for Pybf (attempt ${ATTEMPT}/${MAX_ATTEMPTS})..."
+            if pip install --no-cache-dir pybatfish==${{ inputs.bf_version }}; then
+              break
+            fi
+            if [ "$ATTEMPT" -eq "$MAX_ATTEMPTS" ]; then
+              echo "Could not install Pybf after ${MAX_ATTEMPTS} attempts"
               exit 1
             fi
-            sleep 5
-            ((COUNTER+=1))
+            echo "Pybf is not available yet; retrying in ${RETRY_DELAY}s..."
+            sleep "$RETRY_DELAY"
           done
           echo "Pybf installed"
           # Assume successful import means a working artifact
