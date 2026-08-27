@@ -52,42 +52,29 @@ jobs:
           echo Cannot upload from a repo other than batfish/batfish and batfish/pybatfish
           exit 1
   dev_image_upload:
-    if: inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
+    if: ${{ !inputs.queue_prod_release && inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Download jar
+      - name: Download Batfish amd64 image
         uses: actions/download-artifact@v8
         with:
-          name: bf_jar
-      - name: Download questions
+          name: bf_image
+          path: bf_image
+      - name: Download Batfish arm64 image
         uses: actions/download-artifact@v8
         with:
-          name: bf_questions
-      - name: Download pybf whl
+          name: bf_image_arm64
+          path: bf_image_arm64
+      - name: Download Allinone amd64 image
         uses: actions/download-artifact@v8
         with:
-          name: pybf_whl
-      - name: Download pybf notebooks
+          name: allinone_image
+          path: allinone_image
+      - name: Download Allinone arm64 image
         uses: actions/download-artifact@v8
         with:
-          name: pybf_notebooks
-      - name: Setup Batfish image assets
-        run: |
-          mkdir assets
-          tar xzf questions.tgz -C assets
-          cp allinone-bundle.jar assets
-          cp log4j2.yaml assets
-      - name: Setup Allinone image assets
-        run: |
-          cp pybatfish-*.whl assets
-          TEMP_DIR=$(mktemp -d)
-          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
-          cp -r ${TEMP_DIR}/jupyter_notebooks/ assets/notebooks/
-          cp wrapper.sh assets
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
+          name: allinone_image_arm64
+          path: allinone_image_arm64
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: DockerHub Login
@@ -95,24 +82,34 @@ jobs:
         with:
           username: ${{ env.BATFISH_DOCKER_LOGIN_USERNAME }}
           password: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
-      - name: Build and push Batfish image (multi-platform)
-        uses: docker/build-push-action@v7
-        with:
-          push: true
-          file: batfish.dockerfile
-          platforms: linux/amd64,linux/arm64
-          build-args: ASSETS=./assets
-          tags: batfish/batfish:${{ inputs.test_tag }}
-          context: .
-      - name: Build and push Allinone image (multi-platform)
-        uses: docker/build-push-action@v7
-        with:
-          push: true
-          file: allinone.dockerfile
-          platforms: linux/amd64,linux/arm64
-          build-args: ASSETS=./assets
-          tags: batfish/allinone:${{ inputs.test_tag }}
-          context: .
+      - name: Push tested Batfish image manifests
+        run: |
+          docker load --input bf_image/bf.tar
+          docker tag batfish/batfish:${{ inputs.test_tag }} \
+            batfish/batfish:${{ inputs.test_tag }}-amd64
+          docker push batfish/batfish:${{ inputs.test_tag }}-amd64
+          docker load --input bf_image_arm64/bf.tar
+          docker tag batfish/batfish:${{ inputs.test_tag }} \
+            batfish/batfish:${{ inputs.test_tag }}-arm64
+          docker push batfish/batfish:${{ inputs.test_tag }}-arm64
+          docker buildx imagetools create \
+            --tag batfish/batfish:${{ inputs.test_tag }} \
+            batfish/batfish:${{ inputs.test_tag }}-amd64 \
+            batfish/batfish:${{ inputs.test_tag }}-arm64
+      - name: Push tested Allinone image manifests
+        run: |
+          docker load --input allinone_image/allinone.tar
+          docker tag batfish/allinone:${{ inputs.test_tag }} \
+            batfish/allinone:${{ inputs.test_tag }}-amd64
+          docker push batfish/allinone:${{ inputs.test_tag }}-amd64
+          docker load --input allinone_image_arm64/allinone.tar
+          docker tag batfish/allinone:${{ inputs.test_tag }} \
+            batfish/allinone:${{ inputs.test_tag }}-arm64
+          docker push batfish/allinone:${{ inputs.test_tag }}-arm64
+          docker buildx imagetools create \
+            --tag batfish/allinone:${{ inputs.test_tag }} \
+            batfish/allinone:${{ inputs.test_tag }}-amd64 \
+            batfish/allinone:${{ inputs.test_tag }}-arm64
       - name: Verify Docker image upload
         run: |
           MAX_RETRIES=5
@@ -129,7 +126,7 @@ jobs:
           done
           echo "Batfish Docker image verified!"
   dev_whl_upload:
-    if: inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
+    if: ${{ !inputs.queue_prod_release && inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish' }}
     runs-on: ubuntu-latest
     steps:
       - name: Download pybf whl
@@ -172,39 +169,6 @@ jobs:
     environment: Release Containers
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-      - name: Download jar
-        uses: actions/download-artifact@v8
-        with:
-          name: bf_jar
-      - name: Download questions
-        uses: actions/download-artifact@v8
-        with:
-          name: bf_questions
-      - name: Download pybf whl
-        uses: actions/download-artifact@v8
-        with:
-          name: pybf_whl
-      - name: Download pybf notebooks
-        uses: actions/download-artifact@v8
-        with:
-          name: pybf_notebooks
-      - name: Setup Batfish image assets
-        run: |
-          mkdir assets
-          tar xzf questions.tgz -C assets
-          cp allinone-bundle.jar assets
-          cp log4j2.yaml assets
-      - name: Setup Allinone image assets
-        run: |
-          cp pybatfish-*.whl assets
-          TEMP_DIR=$(mktemp -d)
-          tar xzf pybatfish-notebooks.tgz -C ${TEMP_DIR}
-          cp -r ${TEMP_DIR}/jupyter_notebooks/ assets/notebooks/
-          cp wrapper.sh assets
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: DockerHub Login
@@ -212,30 +176,22 @@ jobs:
         with:
           username: ${{ env.BATFISH_DOCKER_LOGIN_USERNAME }}
           password: ${{ secrets.BATFISH_DOCKER_LOGIN_TOKEN }}
-      - name: Build and push Batfish image (multi-platform)
-        uses: docker/build-push-action@v7
-        with:
-          push: true
-          file: batfish.dockerfile
-          platforms: linux/amd64,linux/arm64
-          build-args: ASSETS=./assets
-          tags: |
+      - name: Promote tested Batfish image
+        run: |
+          docker buildx imagetools create \
+            --tag batfish/batfish:${{ inputs.release_tag }} \
             batfish/batfish:${{ inputs.test_tag }}
-            batfish/batfish:${{ inputs.release_tag }}
-            batfish/batfish:latest
-          context: .
-      - name: Build and push Allinone image (multi-platform)
-        uses: docker/build-push-action@v7
-        with:
-          push: true
-          file: allinone.dockerfile
-          platforms: linux/amd64,linux/arm64
-          build-args: ASSETS=./assets
-          tags: |
+          docker buildx imagetools create \
+            --tag batfish/batfish:latest \
+            batfish/batfish:${{ inputs.test_tag }}
+      - name: Promote tested Allinone image
+        run: |
+          docker buildx imagetools create \
+            --tag batfish/allinone:${{ inputs.release_tag }} \
             batfish/allinone:${{ inputs.test_tag }}
-            batfish/allinone:${{ inputs.release_tag }}
-            batfish/allinone:latest
-          context: .
+          docker buildx imagetools create \
+            --tag batfish/allinone:latest \
+            batfish/allinone:${{ inputs.test_tag }}
   prod_whl_upload:
     if: inputs.queue_prod_release && inputs.BATFISH_GITHUB_BATFISH_REPO == 'batfish/batfish' && inputs.BATFISH_GITHUB_PYBATFISH_REPO == 'batfish/pybatfish'
     environment: Release Pybatfish
