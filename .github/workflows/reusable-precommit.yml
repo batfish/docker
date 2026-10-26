@@ -188,10 +188,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - runner: ubuntu-latest
+          - runner: ubuntu-26.04
             bf_artifact: bf_image
             allinone_artifact: allinone_image
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             bf_artifact: bf_image_arm64
             allinone_artifact: allinone_image_arm64
     steps:
