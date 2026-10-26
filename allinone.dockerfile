@@ -21,14 +21,17 @@ RUN apt-get update \
     && apt-get install -y \
        openjdk-25-jre-headless \
        python3 \
-       python3-pip \
-       python3-wheel \
+       python3-venv \
     && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /var/cache/oracle*
 
-# Python setup.
-RUN pip3 install --break-system-packages \
+# Python setup. Use a venv so pip never has to modify apt-managed packages.
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH=/opt/venv/bin:$PATH
+RUN python3 -m venv $VIRTUAL_ENV \
+    && pip install --upgrade pip setuptools wheel \
+    && pip install \
     $(ls pybatfish-*.whl) \
     attrdict \
     jupyter \
